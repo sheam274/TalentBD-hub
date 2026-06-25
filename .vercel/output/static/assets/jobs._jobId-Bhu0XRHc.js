@@ -1,0 +1,1 @@
+import{j as o,L as n}from"./index-BaxvlCKm.js";const s=()=>o.jsxs("div",{className:"mx-auto max-w-3xl px-4 py-16 text-center",children:[o.jsx("h1",{className:"text-2xl font-bold",children:"Job not found"}),o.jsx(n,{to:"/jobs",className:"mt-4 inline-block underline",children:"Back to jobs"})]});export{s as notFoundComponent};

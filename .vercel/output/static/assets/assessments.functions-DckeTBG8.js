@@ -1,0 +1,1 @@
+import{b as e,l as d,d as a}from"./index-BaxvlCKm.js";const r=e({method:"GET"}).middleware([d]).handler(a("b910402c449cdc6d93545561777e419d50856c9be92526445f0768cd2e087ff5")),t=e({method:"POST"}).middleware([d]).handler(a("2d2bfe4a37a1e5dd9643ecf1c0c0efd5449878c924286877313568ef117cd057"));export{r as l,t as s};

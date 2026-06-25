@@ -1,0 +1,262 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { ScrollReveal } from "@/components/ScrollReveal";
+import { Sparkles, ArrowRight } from "lucide-react";
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "TalentBD — Learn skills, earn credentials, land jobs in Bangladesh" },
+      { name: "description", content: "TalentBD is Bangladesh's learn-and-earn platform: courses, certifications, CV builder, ATS parser, and a local + global jobs marketplace." },
+      { property: "og:title", content: "TalentBD" },
+      { property: "og:description", content: "Build skills. Earn credentials. Land the job." },
+    ],
+  }),
+  component: Landing,
+});
+
+const CATS = [
+  { name: "IT/Software", icon: "💻", category: "IT/Software" },
+  { name: "Engineering", icon: "⚙️", category: "Engineering" },
+  { name: "Banking/Finance", icon: "🏦", category: "Banking/Finance" },
+  { name: "Marketing", icon: "📣", category: "Marketing" },
+  { name: "Design", icon: "🎨", category: "Design" },
+  { name: "Healthcare", icon: "🩺", category: "Healthcare" },
+  { name: "Education", icon: "🎓", category: "Education" },
+  { name: "Sales", icon: "💼", category: "Sales" },
+];
+
+function Landing() {
+  return (
+    <div className="page-enter">
+      {/* Premium Hero */}
+      <section className="relative overflow-hidden min-h-[640px]">
+        <CseHeroScene />
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 md:py-24 md:px-6">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-semibold">
+              <Sparkles className="size-3.5" style={{ color: "var(--color-primary)" }} />
+              <span className="text-gradient">Premium · Bangladesh's #1 learn-and-earn</span>
+            </div>
+            <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight md:text-6xl">
+              Build skills.<br />
+              Earn credentials.<br />
+              <span className="text-gradient">Land the job.</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-base text-muted-foreground md:text-lg">
+              TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified certifications,
+              a dual-style CV builder, an ATS parser, and a local + global jobs marketplace.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <a
+                href="/auth"
+                className="shimmer inline-flex items-center gap-2 rounded-md px-5 py-3 font-semibold text-white shadow-lg"
+                style={{ background: "linear-gradient(135deg, var(--color-primary), oklch(0.45 0.18 250))" }}
+              >
+                Get started free <ArrowRight className="size-4" />
+              </a>
+              <a href="/jobs" className="rounded-md border bg-white/70 px-5 py-3 font-semibold backdrop-blur hover:bg-white">
+                Browse jobs
+              </a>
+            </div>
+            <div className="mt-9 grid max-w-md grid-cols-3 gap-3">
+              {[["12+", "Courses"], ["3", "Disciplines"], ["100%", "Free start"]].map(([n, l]) => (
+                <div key={l} className="glass rounded-xl p-3 text-center">
+                  <div className="text-xl font-extrabold text-gradient">{n}</div>
+                  <div className="text-xs text-muted-foreground">{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* MacBook anchored bottom-right of hero */}
+        <div className="pointer-events-none absolute right-4 bottom-6 z-20 hidden md:block w-[280px] lg:w-[320px] xl:w-[360px]">
+          <div className="relative macbook-tilt">
+            <div className="absolute -inset-10 rounded-[40px] opacity-40 blur-3xl"
+              style={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))" }} />
+            <MacbookHero />
+          </div>
+        </div>
+      </section>
+
+      {/* Crossover */}
+      <section className="mx-auto max-w-7xl px-4 md:px-6">
+        <ScrollReveal>
+          <div className="crossover grid gap-4 rounded-2xl glass p-6 md:grid-cols-3">
+            {[
+              { title: "Learn", body: "Structured tracks across web dev, networking, VLSI, power systems, BIM and more.", href: "/learn" },
+              { title: "Certify", body: "Pass timed quizzes to write a verified credential straight to your profile.", href: "/assessments" },
+              { title: "Get hired", body: "Apply to vetted local and global remote engineering roles.", href: "/jobs" },
+            ].map((c, i) => (
+              <ScrollReveal key={c.title} delay={i * 80}>
+                <a href={c.href} className="lift rounded-xl bg-white/70 backdrop-blur p-5 h-full block">
+                  <h3 className="text-lg font-semibold text-gradient">{c.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
+                </a>
+              </ScrollReveal>
+            ))}
+          </div>
+        </ScrollReveal>
+      </section>
+
+      {/* Categories */}
+      <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
+        <ScrollReveal>
+          <h2 className="text-3xl font-bold">Popular job categories</h2>
+          <p className="mt-1 text-muted-foreground">Like bdjobs — but with built-in learning to get you hired faster.</p>
+        </ScrollReveal>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+          {CATS.map((c, i) => (
+            <ScrollReveal key={c.name} delay={(i % 4) * 60}>
+              <a href={`/jobs?category=${encodeURIComponent(c.category)}`} className="lift glass rounded-xl p-5 block">
+                <div className="text-3xl">{c.icon}</div>
+                <div className="mt-2 font-semibold">{c.name}</div>
+                <div className="text-xs text-muted-foreground">View jobs →</div>
+              </a>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Disciplines */}
+      <section className="mx-auto max-w-7xl px-4 pb-20 md:px-6">
+        <ScrollReveal><h2 className="text-3xl font-bold">Disciplines we cover</h2></ScrollReveal>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[
+            { d: "Computer Science", disc: "cse", thumb: "thumb-cse", items: [
+              { label: "Web Development", slug: "web-development" },
+              { label: "Networking", slug: "networking" },
+              { label: "Data Science", slug: "data-science" },
+              { label: "Mobile Apps", slug: "mobile-apps" },
+              { label: "3D Animation", slug: "3d-animation" },
+              { label: "Digital Marketing", slug: "digital-marketing" },
+            ] },
+            { d: "Electrical & Electronic", disc: "eee", thumb: "thumb-eee", items: [
+              { label: "Power Systems", slug: "power-systems" },
+              { label: "VLSI", slug: "vlsi" },
+              { label: "Industrial Automation", slug: "industrial-automation" },
+            ] },
+            { d: "Civil Engineering", disc: "civil", thumb: "thumb-civil", items: [
+              { label: "Structural", slug: "structural" },
+              { label: "CAD & BIM", slug: "cad-bim" },
+              { label: "Project Management", slug: "project-management" },
+            ] },
+          ].map((g, i) => (
+            <ScrollReveal key={g.d} delay={i * 100}>
+              <div className="lift glass rounded-xl overflow-hidden h-full flex flex-col">
+                <a href={`/learn#${g.disc}`} className={`${g.thumb} thumb-grid h-28 relative block group`} aria-label={`Open ${g.d} tracks`}>
+                  <div className="absolute inset-0 bg-black/35" />
+                  <div className="absolute inset-0 flex items-end justify-between p-4">
+                    <h3 className="font-bold text-lg text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}>{g.d}</h3>
+                    <span className="text-white/90 text-xs font-semibold opacity-0 group-hover:opacity-100 transition">Explore →</span>
+                  </div>
+                </a>
+                <ul className="p-5 space-y-1 text-sm text-foreground/80 flex-1">
+                  {g.items.map((it) => (
+                    <li key={it.slug}>
+                      <a
+                        href={`/learn/${g.disc}/${it.slug}`}
+                        className="block rounded-md px-2 py-1 -mx-2 hover:bg-primary/10 hover:text-primary transition"
+                      >
+                        • {it.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="mx-auto max-w-7xl px-4 pb-20 md:px-6">
+        <ScrollReveal>
+          <div className="glass-dark rounded-2xl p-10 text-center" style={{ background: "linear-gradient(135deg, var(--color-primary), oklch(0.45 0.18 250))" }}>
+            <h2 className="text-3xl font-bold text-white">Ready to grow your career?</h2>
+            <p className="mt-2 text-white/85">Sign up free and start learning today.</p>
+            <a href="/auth" className="mt-5 inline-block rounded-md px-6 py-3 font-semibold shimmer" style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}>Create free account</a>
+          </div>
+        </ScrollReveal>
+      </section>
+    </div>
+  );
+}
+
+function CseHeroScene() {
+  const chips = [
+    { t: "const job = await apply()", cls: "", x: "4%", y: "12%", d: "0s" },
+    { t: "git commit -m 'shipped 🚀'", cls: "commit", x: "62%", y: "8%", d: "2s" },
+    { t: "💼 Senior Frontend · Dhaka", cls: "briefcase", x: "70%", y: "70%", d: "4s" },
+    { t: "<Resume ats-ready />", cls: "", x: "10%", y: "62%", d: "6s" },
+    { t: "npm run build ✓", cls: "commit", x: "48%", y: "40%", d: "1s" },
+    { t: "💼 Remote · USD 80k", cls: "briefcase", x: "30%", y: "80%", d: "3s" },
+    { t: "function getHired() {}", cls: "", x: "82%", y: "32%", d: "5s" },
+  ];
+  return (
+    <div className="cse-scene" aria-hidden="true">
+      <svg className="cse-net" viewBox="0 0 1200 600" preserveAspectRatio="none">
+        <path className="edge" d="M120,120 L320,260 L560,180 L820,300 L1080,200" />
+        <path className="edge" d="M180,460 L380,360 L600,440 L860,360 L1100,460" style={{ animationDelay: "1.5s" }} />
+        <path className="edge" d="M320,260 L380,360" />
+        <path className="edge" d="M560,180 L600,440" style={{ animationDelay: "0.8s" }} />
+        <path className="edge" d="M820,300 L860,360" />
+        <circle className="node" cx="120" cy="120" r="3" />
+        <circle className="node b" cx="320" cy="260" r="3" />
+        <circle className="node" cx="560" cy="180" r="3" />
+        <circle className="node b" cx="820" cy="300" r="3" />
+        <circle className="node" cx="1080" cy="200" r="3" />
+        <circle className="node b" cx="380" cy="360" r="3" />
+        <circle className="node" cx="600" cy="440" r="3" />
+        <circle className="node b" cx="860" cy="360" r="3" />
+      </svg>
+      {chips.map((c, i) => (
+        <span
+          key={i}
+          className={`chip ${c.cls}`}
+          style={{ left: c.x, top: c.y, animationDelay: c.d }}
+        >
+          {c.t}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function MacbookHero() {
+  return (
+    <div className="macbook" aria-label="Code preview running inside a MacBook Pro">
+      <div className="macbook-lid">
+        <div className="macbook-screen">
+          <div className="macbook-bezel">
+            <span className="macbook-notch" />
+          </div>
+          <div className="macbook-display">
+            <div className="mac-window">
+              <div className="mac-traffic">
+                <span /><span /><span />
+                <span className="mac-title">talentbd ~ /career</span>
+              </div>
+              <div className="mac-code">
+                <span className="ln"><em>$</em> talentbd login <i>--as student</i></span>
+                <span className="ln out">→ welcome, future engineer</span>
+                <span className="ln"><em>$</em> learn react <i>--track cse</i></span>
+                <span className="ln out">→ progress ████████░░ 80%</span>
+                <span className="ln"><em>$</em> certify frontend</span>
+                <span className="ln ok">→ credential issued ✓</span>
+                <span className="ln"><em>$</em> apply <i>--job</i> <b>"Frontend @ Pathao"</b><span className="caret" /></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="macbook-base">
+        <div className="macbook-keyboard" />
+        <div className="macbook-trackpad" />
+      </div>
+      <div className="macbook-shadow" />
+    </div>
+  );
+}
+
+
