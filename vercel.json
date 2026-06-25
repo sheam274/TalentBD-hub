@@ -2,5 +2,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".vercel/output",
   "devCommand": "npm run dev",
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "env": {
+    "TANSTACK_START_TARGET": "vercel"
+  }
 }
