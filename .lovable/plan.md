@@ -1,55 +1,46 @@
 ## Goal
-Make every hover/lift card on the home page (`src/routes/index.tsx`) a functional link to its related destination — especially the **Disciplines we cover** cards and the bullet items inside them.
+Make the project bug-free and ready to deploy to your Vercel account (`sheams-projects-bf3ed0ec`).
 
-## Changes (single file: `src/routes/index.tsx`)
+## Scope
 
-### 1. Disciplines we cover (the 3 big cards)
-Replace each `<div className="lift glass …">` with an `<a>` and add data so each card AND each bullet is a real link.
+### 1. Full static audit + fix obvious bugs
+Walk every route/server-fn and fix concrete issues:
+- Broken links / missing routes referenced by `index.tsx` hover cards (`/learn/$disc/$slug` targets, `/jobs?category=…` filter handling in `jobs.index.tsx`, `/assessments`, etc.)
+- Missing error/notFound boundaries on routes with loaders
+- Auth-protected server fns wrongly called from public loaders
+- RLS / GRANT gaps surfaced by Supabase linter
+- Dead buttons or unwired handlers
+- TypeScript / build warnings
 
-- Card header (Computer Science / Electrical & Electronic / Civil Engineering) → `/learn` discipline section (deep-link with hash so the section scrolls into view): `/learn#cse`, `/learn#eee`, `/learn#civil`.
-- Each bullet becomes its own clickable row that opens the matching module page `/learn/{discipline}/{slug}`. Slug mapping (verified against the DB):
+### 2. Smoke-test critical flows headlessly
+Run Playwright against the live preview for: home → discipline card → jobs filter, learn card → topic page, auth → dashboard, jobs → apply, employer post-job, admin list. Fix any runtime errors that surface (console + network).
 
-```
-Computer Science (cse)
-  Web Development     → /learn/cse/web-development
-  Networking          → /learn/cse/networking
-  Data Science        → /learn/cse/data-science
-  Mobile Apps         → /learn/cse/mobile-apps
-  3D Animation        → /learn/cse/3d-animation
-  Digital Marketing   → /learn/cse/digital-marketing
+### 3. Verify production build
+- `bun run build` clean
+- Confirm `vercel.json` + `.vercel/output/` config target Vercel's Node 22 runtime correctly (already present)
+- Confirm env vars needed on Vercel: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `LOVABLE_API_KEY`
 
-Electrical & Electronic (eee)
-  Power Systems       → /learn/eee/power-systems
-  VLSI                → /learn/eee/vlsi
-  Industrial Automation → /learn/eee/industrial-automation
+### 4. Deployment guidance (Vercel)
+I cannot push to your Vercel account from here. After fixes land, you have two options:
 
-Civil Engineering (civil)
-  Structural          → /learn/civil/structural
-  CAD & BIM           → /learn/civil/cad-bim
-  Project Management  → /learn/civil/project-management
-```
+**Option A — Publish via Lovable** (one click, recommended): I publish to `*.lovable.app`, then you connect your custom domain in Project Settings → Domains.
 
-Note: `/learn/*` is auth-gated. Unauthenticated visitors are redirected to `/auth` by the existing managed `_authenticated` layout — expected, no change needed.
+**Option B — Deploy to your Vercel project manually**:
+1. Connect the GitHub repo behind this Lovable project to your Vercel project `sheams-projects-bf3ed0ec`
+2. Framework preset: **Other** (build is already configured via `vercel.json` → `.vercel/output`)
+3. Build command: `bun run build`
+4. Output: `.vercel/output` (already emitted)
+5. Add the 5 env vars above in Vercel → Settings → Environment Variables
+6. Deploy
 
-### 2. Learn / Certify / Get hired trio (the "Crossover" row)
-Each of the three tiles becomes a link:
-- **Learn** → `/learn`
-- **Certify** → `/assessments`
-- **Get hired** → `/jobs`
-
-### 3. Popular job categories (8 emoji cards)
-Already link to `/jobs` but the category is dropped. Pass it through so the marketplace pre-filters:
-- `IT/Software` → `/jobs?category=IT%2FSoftware`
-- `Engineering` → `/jobs?category=Engineering`
-- `Banking/Finance` → `/jobs?category=Banking%2FFinance`
-- …same pattern for Marketing, Design, Healthcare, Education, Sales.
-
-The jobs page already reads `?category=` on mount (see `src/routes/jobs.index.tsx` lines 54–62), so no jobs-page change is needed.
-
-### 4. Hero + bottom CTA
-Already functional (`/auth`, `/jobs`). Leave as is.
+Lovable doesn't have a tool that pushes directly into your Vercel account, so step 4 is on you — I'll hand you a ready-to-deploy build.
 
 ## Out of scope
-- No design / animation changes — same `lift glass` hover, same layout.
-- No new routes, no DB changes, no server-fn changes.
-- Remote/Live jobs section already opens external posting in a new tab — unchanged.
+- New features
+- Visual redesign
+- Database schema changes beyond fixing RLS/GRANT gaps
+
+## Deliverables
+- Clean `tsgo` + `bun run build`
+- All home-page hover cards verified functional end-to-end
+- A short checklist of Vercel env vars + deploy steps in chat after fixes land
