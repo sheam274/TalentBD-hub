@@ -76,7 +76,7 @@ function Jobs() {
     queryFn: () =>
       remoteFn({
         data: {
-          limit: 18,
+          limit: 40,
           ...(search ? { search } : {}),
           ...(remoteCat ? { category: remoteCat } : {}),
         },
@@ -187,7 +187,7 @@ function Jobs() {
               <Radio className="size-3 animate-pulse" /> Live
             </span>
           </h2>
-          <span className="text-xs text-muted-foreground">Powered by Remotive · refreshed every 5 minutes</span>
+          <span className="text-xs text-muted-foreground">Powered by Remotive · Arbeitnow · RemoteOK</span>
         </div>
 
         {remoteQ.isLoading && <p className="mt-4 text-sm text-muted-foreground">Fetching live remote jobs…</p>}
@@ -227,6 +227,7 @@ function Jobs() {
                   {j.category && <span>{j.category}</span>}
                   {j.job_type && <span>· {j.job_type}</span>}
                   <span>· 🌍 {j.location}</span>
+                  {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
                 </div>
                 {j.tags?.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-1">
