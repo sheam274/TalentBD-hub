@@ -131,17 +131,36 @@ function Jobs() {
 
 
   const all = q.data ?? [];
-  const filtered = useMemo(() => all.filter((j: any) => {
-    const t = `${j.job_title} ${j.company} ${(j.requirements ?? []).join(" ")}`.toLowerCase();
-    if (search && !t.includes(search.toLowerCase())) return false;
-    if (category && (j.category ?? "General") !== category) return false;
-    if (location && !(j.location ?? "").toLowerCase().includes(location.toLowerCase())) return false;
-    if (exp && j.experience_level !== exp) return false;
-    if (type && j.job_type !== type) return false;
-    if (remote === "remote" && !j.is_remote) return false;
-    if (remote === "onsite" && j.is_remote) return false;
-    return true;
-  }), [all, search, category, location, exp, type, remote]);
+  const filtered = useMemo(() => {
+    const tokens = debouncedSearch.toLowerCase().split(/[\s,]+/).filter(Boolean);
+    const loc = location.trim().toLowerCase();
+    return all.filter((j: any) => {
+      if (tokens.length) {
+        const hay = [
+          j.job_title,
+          j.company,
+          j.category,
+          j.job_type,
+          j.experience_level,
+          j.location,
+          j.description,
+          ...(Array.isArray(j.requirements) ? j.requirements : []),
+          ...(Array.isArray(j.tags) ? j.tags : []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        if (!tokens.every((t) => hay.includes(t))) return false;
+      }
+      if (category && (j.category ?? "General") !== category) return false;
+      if (loc && !(j.location ?? "").toLowerCase().includes(loc)) return false;
+      if (exp && j.experience_level !== exp) return false;
+      if (type && j.job_type !== type) return false;
+      if (remote === "remote" && !j.is_remote) return false;
+      if (remote === "onsite" && j.is_remote) return false;
+      return true;
+    });
+  }, [all, debouncedSearch, category, location, exp, type, remote]);
 
   const featured = filtered.filter((j: any) => j.is_featured);
   const rest = filtered.filter((j: any) => !j.is_featured);
