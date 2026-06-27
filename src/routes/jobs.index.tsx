@@ -250,7 +250,8 @@ function Jobs() {
                 <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
                   {j.category && <span>{j.category}</span>}
                   {j.job_type && <span>· {j.job_type}</span>}
-                  <span>· 🌍 {j.location}</span>
+                  <span>· {j.is_remote ? "🌍" : "📍"} {j.location}</span>
+                  {!j.is_remote && <span className="rounded bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
                   {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
                 </div>
                 {j.tags?.length > 0 && (
