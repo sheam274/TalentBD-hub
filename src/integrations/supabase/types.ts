@@ -188,6 +188,66 @@ export type Database = {
         }
         Relationships: []
       }
+      external_jobs_cache: {
+        Row: {
+          category: string | null
+          company: string
+          company_logo: string | null
+          external_id: string
+          fetched_at: string
+          id: string
+          is_remote: boolean
+          job_type: string | null
+          location: string | null
+          normalized_category: string | null
+          publication_date: string | null
+          salary: string | null
+          source: string
+          tags: string[]
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          category?: string | null
+          company: string
+          company_logo?: string | null
+          external_id: string
+          fetched_at?: string
+          id?: string
+          is_remote?: boolean
+          job_type?: string | null
+          location?: string | null
+          normalized_category?: string | null
+          publication_date?: string | null
+          salary?: string | null
+          source: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          category?: string | null
+          company?: string
+          company_logo?: string | null
+          external_id?: string
+          fetched_at?: string
+          id?: string
+          is_remote?: boolean
+          job_type?: string | null
+          location?: string | null
+          normalized_category?: string | null
+          publication_date?: string | null
+          salary?: string | null
+          source?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       interview_answers: {
         Row: {
           answer_text: string | null
