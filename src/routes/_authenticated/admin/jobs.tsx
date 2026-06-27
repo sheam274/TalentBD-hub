@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { adminListJobs, adminUpsertJob, adminToggleJobLive, adminDeleteJob } from "@/lib/jobs.functions";
+import { adminListJobs, adminUpsertJob, adminToggleJobLive, adminDeleteJob, adminRunJobsSync } from "@/lib/jobs.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/jobs")({
@@ -15,9 +15,22 @@ function AdminJobs() {
   const upFn = useServerFn(adminUpsertJob);
   const toggleFn = useServerFn(adminToggleJobLive);
   const delFn = useServerFn(adminDeleteJob);
+  const syncFn = useServerFn(adminRunJobsSync);
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["admin-jobs"], queryFn: () => listFn() });
   const [f, setF] = useState({ id: "", job_title: "", company: "", description: "", salary_range: "", discipline: "cse", is_remote: false, is_live: true, requirements: "" });
+  const [syncRes, setSyncRes] = useState<null | { ok: boolean; upserted: number; sources: Record<string, number>; durationMs?: number; error?: string }>(null);
+  const sync = useMutation({
+    mutationFn: () => syncFn(),
+    onMutate: () => { setSyncRes(null); toast.info("Syncing live jobs from Remotive, Arbeitnow, RemoteOK…"); },
+    onSuccess: (r: any) => {
+      setSyncRes(r);
+      if (r.ok) toast.success(`Synced ${r.upserted} jobs in ${(r.durationMs/1000).toFixed(1)}s`);
+      else toast.error(r.error || "Sync failed");
+      qc.invalidateQueries({ queryKey: ["jobs"] });
+    },
+    onError: (e: any) => { setSyncRes({ ok: false, upserted: 0, sources: {}, error: e.message }); toast.error(e.message); },
+  });
 
   const save = useMutation({
     mutationFn: () => upFn({ data: { id: f.id || undefined, job_title: f.job_title, company: f.company, description: f.description, salary_range: f.salary_range, discipline: f.discipline, is_remote: f.is_remote, is_live: f.is_live, requirements: f.requirements.split(",").map((s) => s.trim()).filter(Boolean) } }),
@@ -29,7 +42,26 @@ function AdminJobs() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Jobs</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">Jobs</h1>
+        <div className="flex items-center gap-3">
+          {syncRes && (
+            <span className="text-xs text-muted-foreground">
+              {syncRes.ok
+                ? `✓ ${syncRes.upserted} upserted · ${Object.entries(syncRes.sources).map(([k,v]) => `${k}:${v}`).join(" · ")}${syncRes.durationMs ? ` · ${(syncRes.durationMs/1000).toFixed(1)}s` : ""}`
+                : `✗ ${syncRes.error}`}
+            </span>
+          )}
+          <button
+            onClick={() => sync.mutate()}
+            disabled={sync.isPending}
+            className="rounded-md px-3 py-2 text-sm font-semibold disabled:opacity-60"
+            style={{ background: "var(--color-primary)", color: "var(--color-primary-foreground)" }}
+          >
+            {sync.isPending ? "Syncing…" : "Run sync now"}
+          </button>
+        </div>
+      </div>
       <div className="mt-5 grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border bg-white p-5 space-y-2 text-sm">
           <h2 className="font-semibold">{f.id ? "Edit" : "Add"} job</h2>
