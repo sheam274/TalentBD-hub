@@ -73,7 +73,26 @@ function Jobs() {
     const c = p.get("category"); if (c) setCategory(c);
     const t = p.get("type"); if (t) setType(t);
     const s = p.get("search"); if (s) setSearch(s);
+    const loc = p.get("location"); if (loc) setLocation(loc);
+    const e = p.get("exp"); if (e) setExp(e);
   }, []);
+
+  // Persist filter state to the URL so refresh / back-forward restore it.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams();
+    if (search) p.set("search", search);
+    if (category) p.set("category", category);
+    if (location) p.set("location", location);
+    if (exp) p.set("exp", exp);
+    if (type) p.set("type", type);
+    if (remote !== "all") p.set("remote", remote);
+    const qs = p.toString();
+    const next = `${window.location.pathname}${qs ? "?" + qs : ""}${window.location.hash}`;
+    if (next !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      window.history.replaceState(null, "", next);
+    }
+  }, [search, category, location, exp, type, remote]);
 
   const remoteCat = category ? REMOTIVE_CATEGORY[category] : undefined;
   const remoteQ = useQuery({
