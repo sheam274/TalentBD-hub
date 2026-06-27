@@ -171,7 +171,7 @@ function Jobs() {
           <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
         </select>
         <select value={remote} onChange={(e) => setRemote(e.target.value as any)} className="rounded-md border px-3 py-2 text-sm bg-white/60">
-          <option value="all">All</option><option value="remote">Remote</option><option value="onsite">On-site</option>
+          <option value="all">Remote + On-site</option><option value="remote">Remote only</option><option value="onsite">On-site only</option>
         </select>
       </div>
 
