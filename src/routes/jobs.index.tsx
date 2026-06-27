@@ -267,7 +267,7 @@ function Jobs() {
               const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
               return tokens.every((tok) => hay.includes(tok));
             });
-            if (s && list.length === 0) {
+            if (tokens.length && list.length === 0) {
               return <p className="text-sm text-muted-foreground">No live jobs match "{search}".</p>;
             }
             const shown = list.slice(0, visibleCount);
