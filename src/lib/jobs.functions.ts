@@ -219,3 +219,14 @@ export const adminDeleteCompany = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// Admin-only: manually trigger the external-jobs sync from the admin UI.
+export const adminRunJobsSync = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const mod = await import("@/routes/api/public/hooks/sync-external-jobs");
+    const startedAt = Date.now();
+    const result = await mod.runJobSync();
+    return { ...result, durationMs: Date.now() - startedAt };
+  });
