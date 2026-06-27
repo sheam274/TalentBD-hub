@@ -27,6 +27,21 @@ const CATEGORIES = [
   "Design", "Customer Service", "Healthcare", "Education", "General",
 ];
 
+// Map our UI categories to Remotive's category slugs so the live feed
+// reacts to the same filter chips as local jobs.
+const REMOTIVE_CATEGORY: Record<string, string | undefined> = {
+  "IT/Software": "software-dev",
+  "Engineering": "devops",
+  "Banking/Finance": "finance-legal",
+  "Marketing": "marketing",
+  "Sales": "sales",
+  "Design": "design",
+  "Customer Service": "customer-support",
+  "Healthcare": undefined,
+  "Education": undefined,
+  "General": undefined,
+};
+
 function Jobs() {
   const fn = useServerFn(listJobsPublic);
   const remoteFn = useServerFn(listRemoteJobsExternal);
@@ -34,12 +49,6 @@ function Jobs() {
   const qc = useQueryClient();
   const { user } = useAuth();
   const q = useQuery({ queryKey: ["jobs"], queryFn: () => fn(), staleTime: 60_000 });
-  const remoteQ = useQuery({
-    queryKey: ["remotive-jobs"],
-    queryFn: () => remoteFn({ data: { limit: 12 } }),
-    staleTime: 5 * 60_000,
-  });
-
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("");
@@ -61,6 +70,21 @@ function Jobs() {
     const s = p.get("search"); if (s) setSearch(s);
   }, []);
 
+  const remoteCat = category ? REMOTIVE_CATEGORY[category] : undefined;
+  const remoteQ = useQuery({
+    queryKey: ["remotive-jobs", search, remoteCat ?? ""],
+    queryFn: () =>
+      remoteFn({
+        data: {
+          limit: 18,
+          ...(search ? { search } : {}),
+          ...(remoteCat ? { category: remoteCat } : {}),
+        },
+      }),
+    staleTime: 5 * 60_000,
+    enabled: remote !== "onsite",
+  });
+
   const apply = useMutation({
     mutationFn: (jobId: string) => applyFn({ data: { jobId, coverNote: cover } }),
     onSuccess: () => { toast.success("Application submitted"); setOpenId(null); setCover(""); qc.invalidateQueries({ queryKey: ["my-apps"] }); },
@@ -72,7 +96,7 @@ function Jobs() {
   const filtered = useMemo(() => all.filter((j: any) => {
     const t = `${j.job_title} ${j.company} ${(j.requirements ?? []).join(" ")}`.toLowerCase();
     if (search && !t.includes(search.toLowerCase())) return false;
-    if (category && j.category !== category) return false;
+    if (category && (j.category ?? "General") !== category) return false;
     if (location && !(j.location ?? "").toLowerCase().includes(location.toLowerCase())) return false;
     if (exp && j.experience_level !== exp) return false;
     if (type && j.job_type !== type) return false;
@@ -86,10 +110,19 @@ function Jobs() {
   const counts: Record<string, number> = {};
   for (const j of all) counts[j.category ?? "General"] = (counts[j.category ?? "General"] ?? 0) + 1;
 
+  const hasFilters = !!(search || category || location || exp || type || remote !== "all");
+  const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 page-enter">
       <h1 className="text-3xl font-bold">Jobs marketplace</h1>
       <p className="mt-1 text-muted-foreground">Local Bangladesh roles + global remote engineering jobs.</p>
+      <div className="mt-2 text-xs text-muted-foreground">
+        Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {all.length} local jobs
+        {hasFilters && (
+          <button onClick={clearFilters} className="ml-3 underline hover:text-foreground">Clear filters</button>
+        )}
+      </div>
 
       {/* Category chips */}
       <ScrollReveal>
