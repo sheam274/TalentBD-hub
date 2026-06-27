@@ -40,6 +40,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
           publication_date: j.publication_date ?? null,
           tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
           source: "Remotive",
+          is_remote: true,
         })),
       )
       .catch(() => [] as any[]);
@@ -61,6 +62,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
           publication_date: j.created_at ? new Date(j.created_at * 1000).toISOString() : null,
           tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
           source: "Arbeitnow",
+          is_remote: !!j.remote,
         })),
       )
       .catch(() => [] as any[]);
@@ -83,6 +85,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
           publication_date: j.date ?? null,
           tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
           source: "RemoteOK",
+          is_remote: true,
         }));
       })
       .catch(() => [] as any[]);
