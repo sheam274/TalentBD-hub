@@ -11,12 +11,12 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       .object({
         search: z.string().max(120).optional(),
         category: z.string().max(80).optional(),
-        limit: z.number().int().min(1).max(50).optional(),
+        limit: z.number().int().min(1).max(300).optional(),
       })
       .parse(i ?? {}),
   )
   .handler(async ({ data }) => {
-    const limit = data.limit ?? 30;
+    const limit = data.limit ?? 150;
     const headers = { "User-Agent": "TalentBD/1.0 (+https://talentbd.app)" };
 
     // ---- Source 1: Remotive ----
