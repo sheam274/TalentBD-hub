@@ -20,8 +20,10 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
     const headers = { "User-Agent": "TalentBD/1.0 (+https://talentbd.app)" };
 
     // ---- Source 1: Remotive ----
+    // Fetch broad; we filter client-side so partial / multi-keyword queries
+    // ("network engineering", "devops", etc.) still return results even when
+    // the upstream API's strict search returns nothing.
     const remotiveParams = new URLSearchParams();
-    if (data.search) remotiveParams.set("search", data.search);
     if (data.category) remotiveParams.set("category", data.category);
     remotiveParams.set("limit", String(limit));
     const remotiveP = fetch(`https://remotive.com/api/remote-jobs?${remotiveParams.toString()}`, { headers })
@@ -93,13 +95,17 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
     const [remotive, arbeitnow, remoteok] = await Promise.all([remotiveP, arbeitnowP, remoteokP]);
     let combined = [...remotive, ...arbeitnow, ...remoteok];
 
-    // Client-side search filter for sources that don't support query params
+    // Client-side search filter (OR across tokens so partial matches still
+    // surface live results — e.g. "network engineering" matches "Network
+    // Engineer", "Senior Engineer", "Network Admin").
     if (data.search) {
-      const tokens = data.search.toLowerCase().split(/\s+/).filter(Boolean);
-      combined = combined.filter((j) => {
-        const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
-        return tokens.every((t) => hay.includes(t));
-      });
+      const tokens = data.search.toLowerCase().split(/\s+/).filter((t) => t.length >= 2);
+      if (tokens.length) {
+        combined = combined.filter((j) => {
+          const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+          return tokens.some((t) => hay.includes(t));
+        });
+      }
     }
 
     // Interleave sources for diversity, then cap
