@@ -201,7 +201,7 @@ function Jobs() {
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Globe className="size-5" style={{ color: "var(--color-primary)" }} />
-            Live remote jobs
+            Live jobs (remote & on-site)
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
               <Radio className="size-3 animate-pulse" /> Live
             </span>
@@ -218,12 +218,14 @@ function Jobs() {
           {(() => {
             const s = debouncedSearch.toLowerCase();
             const list = (remoteQ.data ?? []).filter((j: any) => {
+              if (remote === "remote" && !j.is_remote) return false;
+              if (remote === "onsite" && j.is_remote) return false;
               if (!s) return true;
-              const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+              const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""}`.toLowerCase();
               return s.split(/\s+/).every((tok) => hay.includes(tok));
             });
             if (s && list.length === 0) {
-              return <p className="text-sm text-muted-foreground">No live remote jobs match "{search}".</p>;
+              return <p className="text-sm text-muted-foreground">No live jobs match "{search}".</p>;
             }
             const shown = list.slice(0, visibleCount);
             (window as any).__liveJobsHasMore = list.length > visibleCount;
