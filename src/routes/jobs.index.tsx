@@ -215,7 +215,7 @@ function Jobs() {
 
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {(() => {
-            const s = search.trim().toLowerCase();
+            const s = debouncedSearch.toLowerCase();
             const list = (remoteQ.data ?? []).filter((j: any) => {
               if (!s) return true;
               const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
