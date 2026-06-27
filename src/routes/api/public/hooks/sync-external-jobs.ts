@@ -134,16 +134,14 @@ async function fetchRemoteOK(headers: Record<string, string>): Promise<Row[]> {
   } catch { return []; }
 }
 
-async function handle(request: Request) {
-  const auth = request.headers.get("authorization") ?? "";
-  const token = auth.replace(/^Bearer\s+/i, "");
-  const expected = process.env.JOBS_SYNC_SECRET;
-  if (!expected || token !== expected) {
-    return new Response(JSON.stringify({ error: "unauthorized" }), {
-      status: 401, headers: { "Content-Type": "application/json" },
-    });
-  }
+export type SyncResult = {
+  ok: boolean;
+  upserted: number;
+  sources: Record<string, number>;
+  error?: string;
+};
 
+export async function runJobSync(): Promise<SyncResult> {
   const headers = { "User-Agent": "TalentBD/1.0 (+sync)" };
   const [rmtv, arbn, rmok] = await Promise.all([
     fetchRemotive(headers), fetchArbeitnow(headers), fetchRemoteOK(headers),
@@ -158,9 +156,8 @@ async function handle(request: Request) {
     rows.push(r);
   }
 
-  if (rows.length === 0) {
-    return Response.json({ ok: true, inserted: 0, sources: { rmtv: 0, arbn: 0, rmok: 0 } });
-  }
+  const sources = { Remotive: rmtv.length, Arbeitnow: arbn.length, RemoteOK: rmok.length };
+  if (rows.length === 0) return { ok: true, upserted: 0, sources };
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -172,24 +169,31 @@ async function handle(request: Request) {
     const { error, count } = await supabaseAdmin
       .from("external_jobs_cache")
       .upsert(slice, { onConflict: "external_id", count: "exact" });
-    if (error) {
-      return new Response(JSON.stringify({ error: error.message, upserted }), {
-        status: 500, headers: { "Content-Type": "application/json" },
-      });
-    }
+    if (error) return { ok: false, upserted, sources, error: error.message };
     upserted += count ?? slice.length;
   }
 
-  // Prune stale rows (>14 days untouched) to keep cache fresh
   await supabaseAdmin
     .from("external_jobs_cache")
     .delete()
     .lt("fetched_at", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString());
 
-  return Response.json({
-    ok: true,
-    upserted,
-    sources: { Remotive: rmtv.length, Arbeitnow: arbn.length, RemoteOK: rmok.length },
+  return { ok: true, upserted, sources };
+}
+
+async function handle(request: Request) {
+  const auth = request.headers.get("authorization") ?? "";
+  const token = auth.replace(/^Bearer\s+/i, "");
+  const expected = process.env.JOBS_SYNC_SECRET;
+  if (!expected || token !== expected) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), {
+      status: 401, headers: { "Content-Type": "application/json" },
+    });
+  }
+  const result = await runJobSync();
+  return new Response(JSON.stringify(result), {
+    status: result.ok ? 200 : 500,
+    headers: { "Content-Type": "application/json" },
   });
 }
 
