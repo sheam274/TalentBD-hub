@@ -51,6 +51,11 @@ function Jobs() {
   const q = useQuery({ queryKey: ["jobs"], queryFn: () => fn(), staleTime: 60_000 });
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
+    return () => clearTimeout(t);
+  }, [search]);
   const [category, setCategory] = useState<string>("");
   const [location, setLocation] = useState("");
   const [exp, setExp] = useState("");
@@ -72,12 +77,12 @@ function Jobs() {
 
   const remoteCat = category ? REMOTIVE_CATEGORY[category] : undefined;
   const remoteQ = useQuery({
-    queryKey: ["remotive-jobs", search, remoteCat ?? ""],
+    queryKey: ["remotive-jobs", debouncedSearch, remoteCat ?? ""],
     queryFn: () =>
       remoteFn({
         data: {
           limit: 150,
-          ...(search ? { search } : {}),
+          ...(debouncedSearch ? { search: debouncedSearch } : {}),
           ...(remoteCat ? { category: remoteCat } : {}),
         },
       }),
@@ -95,7 +100,7 @@ function Jobs() {
     if (typeof window !== "undefined") {
       document.getElementById("live-remote-feed")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [search, category, remoteCat, remote]);
+  }, [debouncedSearch, category, remoteCat, remote]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const apply = useMutation({
