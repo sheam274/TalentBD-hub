@@ -30,7 +30,6 @@ function Landing() {
     <div className="page-enter">
       {/* Premium Hero */}
       <section className="relative overflow-hidden min-h-[640px]">
-        <CseHeroScene />
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 md:py-24 md:px-6">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-semibold">
@@ -70,13 +69,6 @@ function Landing() {
         </div>
 
         {/* MacBook anchored bottom-right of hero */}
-        <div className="pointer-events-none absolute right-4 bottom-6 z-20 hidden md:block w-[280px] lg:w-[320px] xl:w-[360px]">
-          <div className="relative macbook-tilt">
-            <div className="absolute -inset-10 rounded-[40px] opacity-40 blur-3xl"
-              style={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-accent))" }} />
-            <MacbookHero />
-          </div>
-        </div>
       </section>
 
       {/* Crossover */}
