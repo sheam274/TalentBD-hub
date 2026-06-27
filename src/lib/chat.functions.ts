@@ -24,19 +24,26 @@ Keep answers concise, structured, and actionable. Use markdown-style lists when 
 export const talentChat = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => messageSchema.parse(i))
   .handler(async ({ data }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) {
-      return { reply: "AI is not configured yet. Please add the LOVABLE_API_KEY secret.", error: true };
-    }
+    const geminiKey = process.env.GOOGLE_GEMINI_API_KEY;
+    const lovableKey = process.env.LOVABLE_API_KEY;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    // Prefer the user's own Google Gemini key when present; fall back to Lovable AI Gateway.
+    const useDirect = !!geminiKey;
+    const url = useDirect
+      ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+      : "https://ai.gateway.lovable.dev/v1/chat/completions";
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (useDirect) headers.Authorization = `Bearer ${geminiKey}`;
+    else if (lovableKey) headers["Lovable-API-Key"] = lovableKey;
+    else return { reply: "AI is not configured. Add GOOGLE_GEMINI_API_KEY or LOVABLE_API_KEY.", error: true };
+
+    const model = useDirect ? "gemini-2.5-flash" : "google/gemini-3-flash-preview";
+
+    const res = await fetch(url, {
       method: "POST",
-      headers: {
-        "Lovable-API-Key": apiKey,
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model,
         messages: [{ role: "system", content: SYSTEM }, ...data.messages],
       }),
     });
