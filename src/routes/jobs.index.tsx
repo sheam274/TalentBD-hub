@@ -254,13 +254,18 @@ function Jobs() {
 
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {(() => {
-            const s = debouncedSearch.toLowerCase();
+            const tokens = debouncedSearch.toLowerCase().split(/[\s,]+/).filter(Boolean);
+            const loc = location.trim().toLowerCase();
+            const typeL = type.toLowerCase();
             const list = (remoteQ.data ?? []).filter((j: any) => {
               if (remote === "remote" && !j.is_remote) return false;
               if (remote === "onsite" && j.is_remote) return false;
-              if (!s) return true;
-              const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""}`.toLowerCase();
-              return s.split(/\s+/).every((tok) => hay.includes(tok));
+              if (loc && !(j.location ?? "").toLowerCase().includes(loc)) return false;
+              if (typeL && !(j.job_type ?? "").toLowerCase().includes(typeL.replace("-", "_"))
+                  && !(j.job_type ?? "").toLowerCase().includes(typeL)) return false;
+              if (!tokens.length) return true;
+              const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
+              return tokens.every((tok) => hay.includes(tok));
             });
             if (s && list.length === 0) {
               return <p className="text-sm text-muted-foreground">No live jobs match "{search}".</p>;
