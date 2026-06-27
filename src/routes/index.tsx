@@ -48,7 +48,7 @@ function Landing() {
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="/auth"
-                className="shimmer inline-flex items-center gap-2 rounded-md px-5 py-3 font-semibold text-white shadow-lg"
+                className="inline-flex items-center gap-2 rounded-md px-5 py-3 font-semibold text-white shadow-lg"
                 style={{ background: "linear-gradient(135deg, var(--color-primary), oklch(0.45 0.18 250))" }}
               >
                 Get started free <ArrowRight className="size-4" />
