@@ -87,7 +87,8 @@ function Jobs() {
         },
       }),
     staleTime: 5 * 60_000,
-    enabled: remote !== "onsite",
+    // Always fetch — Arbeitnow returns both remote and on-site listings
+    enabled: true,
   });
 
   // Infinite scroll for the live remote feed
