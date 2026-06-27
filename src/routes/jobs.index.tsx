@@ -196,7 +196,17 @@ function Jobs() {
         )}
 
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {(remoteQ.data ?? []).map((j: any, i: number) => (
+          {(() => {
+            const s = search.trim().toLowerCase();
+            const list = (remoteQ.data ?? []).filter((j: any) => {
+              if (!s) return true;
+              const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+              return s.split(/\s+/).every((tok) => hay.includes(tok));
+            });
+            if (s && list.length === 0) {
+              return <p className="text-sm text-muted-foreground">No live remote jobs match "{search}".</p>;
+            }
+            return list.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 6) * 40}>
               <a href={j.url ?? "#"} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 h-full flex flex-col">
                 <div className="flex items-start gap-3">
@@ -228,7 +238,8 @@ function Jobs() {
                 {j.salary && <p className="mt-3 text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
               </a>
             </ScrollReveal>
-          ))}
+            ));
+          })()}
         </div>
       </section>
 
