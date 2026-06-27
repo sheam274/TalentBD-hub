@@ -45,6 +45,7 @@ import { Route as AuthenticatedAdminEmployersRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
 import { Route as AuthenticatedAdminCompaniesRouteImport } from './routes/_authenticated/admin/companies'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
+import { Route as ApiPublicHooksSyncExternalJobsRouteImport } from './routes/api/public/hooks/sync-external-jobs'
 import { Route as AuthenticatedLearnDisciplineTopicRouteImport } from './routes/_authenticated/learn/$discipline.$topic'
 import { Route as AuthenticatedInterviewSessionSessionIdRouteImport } from './routes/_authenticated/interview/session.$sessionId'
 import { Route as AuthenticatedInterviewResultSessionIdRouteImport } from './routes/_authenticated/interview/result.$sessionId'
@@ -248,6 +249,12 @@ const AuthenticatedAdminApplicationsRoute =
     path: '/applications',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const ApiPublicHooksSyncExternalJobsRoute =
+  ApiPublicHooksSyncExternalJobsRouteImport.update({
+    id: '/api/public/hooks/sync-external-jobs',
+    path: '/api/public/hooks/sync-external-jobs',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedLearnDisciplineTopicRoute =
   AuthenticatedLearnDisciplineTopicRouteImport.update({
     id: '/learn/$discipline/$topic',
@@ -313,6 +320,7 @@ export interface FileRoutesByFullPath {
   '/interview/result/$sessionId': typeof AuthenticatedInterviewResultSessionIdRoute
   '/interview/session/$sessionId': typeof AuthenticatedInterviewSessionSessionIdRoute
   '/learn/$discipline/$topic': typeof AuthenticatedLearnDisciplineTopicRoute
+  '/api/public/hooks/sync-external-jobs': typeof ApiPublicHooksSyncExternalJobsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -354,6 +362,7 @@ export interface FileRoutesByTo {
   '/interview/result/$sessionId': typeof AuthenticatedInterviewResultSessionIdRoute
   '/interview/session/$sessionId': typeof AuthenticatedInterviewSessionSessionIdRoute
   '/learn/$discipline/$topic': typeof AuthenticatedLearnDisciplineTopicRoute
+  '/api/public/hooks/sync-external-jobs': typeof ApiPublicHooksSyncExternalJobsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -397,6 +406,7 @@ export interface FileRoutesById {
   '/_authenticated/interview/result/$sessionId': typeof AuthenticatedInterviewResultSessionIdRoute
   '/_authenticated/interview/session/$sessionId': typeof AuthenticatedInterviewSessionSessionIdRoute
   '/_authenticated/learn/$discipline/$topic': typeof AuthenticatedLearnDisciplineTopicRoute
+  '/api/public/hooks/sync-external-jobs': typeof ApiPublicHooksSyncExternalJobsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/interview/result/$sessionId'
     | '/interview/session/$sessionId'
     | '/learn/$discipline/$topic'
+    | '/api/public/hooks/sync-external-jobs'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/interview/result/$sessionId'
     | '/interview/session/$sessionId'
     | '/learn/$discipline/$topic'
+    | '/api/public/hooks/sync-external-jobs'
   id:
     | '__root__'
     | '/'
@@ -523,6 +535,7 @@ export interface FileRouteTypes {
     | '/_authenticated/interview/result/$sessionId'
     | '/_authenticated/interview/session/$sessionId'
     | '/_authenticated/learn/$discipline/$topic'
+    | '/api/public/hooks/sync-external-jobs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -536,6 +549,7 @@ export interface RootRouteChildren {
   JobsJobIdRoute: typeof JobsJobIdRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   JobsIndexRoute: typeof JobsIndexRoute
+  ApiPublicHooksSyncExternalJobsRoute: typeof ApiPublicHooksSyncExternalJobsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -792,6 +806,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminApplicationsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/api/public/hooks/sync-external-jobs': {
+      id: '/api/public/hooks/sync-external-jobs'
+      path: '/api/public/hooks/sync-external-jobs'
+      fullPath: '/api/public/hooks/sync-external-jobs'
+      preLoaderRoute: typeof ApiPublicHooksSyncExternalJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/learn/$discipline/$topic': {
       id: '/_authenticated/learn/$discipline/$topic'
       path: '/learn/$discipline/$topic'
@@ -958,17 +979,8 @@ const rootRouteChildren: RootRouteChildren = {
   JobsJobIdRoute: JobsJobIdRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
   JobsIndexRoute: JobsIndexRoute,
+  ApiPublicHooksSyncExternalJobsRoute: ApiPublicHooksSyncExternalJobsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

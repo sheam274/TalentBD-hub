@@ -1,5 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 /**
  * Fetches real remote jobs from the public Remotive API (no auth required, CORS-free server-side).
@@ -18,6 +20,41 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const limit = data.limit ?? 150;
     const headers = { "User-Agent": "TalentBD/1.0 (+https://talentbd.app)" };
+
+    // ---- Source 0: cached (synced) jobs from our DB ----
+    let cached: any[] = [];
+    try {
+      const sb = createClient<Database>(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_PUBLISHABLE_KEY!,
+        { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } },
+      );
+      let q = sb
+        .from("external_jobs_cache")
+        .select("external_id,source,title,company,company_logo,category,normalized_category,job_type,location,is_remote,salary,url,tags,publication_date")
+        .order("publication_date", { ascending: false, nullsFirst: false })
+        .limit(limit);
+      if (data.category) q = q.ilike("normalized_category", `%${data.category}%`);
+      if (data.search) q = q.or(
+        `title.ilike.%${data.search}%,company.ilike.%${data.search}%,category.ilike.%${data.search}%`,
+      );
+      const { data: rows } = await q;
+      cached = (rows ?? []).map((r) => ({
+        id: r.external_id,
+        title: r.title,
+        company: r.company,
+        company_logo: r.company_logo,
+        category: r.normalized_category ?? r.category,
+        job_type: r.job_type,
+        location: r.location ?? "Worldwide",
+        salary: r.salary,
+        url: r.url,
+        publication_date: r.publication_date,
+        tags: r.tags ?? [],
+        source: r.source,
+        is_remote: !!r.is_remote,
+      }));
+    } catch { cached = []; }
 
     // ---- Source 1: Remotive ----
     // Fetch broad; we filter client-side so partial / multi-keyword queries
@@ -93,7 +130,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       .catch(() => [] as any[]);
 
     const [remotive, arbeitnow, remoteok] = await Promise.all([remotiveP, arbeitnowP, remoteokP]);
-    let combined = [...remotive, ...arbeitnow, ...remoteok];
+    let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok];
 
     // Client-side search filter (OR across tokens so partial matches still
     // surface live results — e.g. "network engineering" matches "Network
@@ -108,8 +145,8 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       }
     }
 
-    // Interleave sources for diversity, then cap
-    const buckets = [remotive, arbeitnow, remoteok];
+    // Interleave sources for diversity (cached first), then cap
+    const buckets = [cached, remotive, arbeitnow, remoteok];
     const interleaved: any[] = [];
     const seen = new Set<string>();
     let added = true;
