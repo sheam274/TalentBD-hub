@@ -88,7 +88,14 @@ function Jobs() {
   // Infinite scroll for the live remote feed
   const PAGE_SIZE = 12;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [search, remoteCat]);
+  // Reset to page 1 whenever any filter that affects the live feed changes.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+    // Scroll the live feed back to the top so users see fresh page-1 results.
+    if (typeof window !== "undefined") {
+      document.getElementById("live-remote-feed")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [search, category, remoteCat, remote]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const apply = useMutation({
@@ -184,7 +191,7 @@ function Jobs() {
       </section>
 
       {/* Live Remote Jobs — pulled live from Remotive public API */}
-      <section className="mt-12">
+      <section id="live-remote-feed" className="mt-12 scroll-mt-24">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Globe className="size-5" style={{ color: "var(--color-primary)" }} />
