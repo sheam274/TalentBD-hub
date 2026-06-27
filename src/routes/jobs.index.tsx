@@ -319,3 +319,31 @@ function JobCard({ j, onApply, canApply }: { j: any; onApply: () => void; canApp
     </article>
   );
 }
+
+const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visibleCount: number; total: number }>(
+  function InfiniteSentinel({ onHit, visibleCount, total }, ref) {
+    const localRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+      const el = localRef.current;
+      if (!el || visibleCount >= total) return;
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) onHit();
+      }, { rootMargin: "300px" });
+      io.observe(el);
+      return () => io.disconnect();
+    }, [onHit, visibleCount, total]);
+    if (total === 0) return null;
+    const hasMore = visibleCount < total;
+    return (
+      <div ref={(node) => { localRef.current = node; if (typeof ref === "function") ref(node); else if (ref) (ref as any).current = node; }} className="mt-6 flex justify-center">
+        {hasMore ? (
+          <button onClick={onHit} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-white/60">
+            Load more ({total - visibleCount} remaining)
+          </button>
+        ) : (
+          <p className="text-xs text-muted-foreground">You've reached the end — {total} live jobs shown.</p>
+        )}
+      </div>
+    );
+  },
+);
