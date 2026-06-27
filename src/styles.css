@@ -91,11 +91,11 @@
 @layer utilities {
   /* Translucent glass surface — usable everywhere */
   .glass {
-    background-color: color-mix(in oklab, var(--color-surface) 70%, transparent);
+    background-color: color-mix(in oklab, white 65%, transparent);
     backdrop-filter: blur(18px) saturate(140%);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border: 1px solid color-mix(in oklab, white 12%, transparent);
-    box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.55);
+    border: 1px solid color-mix(in oklab, white 60%, transparent);
+    box-shadow: 0 8px 32px -12px rgba(15, 23, 42, 0.18);
   }
   .glass-dark {
     background-color: color-mix(in oklab, white 12%, transparent);
