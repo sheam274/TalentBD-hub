@@ -191,7 +191,7 @@ function Jobs() {
       </section>
 
       {/* Live Remote Jobs — pulled live from Remotive public API */}
-      <section className="mt-12">
+      <section id="live-remote-feed" className="mt-12 scroll-mt-24">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Globe className="size-5" style={{ color: "var(--color-primary)" }} />
