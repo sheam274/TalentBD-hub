@@ -257,12 +257,19 @@ function Jobs() {
             const tokens = debouncedSearch.toLowerCase().split(/[\s,]+/).filter(Boolean);
             const loc = location.trim().toLowerCase();
             const typeL = type.toLowerCase();
+            const catL = category.toLowerCase();
             const list = (remoteQ.data ?? []).filter((j: any) => {
               if (remote === "remote" && !j.is_remote) return false;
               if (remote === "onsite" && j.is_remote) return false;
               if (loc && !(j.location ?? "").toLowerCase().includes(loc)) return false;
               if (typeL && !(j.job_type ?? "").toLowerCase().includes(typeL.replace("-", "_"))
                   && !(j.job_type ?? "").toLowerCase().includes(typeL)) return false;
+              if (catL) {
+                const catHay = `${j.category ?? ""} ${j.title ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+                // Match either the full label or its first word (e.g. "IT/Software" -> "it", "software")
+                const parts = catL.split(/[\s/&-]+/).filter(Boolean);
+                if (!parts.some((p) => catHay.includes(p))) return false;
+              }
               if (!tokens.length) return true;
               const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
               return tokens.every((tok) => hay.includes(tok));
