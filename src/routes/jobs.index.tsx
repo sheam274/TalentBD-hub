@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { applyToJob, listJobsPublic } from "@/lib/jobs.functions";
 import { listRemoteJobsExternal } from "@/lib/external-jobs.functions";
 import { useAuth } from "@/lib/auth-context";
@@ -76,7 +76,7 @@ function Jobs() {
     queryFn: () =>
       remoteFn({
         data: {
-          limit: 40,
+          limit: 150,
           ...(search ? { search } : {}),
           ...(remoteCat ? { category: remoteCat } : {}),
         },
@@ -84,6 +84,12 @@ function Jobs() {
     staleTime: 5 * 60_000,
     enabled: remote !== "onsite",
   });
+
+  // Infinite scroll for the live remote feed
+  const PAGE_SIZE = 12;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => { setVisibleCount(PAGE_SIZE); }, [search, remoteCat]);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   const apply = useMutation({
     mutationFn: (jobId: string) => applyFn({ data: { jobId, coverNote: cover } }),
@@ -206,7 +212,10 @@ function Jobs() {
             if (s && list.length === 0) {
               return <p className="text-sm text-muted-foreground">No live remote jobs match "{search}".</p>;
             }
-            return list.map((j: any, i: number) => (
+            const shown = list.slice(0, visibleCount);
+            (window as any).__liveJobsHasMore = list.length > visibleCount;
+            (window as any).__liveJobsTotal = list.length;
+            return shown.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 6) * 40}>
               <a href={j.url ?? "#"} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 h-full flex flex-col">
                 <div className="flex items-start gap-3">
@@ -242,6 +251,12 @@ function Jobs() {
             ));
           })()}
         </div>
+        <InfiniteSentinel
+          ref={sentinelRef}
+          onHit={() => setVisibleCount((c) => c + PAGE_SIZE)}
+          visibleCount={visibleCount}
+          total={(remoteQ.data ?? []).length}
+        />
       </section>
 
 
