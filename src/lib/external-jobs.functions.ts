@@ -16,34 +16,110 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       .parse(i ?? {}),
   )
   .handler(async ({ data }) => {
-    const params = new URLSearchParams();
-    if (data.search) params.set("search", data.search);
-    if (data.category) params.set("category", data.category);
-    if (data.limit) params.set("limit", String(data.limit));
-    const url = `https://remotive.com/api/remote-jobs?${params.toString()}`;
+    const limit = data.limit ?? 30;
+    const headers = { "User-Agent": "TalentBD/1.0 (+https://talentbd.app)" };
 
-    try {
-      const res = await fetch(url, {
-        headers: { "User-Agent": "TalentBD/1.0 (+https://talentbd.app)" },
+    // ---- Source 1: Remotive ----
+    const remotiveParams = new URLSearchParams();
+    if (data.search) remotiveParams.set("search", data.search);
+    if (data.category) remotiveParams.set("category", data.category);
+    remotiveParams.set("limit", String(limit));
+    const remotiveP = fetch(`https://remotive.com/api/remote-jobs?${remotiveParams.toString()}`, { headers })
+      .then((r) => (r.ok ? r.json() : { jobs: [] }))
+      .then((j: any) =>
+        (Array.isArray(j?.jobs) ? j.jobs : []).map((j: any) => ({
+          id: `rmtv-${j.id}`,
+          title: j.title ?? "Untitled role",
+          company: j.company_name ?? "Unknown company",
+          company_logo: j.company_logo ?? null,
+          category: j.category ?? null,
+          job_type: j.job_type ?? null,
+          location: j.candidate_required_location ?? "Worldwide",
+          salary: j.salary ?? null,
+          url: j.url ?? null,
+          publication_date: j.publication_date ?? null,
+          tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
+          source: "Remotive",
+        })),
+      )
+      .catch(() => [] as any[]);
+
+    // ---- Source 2: Arbeitnow (free remote/EU board) ----
+    const arbeitnowP = fetch("https://arbeitnow.com/api/job-board-api", { headers })
+      .then((r) => (r.ok ? r.json() : { data: [] }))
+      .then((j: any) =>
+        (Array.isArray(j?.data) ? j.data : []).map((j: any) => ({
+          id: `arbn-${j.slug}`,
+          title: j.title ?? "Untitled role",
+          company: j.company_name ?? "Unknown company",
+          company_logo: null,
+          category: Array.isArray(j.tags) && j.tags[0] ? j.tags[0] : null,
+          job_type: Array.isArray(j.job_types) && j.job_types[0] ? j.job_types[0] : null,
+          location: j.remote ? "Remote" : j.location ?? "Worldwide",
+          salary: null,
+          url: j.url ?? null,
+          publication_date: j.created_at ? new Date(j.created_at * 1000).toISOString() : null,
+          tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
+          source: "Arbeitnow",
+        })),
+      )
+      .catch(() => [] as any[]);
+
+    // ---- Source 3: RemoteOK ----
+    const remoteokP = fetch("https://remoteok.com/api", { headers })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((j: any) => {
+        const arr = Array.isArray(j) ? j.filter((x) => x && x.id) : [];
+        return arr.map((j: any) => ({
+          id: `rmok-${j.id}`,
+          title: j.position ?? j.title ?? "Untitled role",
+          company: j.company ?? "Unknown company",
+          company_logo: j.company_logo ?? j.logo ?? null,
+          category: Array.isArray(j.tags) && j.tags[0] ? j.tags[0] : null,
+          job_type: null,
+          location: j.location || "Remote",
+          salary: j.salary || (j.salary_min && j.salary_max ? `$${j.salary_min} - $${j.salary_max}` : null),
+          url: j.url ?? (j.slug ? `https://remoteok.com/remote-jobs/${j.slug}` : null),
+          publication_date: j.date ?? null,
+          tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
+          source: "RemoteOK",
+        }));
+      })
+      .catch(() => [] as any[]);
+
+    const [remotive, arbeitnow, remoteok] = await Promise.all([remotiveP, arbeitnowP, remoteokP]);
+    let combined = [...remotive, ...arbeitnow, ...remoteok];
+
+    // Client-side search filter for sources that don't support query params
+    if (data.search) {
+      const tokens = data.search.toLowerCase().split(/\s+/).filter(Boolean);
+      combined = combined.filter((j) => {
+        const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+        return tokens.every((t) => hay.includes(t));
       });
-      if (!res.ok) throw new Error(`Remotive responded ${res.status}`);
-      const json: any = await res.json();
-      const jobs = Array.isArray(json?.jobs) ? json.jobs : [];
-      return jobs.slice(0, data.limit ?? 30).map((j: any) => ({
-        id: String(j.id),
-        title: j.title ?? "Untitled role",
-        company: j.company_name ?? "Unknown company",
-        company_logo: j.company_logo ?? null,
-        category: j.category ?? null,
-        job_type: j.job_type ?? null,
-        location: j.candidate_required_location ?? "Worldwide",
-        salary: j.salary ?? null,
-        url: j.url ?? null,
-        publication_date: j.publication_date ?? null,
-        tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
-      }));
-    } catch (e: any) {
-      // Fail soft so the page still renders
-      return [];
     }
+
+    // Interleave sources for diversity, then cap
+    const buckets = [remotive, arbeitnow, remoteok];
+    const interleaved: any[] = [];
+    const seen = new Set<string>();
+    let added = true;
+    let i = 0;
+    while (added) {
+      added = false;
+      for (const b of buckets) {
+        const item = b[i];
+        if (item && !seen.has(item.id)) {
+          if (!data.search || combined.includes(item)) {
+            interleaved.push(item);
+            seen.add(item.id);
+            added = true;
+          }
+        }
+      }
+      i++;
+      if (interleaved.length >= limit * 2) break;
+    }
+
+    return interleaved.slice(0, limit * 2);
   });
