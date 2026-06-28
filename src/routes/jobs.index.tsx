@@ -318,13 +318,34 @@ function Jobs() {
       )}
 
       <section className="mt-8">
-        <h2 className="text-lg font-semibold">{featured.length ? "All jobs" : "Open positions"}</h2>
+        <h2 className="text-lg font-semibold flex items-center gap-2">
+          {featured.length ? "All jobs" : "Open positions"}
+          {(category || hasFilters) && liveFiltered.length > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+              <Radio className="size-3 animate-pulse" /> {liveFiltered.length} live
+            </span>
+          )}
+        </h2>
         <div className="mt-3 grid gap-4 md:grid-cols-2">
           {rest.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} canApply={!!user} /></ScrollReveal>
           ))}
-          {filtered.length === 0 && <p className="text-sm text-muted-foreground">No jobs match those filters.</p>}
+          {liveForOpenPositions.map((j: any, i: number) => (
+            <ScrollReveal key={`live-${j.id}`} delay={(i % 4) * 60}>
+              <LiveJobCard j={j} />
+            </ScrollReveal>
+          ))}
+          {filtered.length === 0 && liveForOpenPositions.length === 0 && (
+            <p className="text-sm text-muted-foreground">No jobs match those filters.</p>
+          )}
         </div>
+        {liveFiltered.length > liveForOpenPositions.length && (
+          <div className="mt-4 text-center">
+            <a href="#live-remote-feed" className="text-xs font-semibold underline text-muted-foreground hover:text-foreground">
+              See {liveFiltered.length - liveForOpenPositions.length} more live {category || "matching"} jobs ↓
+            </a>
+        </div>
+        )}
       </section>
 
       {/* Live Remote Jobs — pulled live from Remotive public API */}
