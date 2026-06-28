@@ -130,8 +130,78 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       })
       .catch(() => [] as any[]);
 
-    const [remotive, arbeitnow, remoteok] = await Promise.all([remotiveP, arbeitnowP, remoteokP]);
-    let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok];
+    // ---- Source 4: The Muse (global on-site + remote, no key) ----
+    // Docs: https://www.themuse.com/developers/api/v2
+    const musePages = [1, 2, 3];
+    const museP = Promise.all(
+      musePages.map((page) =>
+        fetch(`https://www.themuse.com/api/public/jobs?page=${page}&descending=true`, { headers })
+          .then((r) => (r.ok ? r.json() : { results: [] }))
+          .then((j: any) => (Array.isArray(j?.results) ? j.results : []))
+          .catch(() => [] as any[]),
+      ),
+    ).then((batches) =>
+      batches.flat().map((j: any) => {
+        const loc = Array.isArray(j.locations) && j.locations[0]?.name ? j.locations[0].name : "Worldwide";
+        const isRemote = /remote|flexible/i.test(loc);
+        return {
+          id: `muse-${j.id}`,
+          title: j.name ?? "Untitled role",
+          company: j.company?.name ?? "Unknown company",
+          company_logo: null,
+          category: Array.isArray(j.categories) && j.categories[0]?.name ? j.categories[0].name : null,
+          job_type: Array.isArray(j.levels) && j.levels[0]?.name ? j.levels[0].name : null,
+          location: loc,
+          salary: null,
+          url: j.refs?.landing_page ?? null,
+          publication_date: j.publication_date ?? null,
+          tags: [
+            ...(Array.isArray(j.categories) ? j.categories.map((c: any) => c.name).filter(Boolean) : []),
+            ...(Array.isArray(j.levels) ? j.levels.map((l: any) => l.name).filter(Boolean) : []),
+          ].slice(0, 8),
+          source: "The Muse",
+          is_remote: isRemote,
+        };
+      }),
+    );
+
+    // ---- Source 5: Jobicy (remote + hybrid, no key) ----
+    // Docs: https://jobicy.com/jobs-rss-feed
+    const jobicyP = fetch("https://jobicy.com/api/v2/remote-jobs?count=50", { headers })
+      .then((r) => (r.ok ? r.json() : { jobs: [] }))
+      .then((j: any) =>
+        (Array.isArray(j?.jobs) ? j.jobs : []).map((j: any) => ({
+          id: `jbcy-${j.id}`,
+          title: j.jobTitle ?? "Untitled role",
+          company: j.companyName ?? "Unknown company",
+          company_logo: j.companyLogo ?? null,
+          category: Array.isArray(j.jobIndustry) ? j.jobIndustry[0] : j.jobIndustry ?? null,
+          job_type: Array.isArray(j.jobType) ? j.jobType[0] : j.jobType ?? null,
+          location: j.jobGeo || "Anywhere",
+          salary:
+            j.annualSalaryMin && j.annualSalaryMax
+              ? `${j.salaryCurrency ?? "USD"} ${j.annualSalaryMin}-${j.annualSalaryMax}`
+              : null,
+          url: j.url ?? null,
+          publication_date: j.pubDate ?? null,
+          tags: [
+            ...(Array.isArray(j.jobIndustry) ? j.jobIndustry : []),
+            ...(Array.isArray(j.jobLevel) ? j.jobLevel : []),
+          ].slice(0, 8),
+          source: "Jobicy",
+          is_remote: true,
+        })),
+      )
+      .catch(() => [] as any[]);
+
+    const [remotive, arbeitnow, remoteok, muse, jobicy] = await Promise.all([
+      remotiveP,
+      arbeitnowP,
+      remoteokP,
+      museP,
+      jobicyP,
+    ]);
+    let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok, ...muse, ...jobicy];
 
     // Dedupe by id (cached first wins).
     const seen = new Set<string>();
