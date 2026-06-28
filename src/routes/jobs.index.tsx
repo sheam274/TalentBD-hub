@@ -555,18 +555,12 @@ const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visible
   },
 );
 
-function LiveJobCard({ j }: { j: any }) {
+function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => void }) {
   return (
-    <a
-      href={j.url ?? "#"}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e) => {
-        if (!j.url) return;
-        e.preventDefault();
-        window.open(j.url, "_blank", "noopener,noreferrer");
-      }}
-      className="lift glass rounded-xl p-5 h-full flex flex-col"
+    <button
+      type="button"
+      onClick={() => onOpen(j.url)}
+      className="lift glass rounded-xl p-5 h-full flex flex-col text-left"
     >
       <div className="flex items-start gap-3">
         {j.company_logo ? (
@@ -604,6 +598,6 @@ function LiveJobCard({ j }: { j: any }) {
           View & Apply <ExternalLink className="size-3" />
         </span>
       </div>
-    </a>
+    </button>
   );
 }
