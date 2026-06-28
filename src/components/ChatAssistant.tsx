@@ -6,7 +6,7 @@ import { talentChat } from "@/lib/chat.functions";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: "user" | "assistant"; content: string; model?: string; fellBack?: boolean };
 
 const SUGGESTIONS = [
   "Suggest a 4-week CSE learning plan",
@@ -23,11 +23,18 @@ export function ChatAssistant() {
   const [input, setInput] = useState("");
   const chatFn = useServerFn(talentChat);
   const endRef = useRef<HTMLDivElement>(null);
+  const [lastModel, setLastModel] = useState<string | null>(null);
+  const [lastFellBack, setLastFellBack] = useState(false);
 
   const send = useMutation({
     mutationFn: (next: Msg[]) => chatFn({ data: { messages: next } }),
     onSuccess: (res) => {
-      setMessages((prev) => [...prev, { role: "assistant", content: res.reply }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: res.reply, model: (res as any).model, fellBack: (res as any).fellBack },
+      ]);
+      if ((res as any).model) setLastModel((res as any).model);
+      setLastFellBack(!!(res as any).fellBack);
     },
     onError: (e: any) => {
       setMessages((prev) => [...prev, { role: "assistant", content: `Error: ${e.message}` }]);
@@ -81,7 +88,16 @@ export function ChatAssistant() {
             <Sparkles className="size-5" />
             <div className="flex-1">
               <div className="text-sm font-bold">TalentBD AI Coach</div>
-              <div className="text-[11px] opacity-80">Powered by Lovable AI · Always-on</div>
+              <div className="text-[11px] opacity-80">
+                {lastModel ? (
+                  <>
+                    Powered by <span className="font-semibold">{lastModel}</span>
+                    {lastFellBack && <span className="ml-1 rounded bg-amber-400/90 px-1 text-[10px] font-semibold text-amber-950">fallback</span>}
+                  </>
+                ) : (
+                  <>Powered by Google Gemini</>
+                )}
+              </div>
             </div>
           </div>
 
