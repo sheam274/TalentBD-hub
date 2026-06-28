@@ -109,6 +109,35 @@
   --border: #e6e7ee;
   --input: #e6e7ee;
   --ring: #fe5252;
+  /* Eduma signature palette (full set) */
+  --eduma-red: #fe5252;
+  --eduma-red-hover: #e63946;
+  --eduma-red-soft: #ffe5e5;
+  --eduma-gold: #ffb606;
+  --eduma-gold-soft: #fff3cf;
+  --eduma-ink: #111127;
+  --eduma-ink-2: #1e1e2c;
+  --eduma-navy: #2a2a52;
+  --eduma-blue: #4067f9;
+  --eduma-teal: #00bcd4;
+  --eduma-green: #28a745;
+  --eduma-orange: #ff7d4d;
+  --eduma-purple: #7e3ff2;
+  --eduma-canvas: #f5f5f7;
+  --eduma-line: #e6e7ee;
+  /* Semantic status tokens (used by .badge-* utilities) */
+  --success: #28a745;
+  --success-foreground: #ffffff;
+  --success-soft: #e3f6e8;
+  --warning: #b76e00;
+  --warning-foreground: #ffffff;
+  --warning-soft: #fff3cf;
+  --info: #4067f9;
+  --info-foreground: #ffffff;
+  --info-soft: #e3ebff;
+  --danger-soft: #ffe5e5;
+  --neutral-soft: #eef0f4;
+  --neutral-strong: #4b4b63;
 }
 
 @layer base {
