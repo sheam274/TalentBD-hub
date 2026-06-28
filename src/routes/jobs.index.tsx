@@ -228,7 +228,7 @@ function Jobs() {
 
   const openExternalJob = (url?: string | null) => {
     if (!url || typeof window === "undefined") return;
-    const nextWindow = window.open("about:blank", "_blank", "noopener,noreferrer");
+    const nextWindow = window.open("", "_blank");
     if (nextWindow) {
       nextWindow.opener = null;
       nextWindow.location.href = url;
