@@ -113,6 +113,8 @@
   --eduma-red: #fe5252;
   --eduma-red-hover: #e63946;
   --eduma-red-soft: #ffe5e5;
+  /* AA-compliant on white text (≥ 4.5:1). Use for text-bearing surfaces like CTAs. */
+  --eduma-red-strong: #c81e1e;
   --eduma-gold: #ffb606;
   --eduma-gold-soft: #fff3cf;
   --eduma-ink: #111127;

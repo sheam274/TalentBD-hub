@@ -106,10 +106,10 @@ function Landing() {
             <Link
               to="/jobs"
               aria-label="Browse live engineering jobs"
-              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] px-8 py-4 text-center text-sm font-semibold tracking-wide text-white shadow-lg outline-none transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
+              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] px-8 py-4 text-center text-sm font-bold tracking-wide text-white shadow-lg outline-none transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--eduma-red-hover)] focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
               style={{
-                background: "var(--eduma-red)",
-                boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red) 50%, transparent)",
+                background: "var(--eduma-red-strong)",
+                boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red-strong) 55%, transparent)",
               }}
             >
               <span>Browse Live Jobs</span>
@@ -118,7 +118,7 @@ function Landing() {
             <Link
               to="/learn"
               aria-label="Start learning with free engineering modules"
-              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-white/15 bg-white/5 px-8 py-4 text-center text-sm font-semibold tracking-wide text-white outline-none backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--eduma-gold)] hover:bg-white/10 hover:text-[var(--eduma-gold)] focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
+              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-8 py-4 text-center text-sm font-bold tracking-wide text-white outline-none backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--eduma-gold)] hover:bg-white/15 hover:text-[var(--eduma-gold)] focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
             >
               <span>Start Learning Free</span>
               <GraduationCap aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none" />
