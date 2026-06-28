@@ -131,8 +131,14 @@ function Jobs() {
 
 
   const all = q.data ?? [];
+  // Light stemmer so "engineering" matches "engineer", "developers" matches "developer", etc.
+  const stem = (w: string) => w.replace(/(ing|ers|er|s)$/i, "");
   const filtered = useMemo(() => {
-    const tokens = debouncedSearch.toLowerCase().split(/[\s,]+/).filter(Boolean);
+    const tokens = debouncedSearch
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .filter((t) => t.length >= 2)
+      .map(stem);
     const loc = location.trim().toLowerCase();
     return all.filter((j: any) => {
       if (tokens.length) {
@@ -150,7 +156,8 @@ function Jobs() {
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
-        if (!tokens.every((t) => hay.includes(t))) return false;
+        // OR-match: any token hit surfaces the job — broader, related results.
+        if (!tokens.some((t) => hay.includes(t))) return false;
       }
       if (category) {
         const jc = (j.category ?? "General").toLowerCase();
@@ -260,7 +267,11 @@ function Jobs() {
 
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {(() => {
-            const tokens = debouncedSearch.toLowerCase().split(/[\s,]+/).filter(Boolean);
+            const tokens = debouncedSearch
+              .toLowerCase()
+              .split(/[\s,]+/)
+              .filter((t) => t.length >= 2)
+              .map(stem);
             const loc = location.trim().toLowerCase();
             const typeL = type.toLowerCase();
             const catL = category.toLowerCase();
@@ -278,7 +289,7 @@ function Jobs() {
               }
               if (!tokens.length) return true;
               const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
-              return tokens.every((tok) => hay.includes(tok));
+              return tokens.some((tok) => hay.includes(tok));
             });
             if (tokens.length && list.length === 0) {
               return <p className="text-sm text-muted-foreground">No live jobs match "{search}".</p>;
