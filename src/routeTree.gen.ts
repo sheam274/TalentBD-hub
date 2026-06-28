@@ -43,6 +43,7 @@ import { Route as AuthenticatedAdminLettersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
 import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin/interviews'
 import { Route as AuthenticatedAdminEmployersRouteImport } from './routes/_authenticated/admin/employers'
+import { Route as AuthenticatedAdminDatabaseRouteImport } from './routes/_authenticated/admin/database'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
 import { Route as AuthenticatedAdminCredentialsRouteImport } from './routes/_authenticated/admin/credentials'
 import { Route as AuthenticatedAdminCompaniesRouteImport } from './routes/_authenticated/admin/companies'
@@ -238,6 +239,12 @@ const AuthenticatedAdminEmployersRoute =
     path: '/employers',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminDatabaseRoute =
+  AuthenticatedAdminDatabaseRouteImport.update({
+    id: '/database',
+    path: '/database',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminDashboardRoute =
   AuthenticatedAdminDashboardRouteImport.update({
     id: '/dashboard',
@@ -314,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/admin/companies': typeof AuthenticatedAdminCompaniesRoute
   '/admin/credentials': typeof AuthenticatedAdminCredentialsRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/database': typeof AuthenticatedAdminDatabaseRoute
   '/admin/employers': typeof AuthenticatedAdminEmployersRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsRoute
@@ -358,6 +366,7 @@ export interface FileRoutesByTo {
   '/admin/companies': typeof AuthenticatedAdminCompaniesRoute
   '/admin/credentials': typeof AuthenticatedAdminCredentialsRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/database': typeof AuthenticatedAdminDatabaseRoute
   '/admin/employers': typeof AuthenticatedAdminEmployersRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsRoute
@@ -404,6 +413,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/companies': typeof AuthenticatedAdminCompaniesRoute
   '/_authenticated/admin/credentials': typeof AuthenticatedAdminCredentialsRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/database': typeof AuthenticatedAdminDatabaseRoute
   '/_authenticated/admin/employers': typeof AuthenticatedAdminEmployersRoute
   '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
   '/_authenticated/admin/jobs': typeof AuthenticatedAdminJobsRoute
@@ -450,6 +460,7 @@ export interface FileRouteTypes {
     | '/admin/companies'
     | '/admin/credentials'
     | '/admin/dashboard'
+    | '/admin/database'
     | '/admin/employers'
     | '/admin/interviews'
     | '/admin/jobs'
@@ -494,6 +505,7 @@ export interface FileRouteTypes {
     | '/admin/companies'
     | '/admin/credentials'
     | '/admin/dashboard'
+    | '/admin/database'
     | '/admin/employers'
     | '/admin/interviews'
     | '/admin/jobs'
@@ -539,6 +551,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/companies'
     | '/_authenticated/admin/credentials'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/database'
     | '/_authenticated/admin/employers'
     | '/_authenticated/admin/interviews'
     | '/_authenticated/admin/jobs'
@@ -817,6 +830,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEmployersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/database': {
+      id: '/_authenticated/admin/database'
+      path: '/database'
+      fullPath: '/admin/database'
+      preLoaderRoute: typeof AuthenticatedAdminDatabaseRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/dashboard': {
       id: '/_authenticated/admin/dashboard'
       path: '/dashboard'
@@ -888,6 +908,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminCompaniesRoute: typeof AuthenticatedAdminCompaniesRoute
   AuthenticatedAdminCredentialsRoute: typeof AuthenticatedAdminCredentialsRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminDatabaseRoute: typeof AuthenticatedAdminDatabaseRoute
   AuthenticatedAdminEmployersRoute: typeof AuthenticatedAdminEmployersRoute
   AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
   AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
@@ -902,6 +923,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminCompaniesRoute: AuthenticatedAdminCompaniesRoute,
     AuthenticatedAdminCredentialsRoute: AuthenticatedAdminCredentialsRoute,
     AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+    AuthenticatedAdminDatabaseRoute: AuthenticatedAdminDatabaseRoute,
     AuthenticatedAdminEmployersRoute: AuthenticatedAdminEmployersRoute,
     AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
     AuthenticatedAdminJobsRoute: AuthenticatedAdminJobsRoute,
