@@ -596,7 +596,7 @@ function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => v
       <div className="mt-4 flex items-center justify-between gap-2">
         {j.salary_range && <p className="text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary_range}</p>}
         <div className="ml-auto flex items-center gap-2">
-          <button onClick={onPreview} className="rounded-md border px-3 py-1.5 text-sm font-semibold hover:bg-white/60">View details</button>
+          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="rounded-md border px-3 py-1.5 text-sm font-semibold hover:bg-white/60">View details</Link>
           {canApply ? (
             <button onClick={onApply} className="rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>Apply</button>
           ) : (
