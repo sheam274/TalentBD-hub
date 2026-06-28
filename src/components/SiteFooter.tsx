@@ -67,8 +67,11 @@ export function SiteFooter() {
               <span className="inline-flex size-10 items-center justify-center rounded-lg bg-primary p-1.5 shadow-md">
                 <BrandMark size={28} />
               </span>
-              <span className="text-xl text-white">Talent<span className="text-primary">BD</span></span>
-              <span className="rounded-full border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Premium</span>
+              <span className="text-xl text-white">Talent<span style={{ color: "var(--eduma-red)" }}>BD</span></span>
+              <span
+                className="rounded-full border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+                style={{ color: "var(--eduma-red)" }}
+              >Premium</span>
             </a>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/55">
               Bangladesh's premium learn-and-earn platform. Build skills, earn verified credentials, and land local or global remote jobs.
@@ -98,7 +101,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-5">
             {columns.map((col) => (
               <div key={col.title}>
-                <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-primary">{col.title}</h3>
+                <h3 className="font-mono text-xs font-bold uppercase tracking-widest" style={{ color: "var(--eduma-red)" }}>{col.title}</h3>
                 <ul className="mt-4 space-y-3 text-sm text-white/75">
                   {col.links.map((l) => (
                     <li key={l.label}>
@@ -119,7 +122,7 @@ export function SiteFooter() {
             ["80%", "Pass rate to certify"],
           ].map(([n, l]) => (
             <div key={l as string}>
-              <div className="text-2xl font-extrabold text-primary">{n}</div>
+              <div className="text-2xl font-extrabold" style={{ color: "var(--eduma-red)" }}>{n}</div>
               <div className="mt-1 text-xs text-white/50">{l}</div>
             </div>
           ))}
