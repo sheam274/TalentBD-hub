@@ -141,14 +141,21 @@ export const adminDeleteJob = createServerFn({ method: "POST" })
 export const applyToJob = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ jobId: z.string().uuid(), coverNote: z.string().max(2000).optional() }).parse(i),
+    z.object({
+      jobId: z.string().uuid(),
+      coverNote: z.string().max(2000).optional(),
+      method: z.enum(["internal", "external"]).optional(),
+    }).parse(i),
   )
   .handler(async ({ data, context }) => {
+    const method = data.method ?? "internal";
+    const prefix = method === "external" ? "[Applied on company site] " : "";
+    const note = `${prefix}${data.coverNote ?? ""}`.trim() || null;
     const { error } = await context.supabase
       .from("job_applications")
-      .insert({ job_id: data.jobId, user_id: context.userId, cover_note: data.coverNote ?? null });
+      .insert({ job_id: data.jobId, user_id: context.userId, cover_note: note });
     if (error && !error.message.toLowerCase().includes("duplicate")) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true, method };
   });
 
 export const listMyApplications = createServerFn({ method: "GET" })

@@ -38,11 +38,15 @@ function ApplyPage() {
   const [method, setMethod] = useState<"internal" | "external">("internal");
 
   const apply = useMutation({
-    mutationFn: () => applyFn({ data: { jobId, coverNote: cover } }),
-    onSuccess: () => {
+    mutationFn: (vars: { method: "internal" | "external" }) =>
+      applyFn({ data: { jobId, coverNote: cover, method: vars.method } }),
+    onSuccess: (_res, vars) => {
       toast.success("Application submitted");
       qc.invalidateQueries({ queryKey: ["my-app", jobId] });
       qc.invalidateQueries({ queryKey: ["my-apps"] });
+      if (vars.method === "external" && externalUrl) {
+        window.open(externalUrl, "_blank", "noopener,noreferrer");
+      }
       navigate({ to: "/my-applications" });
     },
     onError: (e: any) => toast.error(e.message),
@@ -133,7 +137,7 @@ function ApplyPage() {
                 <div className="mt-4 flex justify-end gap-2">
                   <Link to="/jobs/$jobId" params={{ jobId }} className="rounded-md border px-4 py-2 text-sm">Cancel</Link>
                   <button
-                    onClick={() => apply.mutate()}
+                    onClick={() => apply.mutate({ method: "internal" })}
                     disabled={apply.isPending}
                     className="rounded-md px-4 py-2 text-sm font-semibold text-white"
                     style={{ background: "var(--color-primary)" }}
@@ -145,15 +149,14 @@ function ApplyPage() {
             ) : (
               <div className="mt-5 flex justify-end gap-2">
                 <Link to="/jobs/$jobId" params={{ jobId }} className="rounded-md border px-4 py-2 text-sm">Cancel</Link>
-                <a
-                  href={externalUrl ?? "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-md px-4 py-2 text-sm font-semibold text-white inline-flex items-center gap-1"
+                <button
+                  onClick={() => apply.mutate({ method: "external" })}
+                  disabled={apply.isPending || !externalUrl}
+                  className="rounded-md px-4 py-2 text-sm font-semibold text-white inline-flex items-center gap-1 disabled:opacity-50"
                   style={{ background: "var(--color-primary)" }}
                 >
-                  Continue on company site <ExternalLink className="size-4" />
-                </a>
+                  {apply.isPending ? "Recording…" : <>Continue on company site <ExternalLink className="size-4" /></>}
+                </button>
               </div>
             )}
           </>
