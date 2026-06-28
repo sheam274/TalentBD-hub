@@ -1,11 +1,12 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
-@import "@fontsource/baloo-2/400.css";
-@import "@fontsource/baloo-2/500.css";
-@import "@fontsource/baloo-2/600.css";
-@import "@fontsource/baloo-2/700.css";
-@import "@fontsource/baloo-2/800.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/dm-sans/400.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/700.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -35,36 +36,36 @@
   --color-ring: var(--ring);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
-  --font-sans: "Baloo 2", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Baloo 2", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --radius: 0.75rem;
-  /* Midnight Sky — premium professional palette
-     Light surfaces for content readability, deep slate ink,
-     sky brand accents that match the slate-950 header/footer. */
-  --background: oklch(0.985 0.005 240);   /* near-white with cool tint */
-  --surface: oklch(1 0 0);                 /* pure white cards */
-  --foreground: oklch(0.22 0.03 260);      /* slate-800 body text */
-  --ink: oklch(0.16 0.04 265);             /* slate-900 headings */
-  --card: oklch(1 0 0);
-  --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
-  --popover-foreground: var(--foreground);
-  --primary: oklch(0.21 0.04 265);         /* slate-900 — matches footer */
-  --primary-foreground: oklch(0.99 0.01 240);
-  --accent: oklch(0.7 0.15 230);           /* sky-500 brand accent */
-  --accent-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0.01 250);
-  --secondary-foreground: var(--ink);
-  --muted: oklch(0.96 0.008 250);
-  --muted-foreground: oklch(0.48 0.03 260); /* slate-500, AA on white */
+  --radius: 1rem;
+  /* Navy Trust — BeTheme-inspired premium corporate palette
+     Locked tokens: #0f1b3d (deep navy ink), #1e3a5f (navy depth),
+     #3b6fa0 (steel blue brand), #e8edf3 (cool whitespace). */
+  --background: #e8edf3;                /* cool corporate canvas */
+  --surface: #ffffff;                    /* white cards */
+  --foreground: #1e3a5f;                 /* mid navy body */
+  --ink: #0f1b3d;                        /* deep navy headings */
+  --card: #ffffff;
+  --card-foreground: #1e3a5f;
+  --popover: #ffffff;
+  --popover-foreground: #1e3a5f;
+  --primary: #0f1b3d;                    /* deep navy primary */
+  --primary-foreground: #ffffff;
+  --accent: #3b6fa0;                     /* steel blue accent */
+  --accent-foreground: #ffffff;
+  --secondary: #e8edf3;
+  --secondary-foreground: #0f1b3d;
+  --muted: #e8edf3;
+  --muted-foreground: #64748b;
   --destructive: oklch(0.58 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.92 0.01 255);
-  --input: oklch(0.92 0.01 255);
-  --ring: oklch(0.7 0.15 230);
+  --destructive-foreground: #ffffff;
+  --border: #d8dee9;
+  --input: #d8dee9;
+  --ring: #3b6fa0;
 }
 
 @layer base {
@@ -72,8 +73,8 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: "Baloo 2", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-weight: 500;
+    font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -81,10 +82,10 @@
     overflow-x: hidden;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Baloo 2", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
     color: var(--color-ink);
     font-weight: 700;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.025em;
   }
 }
 
