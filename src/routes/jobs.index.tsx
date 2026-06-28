@@ -404,7 +404,17 @@ function Jobs() {
             }
             return shown.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 6) * 40}>
-              <a href={j.url ?? "#"} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 h-full flex flex-col">
+              <a
+                href={j.url ?? "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  if (!j.url) return;
+                  e.preventDefault();
+                  window.open(j.url, "_blank", "noopener,noreferrer");
+                }}
+                className="lift glass rounded-xl p-5 h-full flex flex-col"
+              >
                 <div className="flex items-start gap-3">
                   {j.company_logo ? (
                     <img src={j.company_logo} alt={j.company} className="size-10 rounded-md object-contain bg-white" />
@@ -538,7 +548,17 @@ const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visible
 
 function LiveJobCard({ j }: { j: any }) {
   return (
-    <a href={j.url ?? "#"} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 h-full flex flex-col">
+    <a
+      href={j.url ?? "#"}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(e) => {
+        if (!j.url) return;
+        e.preventDefault();
+        window.open(j.url, "_blank", "noopener,noreferrer");
+      }}
+      className="lift glass rounded-xl p-5 h-full flex flex-col"
+    >
       <div className="flex items-start gap-3">
         {j.company_logo ? (
           <img src={j.company_logo} alt={j.company} className="size-10 rounded-md object-contain bg-white" />
