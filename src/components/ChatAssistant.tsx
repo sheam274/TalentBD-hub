@@ -25,7 +25,15 @@ export function ChatAssistant() {
   const endRef = useRef<HTMLDivElement>(null);
   const [lastModel, setLastModel] = useState<string | null>(null);
   const [lastFellBack, setLastFellBack] = useState(false);
-  const [geminiMode, setGeminiMode] = useState(false);
+  const [geminiMode, setGeminiMode] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("talentbd.chatMode") === "gemini";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("talentbd.chatMode", geminiMode ? "gemini" : "coach");
+  }, [geminiMode]);
 
   const send = useMutation({
     mutationFn: (next: Msg[]) =>
