@@ -62,6 +62,7 @@ function Jobs() {
   const [type, setType] = useState("");
   const [remote, setRemote] = useState<"all" | "remote" | "onsite">("all");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const [cover, setCover] = useState("");
 
   // Sync from URL params on mount so deep-links like /jobs?remote=remote work
@@ -349,7 +350,7 @@ function Jobs() {
           <h2 className="text-lg font-semibold flex items-center gap-2"><Star className="size-4 text-amber-500" /> Featured / Hot jobs</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
             {featured.map((j: any, i: number) => (
-              <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} canApply={!!user} /></ScrollReveal>
+              <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
             ))}
           </div>
         </section>
@@ -366,7 +367,7 @@ function Jobs() {
         </h2>
         <div className="mt-3 grid gap-4 md:grid-cols-2">
           {rest.map((j: any, i: number) => (
-            <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} canApply={!!user} /></ScrollReveal>
+            <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
           ))}
           {liveForOpenPositions.map((j: any, i: number) => (
             <ScrollReveal key={`live-${j.id}`} delay={(i % 4) * 60}>
@@ -503,11 +504,68 @@ function Jobs() {
           </div>
         </div>
       )}
+
+      {previewId && (() => {
+        const j: any = all.find((x: any) => x.id === previewId);
+        if (!j) return null;
+        const deadline = j.application_deadline ? new Date(j.application_deadline) : null;
+        const daysLeft = deadline ? Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+        return (
+          <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={() => setPreviewId(null)}>
+            <div className="glass rounded-xl p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-xl font-bold">{j.job_title}</h3>
+                    {j.is_featured && <span className="badge-featured">Hot</span>}
+                    {j.is_live && <span className="badge-live">Live</span>}
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">{j.company}</p>
+                </div>
+                <button onClick={() => setPreviewId(null)} className="rounded-md border px-2 py-1 text-xs">Close</button>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                {j.location && <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{j.location}</span>}
+                {j.is_remote && <span className="rounded bg-emerald-100 text-emerald-700 px-2 py-0.5">Remote</span>}
+                {j.job_type && <span className="inline-flex items-center gap-1"><Briefcase className="size-3" />{j.job_type}</span>}
+                {j.experience_level && <span className="inline-flex items-center gap-1"><GraduationCap className="size-3" />{j.experience_level}</span>}
+                {j.category && <span>· {j.category}</span>}
+                {daysLeft !== null && <span className={`inline-flex items-center gap-1 ${daysLeft <= 3 ? "text-destructive font-semibold" : ""}`}><Clock className="size-3" />{daysLeft > 0 ? `${daysLeft}d left` : "Closed"}</span>}
+              </div>
+              {j.salary_range && <p className="mt-3 text-sm font-semibold" style={{ color: "var(--color-primary)" }}>{j.salary_range}</p>}
+              {j.description && (
+                <section className="mt-4">
+                  <h4 className="text-xs font-semibold uppercase text-muted-foreground">Description</h4>
+                  <p className="mt-1 whitespace-pre-line text-sm leading-relaxed">{j.description}</p>
+                </section>
+              )}
+              {(j.requirements?.length ?? 0) > 0 && (
+                <section className="mt-4">
+                  <h4 className="text-xs font-semibold uppercase text-muted-foreground">Requirements</h4>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {j.requirements.map((r: string) => (
+                      <li key={r} className="rounded-full border bg-white/60 px-3 py-1 text-xs">{r}</li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              <div className="mt-5 flex flex-wrap justify-end gap-2">
+                <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="rounded-md border px-3 py-1.5 text-sm font-semibold hover:bg-white/60">Open full page</Link>
+                {user ? (
+                  <button onClick={() => { setPreviewId(null); setOpenId(j.id); }} className="rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>Apply</button>
+                ) : (
+                  <a href="/auth" className="rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>Sign in to apply</a>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
 
-function JobCard({ j, onApply, canApply }: { j: any; onApply: () => void; canApply: boolean }) {
+function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => void; onPreview: () => void; canApply: boolean }) {
   const deadline = j.application_deadline ? new Date(j.application_deadline) : null;
   const daysLeft = deadline ? Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
   return (
@@ -538,7 +596,7 @@ function JobCard({ j, onApply, canApply }: { j: any; onApply: () => void; canApp
       <div className="mt-4 flex items-center justify-between gap-2">
         {j.salary_range && <p className="text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary_range}</p>}
         <div className="ml-auto flex items-center gap-2">
-          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="rounded-md border px-3 py-1.5 text-sm font-semibold hover:bg-white/60">View details</Link>
+          <button onClick={onPreview} className="rounded-md border px-3 py-1.5 text-sm font-semibold hover:bg-white/60">View details</button>
           {canApply ? (
             <button onClick={onApply} className="rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>Apply</button>
           ) : (
