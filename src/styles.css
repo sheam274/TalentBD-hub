@@ -96,19 +96,22 @@
   --card-foreground: #1e1e2c;
   --popover: #ffffff;
   --popover-foreground: #1e1e2c;
-  --primary: #fe5252;                     /* Eduma signature red */
+  /* Primary uses AA-compliant strong red (#c81e1e, 6.36:1 on white) so
+     white text on bg-primary buttons meets WCAG. Brand pink (#fe5252)
+     stays available via --eduma-red for accents/gradients/dots. */
+  --primary: #c81e1e;
   --primary-foreground: #ffffff;
   --accent: #ffb606;                      /* Eduma gold */
   --accent-foreground: #111127;
   --secondary: #111127;                   /* dark sections */
   --secondary-foreground: #ffffff;
   --muted: #eef0f4;
-  --muted-foreground: #6b7280;
+  --muted-foreground: #4b5563;            /* gray-600, ~7.6:1 on white */
   --destructive: #d92d20;
   --destructive-foreground: #ffffff;
   --border: #e6e7ee;
   --input: #e6e7ee;
-  --ring: #fe5252;
+  --ring: #c81e1e;
   /* Eduma signature palette (full set) */
   --eduma-red: #fe5252;
   --eduma-red-hover: #e63946;
