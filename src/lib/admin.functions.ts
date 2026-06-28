@@ -192,3 +192,77 @@ export const adminDeleteRow = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/* ============= Database browser ============= */
+
+export const ADMIN_BROWSABLE_TABLES = [
+  "profiles",
+  "user_roles",
+  "user_credentials",
+  "companies",
+  "company_members",
+  "job_marketplace",
+  "job_applications",
+  "application_messages",
+  "appointment_letters",
+  "interview_sessions",
+  "interview_invitations",
+  "interview_questions",
+  "interview_answers",
+  "learning_modules",
+  "skill_quizzes",
+  "cv_records",
+  "external_jobs_cache",
+] as const;
+
+export type AdminBrowsableTable = (typeof ADMIN_BROWSABLE_TABLES)[number];
+
+export const adminListTables = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const results = await Promise.all(
+      ADMIN_BROWSABLE_TABLES.map(async (t) => {
+        const { count } = await (supabaseAdmin as any)
+          .from(t)
+          .select("*", { count: "exact", head: true });
+        return { table: t, count: count ?? 0 };
+      }),
+    );
+    return results;
+  });
+
+export const adminBrowseTable = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({
+      table: z.enum(ADMIN_BROWSABLE_TABLES as unknown as [string, ...string[]]),
+      page: z.number().int().min(0).default(0),
+      pageSize: z.number().int().min(1).max(100).default(25),
+      search: z.string().trim().max(200).optional(),
+    }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const from = data.page * data.pageSize;
+    const to = from + data.pageSize - 1;
+    let q: any = (supabaseAdmin as any).from(data.table).select("*", { count: "exact" });
+    if (data.search) {
+      // Try matching by id if it looks like a uuid; otherwise no-op (table-specific search is out of scope)
+      const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (uuid.test(data.search)) q = q.eq("id", data.search);
+    }
+    const { data: rows, count, error } = await q.range(from, to);
+    if (error) throw new Error(error.message);
+    const columns = rows && rows.length ? Object.keys(rows[0]) : [];
+    return {
+      table: data.table,
+      page: data.page,
+      pageSize: data.pageSize,
+      total: count ?? 0,
+      columns,
+      rows: rows ?? [],
+    };
+  });
