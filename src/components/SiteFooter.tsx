@@ -75,14 +75,21 @@ export function SiteFooter() {
             </p>
             <div className="mt-5 flex items-center gap-3">
               {[
-                { Icon: Facebook, href: "https://facebook.com" },
-                { Icon: Linkedin, href: "https://linkedin.com" },
-                { Icon: Twitter, href: "https://twitter.com" },
-                { Icon: Youtube, href: "https://youtube.com" },
-                { Icon: Globe, href: "https://w3schools.com" },
-              ].map(({ Icon, href }, i) => (
-                <a key={i} href={href} target="_blank" rel="noreferrer" className="inline-flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/55 transition hover:border-primary/50 hover:text-primary">
-                  <Icon className="size-4" />
+                { Icon: Facebook, href: "https://facebook.com", label: "Facebook" },
+                { Icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+                { Icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+                { Icon: Youtube, href: "https://youtube.com", label: "YouTube" },
+                { Icon: Globe, href: "https://w3schools.com", label: "Website" },
+              ].map(({ Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`TalentBD on ${label}`}
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition hover:border-primary/60 hover:text-white"
+                >
+                  <Icon className="size-4" aria-hidden="true" focusable="false" />
                 </a>
               ))}
             </div>
@@ -91,7 +98,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-5">
             {columns.map((col) => (
               <div key={col.title}>
-                <h4 className="font-mono text-xs font-bold uppercase tracking-widest text-primary">{col.title}</h4>
+                <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-primary">{col.title}</h3>
                 <ul className="mt-4 space-y-3 text-sm text-white/75">
                   {col.links.map((l) => (
                     <li key={l.label}>
