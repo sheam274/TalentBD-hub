@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart, CheckCircle2, Sparkles } from "lucide-react";
+import {
+  HeroCenteredEditorial,
+  HeroMarketplaceGrid,
+  HeroSearchImmersive,
+  HeroDualPath,
+} from "@/components/hero/HeroVariants";
+
+// Swap the hero template by changing this value:
+// "asymmetric" (default) | "editorial" | "marketplace" | "search" | "dual"
+const HERO_VARIANT: "asymmetric" | "editorial" | "marketplace" | "search" | "dual" = "asymmetric";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,7 +56,7 @@ function Landing() {
     <div className="page-enter bg-background">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 md:px-6 md:py-20">
         {/* Hero — asymmetric, stat-rich */}
-        <ScrollReveal>
+        <ScrollReveal>{HERO_VARIANT === "editorial" ? <HeroCenteredEditorial /> : HERO_VARIANT === "marketplace" ? <HeroMarketplaceGrid /> : HERO_VARIANT === "search" ? <HeroSearchImmersive /> : HERO_VARIANT === "dual" ? <HeroDualPath /> : (
           <section className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
             {/* Text */}
             <div className="space-y-8">
@@ -169,7 +179,7 @@ function Landing() {
               </div>
             </div>
           </section>
-        </ScrollReveal>
+        )}</ScrollReveal>
 
         {/* Stats band */}
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
