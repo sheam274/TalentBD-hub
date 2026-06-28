@@ -165,43 +165,50 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       }),
     );
 
-    // ---- Source 5: Jobicy (remote + hybrid, no key) ----
-    // Docs: https://jobicy.com/jobs-rss-feed
-    const jobicyP = fetch("https://jobicy.com/api/v2/remote-jobs?count=50", { headers })
+    // ---- Source 5: Himalayas (reputed remote job board, no key) ----
+    // Public API: https://himalayas.app/jobs/api
+    const himalayasP = fetch(`https://himalayas.app/jobs/api?limit=${Math.min(limit, 100)}`, { headers })
       .then((r) => (r.ok ? r.json() : { jobs: [] }))
       .then((j: any) =>
         (Array.isArray(j?.jobs) ? j.jobs : []).map((j: any) => ({
-          id: `jbcy-${j.id}`,
-          title: j.jobTitle ?? "Untitled role",
+          id: `hima-${encodeURIComponent(String(j.guid ?? j.applicationLink ?? `${j.companyName ?? "unknown"}-${j.title ?? "untitled"}`))}`,
+          title: j.title ?? "Untitled role",
           company: j.companyName ?? "Unknown company",
-          company_logo: j.companyLogo ?? null,
-          category: Array.isArray(j.jobIndustry) ? j.jobIndustry[0] : j.jobIndustry ?? null,
-          job_type: Array.isArray(j.jobType) ? j.jobType[0] : j.jobType ?? null,
-          location: j.jobGeo || "Anywhere",
-          salary:
-            j.annualSalaryMin && j.annualSalaryMax
-              ? `${j.salaryCurrency ?? "USD"} ${j.annualSalaryMin}-${j.annualSalaryMax}`
+          company_logo: j.companyLogo || null,
+          category: Array.isArray(j.parentCategories) && j.parentCategories[0]
+            ? j.parentCategories[0]
+            : Array.isArray(j.categories) && j.categories[0]
+              ? String(j.categories[0]).replace(/-/g, " ")
               : null,
-          url: j.url ?? null,
-          publication_date: j.pubDate ?? null,
+          job_type: j.employmentType ?? null,
+          location: Array.isArray(j.locationRestrictions) && j.locationRestrictions.length
+            ? j.locationRestrictions.slice(0, 3).join(", ")
+            : "Remote",
+          salary:
+            j.minSalary && j.maxSalary
+              ? `${j.currency ?? "USD"} ${j.minSalary}-${j.maxSalary}${j.salaryPeriod ? ` / ${j.salaryPeriod}` : ""}`
+              : null,
+          url: j.applicationLink ?? j.guid ?? null,
+          publication_date: j.pubDate ? new Date(j.pubDate * 1000).toISOString() : null,
           tags: [
-            ...(Array.isArray(j.jobIndustry) ? j.jobIndustry : []),
-            ...(Array.isArray(j.jobLevel) ? j.jobLevel : []),
+            ...(Array.isArray(j.parentCategories) ? j.parentCategories : []),
+            ...(Array.isArray(j.categories) ? j.categories.map((x: string) => String(x).replace(/-/g, " ")) : []),
+            ...(Array.isArray(j.seniority) ? j.seniority : []),
           ].slice(0, 8),
-          source: "Jobicy",
+          source: "Himalayas",
           is_remote: true,
         })),
       )
       .catch(() => [] as any[]);
 
-    const [remotive, arbeitnow, remoteok, muse, jobicy] = await Promise.all([
+    const [remotive, arbeitnow, remoteok, muse, himalayas] = await Promise.all([
       remotiveP,
       arbeitnowP,
       remoteokP,
       museP,
-      jobicyP,
+      himalayasP,
     ]);
-    let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok, ...muse, ...jobicy];
+    let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok, ...muse, ...himalayas];
 
     // Dedupe by id (cached first wins).
     const seen = new Set<string>();

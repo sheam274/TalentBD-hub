@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// Background sync: pulls live jobs from Remotive, Arbeitnow, RemoteOK,
+// Background sync: pulls live jobs from Remotive, Arbeitnow, RemoteOK, Himalayas,
 // normalizes categories, dedupes by external_id, and upserts into
 // public.external_jobs_cache.
 //
@@ -134,6 +134,45 @@ async function fetchRemoteOK(headers: Record<string, string>): Promise<Row[]> {
   } catch { return []; }
 }
 
+async function fetchHimalayas(headers: Record<string, string>): Promise<Row[]> {
+  try {
+    const r = await fetch("https://himalayas.app/jobs/api?limit=100", { headers });
+    if (!r.ok) return [];
+    const j: any = await r.json();
+    return (j?.jobs ?? []).map((x: any): Row => {
+      const tags = [
+        ...(Array.isArray(x.parentCategories) ? x.parentCategories : []),
+        ...(Array.isArray(x.categories) ? x.categories.map((c: string) => String(c).replace(/-/g, " ")) : []),
+        ...(Array.isArray(x.seniority) ? x.seniority : []),
+      ].slice(0, 12);
+      const title = x.title ?? "Untitled role";
+      const category = Array.isArray(x.parentCategories) && x.parentCategories[0]
+        ? x.parentCategories[0]
+        : tags[0] ?? null;
+      return {
+        external_id: `hima-${encodeURIComponent(String(x.guid ?? x.applicationLink ?? title))}`,
+        source: "Himalayas",
+        title,
+        company: x.companyName ?? "Unknown",
+        company_logo: x.companyLogo || null,
+        category,
+        normalized_category: normalizeCategory(title, category, tags),
+        job_type: x.employmentType ?? null,
+        location: Array.isArray(x.locationRestrictions) && x.locationRestrictions.length
+          ? x.locationRestrictions.slice(0, 3).join(", ")
+          : "Remote",
+        is_remote: true,
+        salary: x.minSalary && x.maxSalary
+          ? `${x.currency ?? "USD"} ${x.minSalary}-${x.maxSalary}${x.salaryPeriod ? ` / ${x.salaryPeriod}` : ""}`
+          : null,
+        url: x.applicationLink ?? x.guid ?? null,
+        tags,
+        publication_date: x.pubDate ? new Date(x.pubDate * 1000).toISOString() : null,
+      };
+    });
+  } catch { return []; }
+}
+
 export type SyncResult = {
   ok: boolean;
   upserted: number;
@@ -143,20 +182,20 @@ export type SyncResult = {
 
 export async function runJobSync(): Promise<SyncResult> {
   const headers = { "User-Agent": "TalentBD/1.0 (+sync)" };
-  const [rmtv, arbn, rmok] = await Promise.all([
-    fetchRemotive(headers), fetchArbeitnow(headers), fetchRemoteOK(headers),
+  const [rmtv, arbn, rmok, hima] = await Promise.all([
+    fetchRemotive(headers), fetchArbeitnow(headers), fetchRemoteOK(headers), fetchHimalayas(headers),
   ]);
 
   // Dedupe by external_id (keep first occurrence)
   const seen = new Set<string>();
   const rows: Row[] = [];
-  for (const r of [...rmtv, ...arbn, ...rmok]) {
+  for (const r of [...rmtv, ...arbn, ...rmok, ...hima]) {
     if (!r.external_id || seen.has(r.external_id)) continue;
     seen.add(r.external_id);
     rows.push(r);
   }
 
-  const sources = { Remotive: rmtv.length, Arbeitnow: arbn.length, RemoteOK: rmok.length };
+  const sources = { Remotive: rmtv.length, Arbeitnow: arbn.length, RemoteOK: rmok.length, Himalayas: hima.length };
   if (rows.length === 0) return { ok: true, upserted: 0, sources };
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
