@@ -167,8 +167,8 @@ function Landing() {
             </div>
             <a
               href="/jobs"
-              className="border-b-2 pb-1 text-sm font-bold uppercase tracking-widest transition-all hover:border-[var(--eduma-red)]"
-              style={{ color: "var(--eduma-red)", borderColor: "color-mix(in oklab, var(--eduma-red) 20%, transparent)" }}
+              className="border-b-2 pb-1 text-sm font-bold uppercase tracking-widest transition-all hover:border-[var(--eduma-red-strong)]"
+              style={{ color: "var(--eduma-red-strong)", borderColor: "color-mix(in oklab, var(--eduma-red-strong) 30%, transparent)" }}
             >
               View All Categories
             </a>
@@ -186,7 +186,7 @@ function Landing() {
                       className="mb-8 flex size-14 items-center justify-center rounded-2xl transition-colors group-hover:bg-[var(--eduma-ink)]"
                       style={{ background: "var(--eduma-red-soft)" }}
                     >
-                      <Icon className="size-6 transition-colors group-hover:text-white" style={{ color: "var(--eduma-red)" }} />
+                      <Icon className="size-6 transition-colors group-hover:text-white" style={{ color: "var(--eduma-red-strong)" }} />
                     </div>
                     <h3 className="mb-3 text-2xl font-bold" style={{ color: "var(--eduma-ink)" }}>
                       {d.name}
@@ -225,8 +225,8 @@ function Landing() {
                     <p className="text-sm text-muted-foreground">{j.meta}</p>
                   </div>
                   <div
-                    className="rounded-full px-4 py-1.5 text-xs font-bold transition-colors group-hover:bg-[var(--eduma-red)] group-hover:text-white"
-                    style={{ background: "var(--eduma-red-soft)", color: "var(--eduma-red)" }}
+                    className="rounded-full px-4 py-1.5 text-xs font-bold transition-colors group-hover:bg-[var(--eduma-red-strong)] group-hover:text-white"
+                    style={{ background: "var(--eduma-red-soft)", color: "var(--eduma-red-strong)" }}
                   >
                     {j.tag}
                   </div>
@@ -284,7 +284,7 @@ function Landing() {
             <a
               href="/auth"
               className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[var(--eduma-navy)]"
-              style={{ background: "var(--eduma-red)" }}
+              style={{ background: "var(--eduma-red-strong)" }}
             >
               Create free account <ArrowRight className="size-4" />
             </a>
