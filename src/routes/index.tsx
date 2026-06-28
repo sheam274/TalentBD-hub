@@ -1,16 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart, CheckCircle2, Sparkles } from "lucide-react";
-import {
-  HeroCenteredEditorial,
-  HeroMarketplaceGrid,
-  HeroSearchImmersive,
-  HeroDualPath,
-} from "@/components/hero/HeroVariants";
-
-// Swap the hero template by changing this value:
-// "asymmetric" (default) | "editorial" | "marketplace" | "search" | "dual"
-const HERO_VARIANT: "asymmetric" | "editorial" | "marketplace" | "search" | "dual" = "asymmetric";
+import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
