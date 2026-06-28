@@ -101,7 +101,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-5">
             {columns.map((col) => (
               <div key={col.title}>
-                <h3 className="font-mono text-xs font-bold uppercase tracking-widest" style={{ color: "var(--eduma-red)" }}>{col.title}</h3>
+                <h2 className="font-mono text-xs font-bold uppercase tracking-widest" style={{ color: "var(--eduma-red)" }}>{col.title}</h2>
                 <ul className="mt-4 space-y-3 text-sm text-white/75">
                   {col.links.map((l) => (
                     <li key={l.label}>

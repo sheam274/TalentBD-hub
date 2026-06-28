@@ -51,7 +51,7 @@ function Companies() {
               <div className="flex items-center gap-3">
                 <CompanyLogo name={c.name} url={c.logo_url} website={c.website} size={48} />
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold group-hover:underline truncate">{c.name}</h3>
+                  <h2 className="text-base font-semibold group-hover:underline truncate">{c.name}</h2>
                   <p className="text-xs text-muted-foreground truncate">
                     {[c.industry, c.location].filter(Boolean).join(" · ") || "—"}
                   </p>
