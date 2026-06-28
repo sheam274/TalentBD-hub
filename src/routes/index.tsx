@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 
@@ -100,22 +100,24 @@ function Landing() {
 
           {/* CTAs */}
           <div className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row">
-            <a
-              href="/jobs"
-              className="w-full rounded-[10px] px-8 py-4 text-center text-sm font-semibold tracking-wide text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 sm:w-auto"
+            <Link
+              to="/jobs"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] px-8 py-4 text-center text-sm font-semibold tracking-wide text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] sm:w-auto"
               style={{
                 background: "var(--eduma-red)",
                 boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red) 50%, transparent)",
               }}
             >
-              Explore Jobs
-            </a>
-            <a
-              href="/learn"
-              className="w-full rounded-[10px] border border-white/10 bg-white/5 px-8 py-4 text-center text-sm font-semibold tracking-wide text-white backdrop-blur-md transition-all duration-300 hover:border-[var(--eduma-gold)] hover:bg-white/10 sm:w-auto"
+              Browse Live Jobs
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+            <Link
+              to="/learn"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] border border-white/15 bg-white/5 px-8 py-4 text-center text-sm font-semibold tracking-wide text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--eduma-gold)] hover:bg-white/10 hover:text-[var(--eduma-gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] sm:w-auto"
             >
-              Start Learning
-            </a>
+              Start Learning Free
+              <GraduationCap className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+            </Link>
           </div>
 
           {/* Trust */}
