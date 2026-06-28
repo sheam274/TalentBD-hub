@@ -25,9 +25,11 @@ export function ChatAssistant() {
   const endRef = useRef<HTMLDivElement>(null);
   const [lastModel, setLastModel] = useState<string | null>(null);
   const [lastFellBack, setLastFellBack] = useState(false);
+  const [geminiMode, setGeminiMode] = useState(false);
 
   const send = useMutation({
-    mutationFn: (next: Msg[]) => chatFn({ data: { messages: next } }),
+    mutationFn: (next: Msg[]) =>
+      chatFn({ data: { messages: next, mode: geminiMode ? "gemini" : "coach" } }),
     onSuccess: (res) => {
       setMessages((prev) => [
         ...prev,
@@ -99,6 +101,16 @@ export function ChatAssistant() {
                 )}
               </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setGeminiMode((v) => !v)}
+              title="Toggle pure Gemini mode (minimal system prompt)"
+              className={`rounded-full px-2 py-1 text-[10px] font-semibold transition ${
+                geminiMode ? "bg-white text-slate-900" : "bg-white/20 text-white hover:bg-white/30"
+              }`}
+            >
+              {geminiMode ? "Gemini" : "Coach"}
+            </button>
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto p-3" style={{ background: "color-mix(in oklab, var(--color-primary) 4%, white)" }}>

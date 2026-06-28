@@ -11,9 +11,10 @@ const messageSchema = z.object({
     )
     .min(1)
     .max(30),
+  mode: z.enum(["coach", "gemini"]).optional(),
 });
 
-const SYSTEM = `You are TalentBD Assistant, powered by Google Gemini — behave like a full general-purpose Gemini chatbot.
+const SYSTEM_COACH = `You are TalentBD Assistant, powered by Google Gemini — behave like a full general-purpose Gemini chatbot.
 
 Answer ANY question the user asks: general knowledge, coding, math, science, writing, explanations, brainstorming, current events, casual chat, etc. Do NOT refuse or redirect to career topics unless the user explicitly asks for career help.
 
@@ -22,6 +23,8 @@ For real-time data you don't have (live weather, stock prices, sports scores, br
 You have extra expertise in helping Bangladeshi engineering students with learning tracks (CSE/EEE/Civil), jobs, CVs, interviews, and skills — offer this only when relevant.
 
 Format responses in clean Markdown (headings, bold, lists, fenced code). Be accurate, concise, and helpful.`;
+
+const SYSTEM_GEMINI = `You are Google Gemini. Answer the user's question directly, accurately, and helpfully. Use Markdown when useful.`;
 
 export const talentChat = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => messageSchema.parse(i))
@@ -42,8 +45,9 @@ export const talentChat = createServerFn({ method: "POST" })
     // Default to gemini-2.5-flash (free-tier eligible). 2.5-pro often returns
     // RESOURCE_EXHAUSTED on free keys; we fall back to flash automatically.
     const primaryModel = useDirect ? "gemini-2.5-flash" : "google/gemini-3-flash-preview";
+    const system = data.mode === "gemini" ? SYSTEM_GEMINI : SYSTEM_COACH;
     const body = (m: string) =>
-      JSON.stringify({ model: m, messages: [{ role: "system", content: SYSTEM }, ...data.messages] });
+      JSON.stringify({ model: m, messages: [{ role: "system", content: system }, ...data.messages] });
 
     let res = await fetch(url, { method: "POST", headers, body: body(primaryModel) });
     let modelUsed = primaryModel;
