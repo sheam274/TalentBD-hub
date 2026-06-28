@@ -133,6 +133,31 @@ function Jobs() {
   const all = q.data ?? [];
   // Light stemmer so "engineering" matches "engineer", "developers" matches "developer", etc.
   const stem = (w: string) => w.replace(/(ing|ers|er|s)$/i, "");
+  // Relevance score: title hits > tags/category > company > description; plus recency & featured boosts.
+  const scoreJob = (fields: { title?: string; company?: string; category?: string; tags?: string[]; description?: string; date?: string | null; featured?: boolean }, tokens: string[]) => {
+    const title = (fields.title ?? "").toLowerCase();
+    const company = (fields.company ?? "").toLowerCase();
+    const category = (fields.category ?? "").toLowerCase();
+    const tags = (fields.tags ?? []).join(" ").toLowerCase();
+    const desc = (fields.description ?? "").toLowerCase();
+    let s = 0;
+    for (const t of tokens) {
+      if (!t) continue;
+      if (title.startsWith(t)) s += 14;
+      else if (title.includes(` ${t}`) || title.includes(`${t} `)) s += 10;
+      else if (title.includes(t)) s += 7;
+      if (tags.includes(t)) s += 5;
+      if (category.includes(t)) s += 4;
+      if (company.includes(t)) s += 3;
+      if (desc.includes(t)) s += 1;
+    }
+    if (fields.featured) s += 8;
+    if (fields.date) {
+      const days = (Date.now() - new Date(fields.date).getTime()) / 86_400_000;
+      if (!Number.isNaN(days) && days >= 0) s += Math.max(0, 10 - Math.min(10, days / 3));
+    }
+    return s;
+  };
   const filtered = useMemo(() => {
     const tokens = debouncedSearch
       .toLowerCase()
@@ -140,7 +165,7 @@ function Jobs() {
       .filter((t) => t.length >= 2)
       .map(stem);
     const loc = location.trim().toLowerCase();
-    return all.filter((j: any) => {
+    const matched = all.filter((j: any) => {
       if (tokens.length) {
         const hay = [
           j.job_title,
@@ -173,6 +198,24 @@ function Jobs() {
       if (remote === "onsite" && j.is_remote) return false;
       return true;
     });
+    if (!tokens.length) {
+      // No query: featured first, then newest.
+      return [...matched].sort((a: any, b: any) => {
+        if (!!b.is_featured !== !!a.is_featured) return b.is_featured ? 1 : -1;
+        return new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime();
+      });
+    }
+    return [...matched]
+      .map((j: any) => ({
+        j,
+        s: scoreJob({
+          title: j.job_title, company: j.company, category: j.category,
+          tags: [...(j.requirements ?? []), ...(j.tags ?? [])],
+          description: j.description, date: j.created_at, featured: !!j.is_featured,
+        }, tokens),
+      }))
+      .sort((a, b) => b.s - a.s)
+      .map((x) => x.j);
   }, [all, debouncedSearch, category, location, exp, type, remote]);
 
   const featured = filtered.filter((j: any) => j.is_featured);
