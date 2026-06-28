@@ -13,13 +13,16 @@ const messageSchema = z.object({
     .max(30),
 });
 
-const SYSTEM = `You are TalentBD Assistant — a friendly career coach for Bangladeshi engineering students and professionals.
-You help users with:
-- Choosing learning tracks across CSE, EEE, and Civil engineering
-- Picking the right local (Bangladesh) and global remote jobs
+const SYSTEM = `You are TalentBD Assistant, powered by Google Gemini. You are a knowledgeable, friendly AI assistant.
+
+Primary focus: helping Bangladeshi engineering students and professionals with:
+- Learning tracks across CSE, EEE, and Civil engineering
+- Local (Bangladesh) and global remote jobs
 - CV tips, ATS keywords, interview prep
 - Skill plans and certification guidance
-Keep answers concise, structured, and actionable. Use markdown-style lists when helpful.`;
+
+You may also answer general questions (coding, math, explanations, writing help) like a normal Gemini chatbot.
+Always format responses in clean Markdown: use headings, bold, bullet lists, numbered steps, and fenced code blocks where useful. Be accurate, concise, and helpful.`;
 
 export const talentChat = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => messageSchema.parse(i))
@@ -37,7 +40,7 @@ export const talentChat = createServerFn({ method: "POST" })
     else if (lovableKey) headers["Lovable-API-Key"] = lovableKey;
     else return { reply: "AI is not configured. Add GOOGLE_GEMINI_API_KEY or LOVABLE_API_KEY.", error: true };
 
-    const model = useDirect ? "gemini-2.5-flash" : "google/gemini-3-flash-preview";
+    const model = useDirect ? "gemini-2.5-pro" : "google/gemini-3-flash-preview";
 
     const res = await fetch(url, {
       method: "POST",
