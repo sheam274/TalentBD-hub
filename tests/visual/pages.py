@@ -60,6 +60,10 @@ async def settle(page: Page) -> None:
         await page.wait_for_load_state("networkidle", timeout=5000)
     except Exception:
         pass
+    try:
+        await page.evaluate("document.fonts && document.fonts.ready")
+    except Exception:
+        pass
     await page.wait_for_timeout(400)
 
 
