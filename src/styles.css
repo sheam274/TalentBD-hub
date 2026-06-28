@@ -39,6 +39,36 @@
   --color-ring: var(--ring);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
+  /* Eduma extended palette — Tailwind utilities like `bg-eduma-red`, `text-success`, `bg-info-soft` */
+  --color-eduma-red: var(--eduma-red);
+  --color-eduma-red-hover: var(--eduma-red-hover);
+  --color-eduma-red-soft: var(--eduma-red-soft);
+  --color-eduma-gold: var(--eduma-gold);
+  --color-eduma-gold-soft: var(--eduma-gold-soft);
+  --color-eduma-ink: var(--eduma-ink);
+  --color-eduma-ink-2: var(--eduma-ink-2);
+  --color-eduma-navy: var(--eduma-navy);
+  --color-eduma-blue: var(--eduma-blue);
+  --color-eduma-teal: var(--eduma-teal);
+  --color-eduma-green: var(--eduma-green);
+  --color-eduma-orange: var(--eduma-orange);
+  --color-eduma-purple: var(--eduma-purple);
+  --color-eduma-canvas: var(--eduma-canvas);
+  --color-eduma-line: var(--eduma-line);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-soft: var(--info-soft);
+  --color-danger: var(--destructive);
+  --color-danger-foreground: var(--destructive-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-neutral-soft: var(--neutral-soft);
+  --color-neutral-strong: var(--neutral-strong);
   --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
   /* Eduma-aligned shadow scale — soft red-tinted corporate depth */
