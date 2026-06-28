@@ -3,6 +3,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { MessageCircle, X, Send, Sparkles, Loader2 } from "lucide-react";
 import { talentChat } from "@/lib/chat.functions";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -87,12 +89,20 @@ export function ChatAssistant() {
             {messages.map((m, i) => (
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm ${
-                    m.role === "user" ? "rounded-br-sm text-white" : "rounded-bl-sm border bg-white"
+                  className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
+                    m.role === "user"
+                      ? "whitespace-pre-wrap rounded-br-sm text-white"
+                      : "rounded-bl-sm border bg-white"
                   }`}
                   style={m.role === "user" ? { background: "var(--color-primary)" } : {}}
                 >
-                  {m.content}
+                  {m.role === "user" ? (
+                    m.content
+                  ) : (
+                    <div className="prose prose-sm max-w-none prose-pre:bg-slate-900 prose-pre:text-slate-50 prose-code:before:hidden prose-code:after:hidden">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
