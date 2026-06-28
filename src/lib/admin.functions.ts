@@ -82,13 +82,36 @@ export const adminStats = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ count: users }, { count: modules }, { count: jobs }, { count: creds }] = await Promise.all([
-      supabaseAdmin.from("profiles").select("*", { count: "exact", head: true }),
-      supabaseAdmin.from("learning_modules").select("*", { count: "exact", head: true }),
-      supabaseAdmin.from("job_marketplace").select("*", { count: "exact", head: true }),
-      supabaseAdmin.from("user_credentials").select("*", { count: "exact", head: true }),
+    const head = { count: "exact" as const, head: true };
+    const [
+      users, modules, jobs, creds, companies, applications,
+      employers, interviews, letters, liveJobs, cachedJobs,
+    ] = await Promise.all([
+      supabaseAdmin.from("profiles").select("*", head),
+      supabaseAdmin.from("learning_modules").select("*", head),
+      supabaseAdmin.from("job_marketplace").select("*", head),
+      supabaseAdmin.from("user_credentials").select("*", head),
+      supabaseAdmin.from("companies").select("*", head),
+      supabaseAdmin.from("job_applications").select("*", head),
+      supabaseAdmin.from("user_roles").select("*", head).eq("role", "employer"),
+      supabaseAdmin.from("interview_sessions").select("*", head),
+      supabaseAdmin.from("appointment_letters").select("*", head),
+      supabaseAdmin.from("job_marketplace").select("*", head).eq("is_live", true),
+      supabaseAdmin.from("external_jobs_cache").select("*", head),
     ]);
-    return { users: users ?? 0, modules: modules ?? 0, jobs: jobs ?? 0, credentials: creds ?? 0 };
+    return {
+      users: users.count ?? 0,
+      employers: employers.count ?? 0,
+      companies: companies.count ?? 0,
+      jobs: jobs.count ?? 0,
+      liveJobs: liveJobs.count ?? 0,
+      cachedJobs: cachedJobs.count ?? 0,
+      applications: applications.count ?? 0,
+      interviews: interviews.count ?? 0,
+      letters: letters.count ?? 0,
+      modules: modules.count ?? 0,
+      credentials: creds.count ?? 0,
+    };
   });
 
 /* Admin views for new workflow tables */
