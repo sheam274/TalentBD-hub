@@ -1,12 +1,15 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
-@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/800.css";
 @import "@fontsource/space-grotesk/600.css";
 @import "@fontsource/space-grotesk/700.css";
 @import "@fontsource/dm-sans/400.css";
 @import "@fontsource/dm-sans/500.css";
-@import "@fontsource/dm-sans/700.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -36,45 +39,46 @@
   --color-ring: var(--ring);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  /* BeTheme-aligned shadow scale — soft, layered, corporate */
-  --shadow-2xs: 0 1px 0 rgba(15, 27, 61, 0.04);
-  --shadow-xs: 0 1px 2px rgba(15, 27, 61, 0.06);
-  --shadow-sm: 0 1px 2px rgba(15, 27, 61, 0.06), 0 1px 3px rgba(15, 27, 61, 0.05);
-  --shadow-md: 0 4px 8px -2px rgba(15, 27, 61, 0.08), 0 2px 4px -2px rgba(15, 27, 61, 0.06);
-  --shadow-lg: 0 12px 24px -8px rgba(15, 27, 61, 0.12), 0 4px 8px -4px rgba(15, 27, 61, 0.06);
-  --shadow-xl: 0 24px 48px -12px rgba(15, 27, 61, 0.18), 0 8px 16px -8px rgba(15, 27, 61, 0.08);
-  --shadow-2xl: 0 40px 80px -20px rgba(15, 27, 61, 0.25);
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  /* Eduma-aligned shadow scale — soft red-tinted corporate depth */
+  --shadow-2xs: 0 1px 0 rgba(17, 17, 39, 0.04);
+  --shadow-xs: 0 1px 2px rgba(17, 17, 39, 0.06);
+  --shadow-sm: 0 2px 4px rgba(17, 17, 39, 0.06), 0 1px 2px rgba(17, 17, 39, 0.05);
+  --shadow-md: 0 6px 14px -4px rgba(17, 17, 39, 0.10), 0 2px 4px -2px rgba(17, 17, 39, 0.06);
+  --shadow-lg: 0 16px 32px -10px rgba(17, 17, 39, 0.14), 0 6px 12px -6px rgba(17, 17, 39, 0.08);
+  --shadow-xl: 0 28px 56px -14px rgba(254, 82, 82, 0.18), 0 10px 20px -10px rgba(17, 17, 39, 0.10);
+  --shadow-2xl: 0 48px 96px -24px rgba(17, 17, 39, 0.28);
 }
 
 :root {
-  /* BeTheme moderate radius — 8px base, scales to 4/6/8/12 across utilities */
-  --radius: 0.5rem;
-  /* Navy Trust — BeTheme-inspired premium corporate palette
-     Locked tokens: #0f1b3d (deep navy ink), #1e3a5f (navy depth),
-     #3b6fa0 (steel blue brand), #e8edf3 (cool whitespace). */
-  --background: #e8edf3;                /* cool corporate canvas */
-  --surface: #ffffff;                    /* white cards */
-  --foreground: #1e3a5f;                 /* mid navy body */
-  --ink: #0f1b3d;                        /* deep navy headings */
+  /* Eduma rounded radius — 10px base, scales to 6/8/10/14 */
+  --radius: 0.625rem;
+  /* Eduma (Education WP) palette
+     Locked tokens: #FE5252 (signature coral red CTA),
+     #FFB606 (gold rating/highlight), #111127 (deep ink navy),
+     #F5F5F7 (cool whitespace), #FFFFFF (card surface). */
+  --background: #f5f5f7;                 /* off-white canvas */
+  --surface: #ffffff;                     /* white cards */
+  --foreground: #4b4b63;                  /* slate body text */
+  --ink: #111127;                         /* deep ink headings */
   --card: #ffffff;
-  --card-foreground: #1e3a5f;
+  --card-foreground: #1e1e2c;
   --popover: #ffffff;
-  --popover-foreground: #1e3a5f;
-  --primary: #0f1b3d;                    /* deep navy primary */
+  --popover-foreground: #1e1e2c;
+  --primary: #fe5252;                     /* Eduma signature red */
   --primary-foreground: #ffffff;
-  --accent: #3b6fa0;                     /* steel blue accent */
-  --accent-foreground: #ffffff;
-  --secondary: #e8edf3;
-  --secondary-foreground: #0f1b3d;
-  --muted: #e8edf3;
-  --muted-foreground: #64748b;
-  --destructive: oklch(0.58 0.22 25);
+  --accent: #ffb606;                      /* Eduma gold */
+  --accent-foreground: #111127;
+  --secondary: #111127;                   /* dark sections */
+  --secondary-foreground: #ffffff;
+  --muted: #eef0f4;
+  --muted-foreground: #6b7280;
+  --destructive: #d92d20;
   --destructive-foreground: #ffffff;
-  --border: #d8dee9;
-  --input: #d8dee9;
-  --ring: #3b6fa0;
+  --border: #e6e7ee;
+  --input: #e6e7ee;
+  --ring: #fe5252;
 }
 
 @layer base {
@@ -82,7 +86,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -91,16 +95,16 @@
     overflow-x: hidden;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
     color: var(--color-ink);
     font-weight: 700;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
   }
   button, input, select, textarea, optgroup {
-    font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   button {
-    font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
     font-weight: 600;
     letter-spacing: -0.01em;
   }
