@@ -132,40 +132,61 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
     const [remotive, arbeitnow, remoteok] = await Promise.all([remotiveP, arbeitnowP, remoteokP]);
     let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok];
 
-    // Client-side search filter (OR across tokens so partial matches still
-    // surface live results — e.g. "network engineering" matches "Network
-    // Engineer", "Senior Engineer", "Network Admin").
-    if (data.search) {
-      const tokens = data.search.toLowerCase().split(/\s+/).filter((t) => t.length >= 2);
-      if (tokens.length) {
-        combined = combined.filter((j) => {
-          const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
-          return tokens.some((t) => hay.includes(t));
-        });
-      }
-    }
-
-    // Interleave sources for diversity (cached first), then cap
-    const buckets = [cached, remotive, arbeitnow, remoteok];
-    const interleaved: any[] = [];
+    // Dedupe by id (cached first wins).
     const seen = new Set<string>();
-    let added = true;
-    let i = 0;
-    while (added) {
-      added = false;
-      for (const b of buckets) {
-        const item = b[i];
-        if (item && !seen.has(item.id)) {
-          if (!data.search || combined.includes(item)) {
-            interleaved.push(item);
-            seen.add(item.id);
-            added = true;
-          }
-        }
+    const deduped = combined.filter((j) => {
+      if (!j?.id || seen.has(j.id)) return false;
+      seen.add(j.id);
+      return true;
+    });
+
+    // ---- Server-side relevance scoring + sorting ----
+    const stem = (w: string) => w.replace(/(ing|ers|er|s)$/i, "");
+    const tokens = (data.search ?? "")
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .filter((t) => t.length >= 2)
+      .map(stem);
+
+    const scoreOf = (j: any) => {
+      const title = (j.title ?? "").toLowerCase();
+      const company = (j.company ?? "").toLowerCase();
+      const category = (j.category ?? "").toLowerCase();
+      const tagStr = (j.tags ?? []).join(" ").toLowerCase();
+      let s = 0;
+      for (const t of tokens) {
+        if (title.startsWith(t)) s += 14;
+        else if (title.includes(` ${t}`) || title.includes(`${t} `)) s += 10;
+        else if (title.includes(t)) s += 7;
+        if (tagStr.includes(t)) s += 5;
+        if (category.includes(t)) s += 4;
+        if (company.includes(t)) s += 3;
       }
-      i++;
-      if (interleaved.length >= limit * 2) break;
+      if (j.publication_date) {
+        const days = (Date.now() - new Date(j.publication_date).getTime()) / 86_400_000;
+        if (!Number.isNaN(days) && days >= 0) s += Math.max(0, 10 - Math.min(10, days / 3));
+      }
+      return s;
+    };
+
+    let pool = deduped;
+    if (tokens.length) {
+      // Keep only jobs with at least one keyword hit anywhere searchable.
+      pool = deduped.filter((j) => {
+        const hay = `${j.title ?? ""} ${j.company ?? ""} ${j.category ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+        return tokens.some((t) => hay.includes(t));
+      });
     }
 
-    return interleaved.slice(0, limit * 2);
+    const scored = pool
+      .map((j) => ({ j, s: scoreOf(j) }))
+      .sort((a, b) => {
+        if (b.s !== a.s) return b.s - a.s;
+        const da = a.j.publication_date ? new Date(a.j.publication_date).getTime() : 0;
+        const db = b.j.publication_date ? new Date(b.j.publication_date).getTime() : 0;
+        return db - da;
+      })
+      .map((x) => x.j);
+
+    return scored.slice(0, limit * 2);
   });
