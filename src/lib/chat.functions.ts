@@ -47,19 +47,23 @@ export const talentChat = createServerFn({ method: "POST" })
       JSON.stringify({ model: m, messages: [{ role: "system", content: SYSTEM }, ...data.messages] });
 
     let res = await fetch(url, { method: "POST", headers, body: body(primaryModel) });
+    let modelUsed = primaryModel;
+    let fellBack = false;
     if (res.status === 429 && useDirect) {
       res = await fetch(url, { method: "POST", headers, body: body("gemini-2.5-flash-lite") });
+      modelUsed = "gemini-2.5-flash-lite";
+      fellBack = true;
     }
 
-    if (res.status === 429) return { reply: "Gemini quota exceeded. Try again shortly.", error: true };
+    if (res.status === 429) return { reply: "Gemini quota exceeded. Try again shortly.", error: true, model: modelUsed, fellBack };
     if (res.status === 402) return { reply: "AI credits exhausted. Please contact support.", error: true };
     if (!res.ok) {
       const t = await res.text().catch(() => "");
       console.error("AI gateway error", res.status, t);
-      return { reply: "AI service is temporarily unavailable.", error: true };
+      return { reply: "AI service is temporarily unavailable.", error: true, model: modelUsed, fellBack };
     }
 
     const json = await res.json();
     const reply: string = json?.choices?.[0]?.message?.content ?? "I had trouble generating a response.";
-    return { reply, error: false };
+    return { reply, error: false, model: json?.model ?? modelUsed, fellBack };
   });
