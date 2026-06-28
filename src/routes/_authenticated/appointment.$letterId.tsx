@@ -50,7 +50,7 @@ function Page() {
           {l.start_date && <p><strong>Start date:</strong> {new Date(l.start_date).toLocaleDateString()}</p>}
         </section>
         <section className="mt-5 whitespace-pre-wrap text-sm leading-7">{l.body}</section>
-        {l.accepted_at && <p className="mt-6 rounded-md bg-emerald-50 p-3 text-sm text-emerald-700">Accepted on {new Date(l.accepted_at).toLocaleString()}</p>}
+        {l.accepted_at && <p className="mt-6 rounded-md badge-success p-3 text-sm">Accepted on {new Date(l.accepted_at).toLocaleString()}</p>}
       </article>
     </div>
   );

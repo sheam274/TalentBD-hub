@@ -47,7 +47,7 @@ function Page() {
             </li>
           ))}
         </ol>
-        {stage === "rejected" && <p className="mt-3 text-sm text-red-600">This application was not selected.</p>}
+        {stage === "rejected" && <p className="mt-3 text-sm text-destructive">This application was not selected.</p>}
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -75,7 +75,7 @@ function Page() {
               {l.salary && <div className="text-xs">Salary: {l.salary}</div>}
               {l.start_date && <div className="text-xs">Start: {new Date(l.start_date).toLocaleDateString()}</div>}
               <Link to="/appointment/$letterId" params={{ letterId: l.id }} className="mt-2 inline-block rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">Open letter</Link>
-              {l.accepted_at && <span className="ml-2 text-xs text-emerald-600">Accepted</span>}
+              {l.accepted_at && <span className="ml-2 text-xs text-success">Accepted</span>}
             </div>
           ))}
         </div>

@@ -111,7 +111,7 @@ function JobDetails() {
 
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
           {j.location && <span className="inline-flex items-center gap-1"><MapPin className="size-4" />{j.location}</span>}
-          {j.is_remote && <span className="rounded bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs">Remote</span>}
+          {j.is_remote && <span className="rounded badge-success px-2 py-0.5 text-xs">Remote</span>}
           {j.job_type && <span className="inline-flex items-center gap-1"><Briefcase className="size-4" />{j.job_type}</span>}
           {j.experience_level && <span className="inline-flex items-center gap-1"><GraduationCap className="size-4" />{j.experience_level}</span>}
           {j.salary_range && <span className="inline-flex items-center gap-1 font-medium" style={{ color: "var(--color-primary)" }}><DollarSign className="size-4" />{j.salary_range}</span>}

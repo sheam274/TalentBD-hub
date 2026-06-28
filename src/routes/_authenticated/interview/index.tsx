@@ -68,9 +68,9 @@ function InterviewLanding() {
                   </div>
                   <div className="flex items-center gap-3">
                     {s.status === "completed" ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700"><Trophy className="size-3" /> {s.score}%</span>
+                      <span className="inline-flex items-center gap-1 rounded-full badge-success px-2 py-0.5 text-xs font-semibold"><Trophy className="size-3" /> {s.score}%</span>
                     ) : (
-                      <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">In progress</span>
+                      <span className="rounded-full badge-warning px-2 py-0.5 text-xs font-semibold">In progress</span>
                     )}
                     <Link to="/interview/result/$sessionId" params={{ sessionId: s.id }} className="text-sm text-primary hover:underline">Open</Link>
                   </div>

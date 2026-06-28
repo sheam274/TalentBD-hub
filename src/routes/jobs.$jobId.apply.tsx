@@ -153,7 +153,7 @@ function ApplyPage() {
           </p>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
             {j.location && <span className="inline-flex items-center gap-1"><MapPin className="size-3.5" />{j.location}</span>}
-            {j.is_remote && <span className="rounded bg-emerald-100 text-emerald-700 px-2 py-0.5">Remote</span>}
+            {j.is_remote && <span className="rounded badge-success px-2 py-0.5">Remote</span>}
             {j.job_type && <span className="inline-flex items-center gap-1"><Briefcase className="size-3.5" />{j.job_type}</span>}
             {j.salary_range && <span style={{ color: "var(--color-primary)" }} className="font-medium">{j.salary_range}</span>}
           </div>

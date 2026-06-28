@@ -466,7 +466,7 @@ function Jobs() {
                   {j.category && <span>{j.category}</span>}
                   {j.job_type && <span>· {j.job_type}</span>}
                   <span>· {j.is_remote ? "🌍" : "📍"} {j.location}</span>
-                  {!j.is_remote && <span className="rounded bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
+                  {!j.is_remote && <span className="rounded badge-warning px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
                   {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
                 </div>
                 {j.tags?.length > 0 && (
@@ -526,7 +526,7 @@ function Jobs() {
               </div>
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                 {j.location && <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{j.location}</span>}
-                {j.is_remote && <span className="rounded bg-emerald-100 text-emerald-700 px-2 py-0.5">Remote</span>}
+                {j.is_remote && <span className="rounded badge-success px-2 py-0.5">Remote</span>}
                 {j.job_type && <span className="inline-flex items-center gap-1"><Briefcase className="size-3" />{j.job_type}</span>}
                 {j.experience_level && <span className="inline-flex items-center gap-1"><GraduationCap className="size-3" />{j.experience_level}</span>}
                 {j.category && <span>· {j.category}</span>}
@@ -582,7 +582,7 @@ function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => v
       </div>
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         {j.location && <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{j.location}</span>}
-        {j.is_remote && <span className="rounded bg-emerald-100 text-emerald-700 px-2 py-0.5">Remote</span>}
+        {j.is_remote && <span className="rounded badge-success px-2 py-0.5">Remote</span>}
         {j.job_type && <span className="inline-flex items-center gap-1"><Briefcase className="size-3" />{j.job_type}</span>}
         {j.experience_level && <span className="inline-flex items-center gap-1"><GraduationCap className="size-3" />{j.experience_level}</span>}
         {daysLeft !== null && <span className={`inline-flex items-center gap-1 ${daysLeft <= 3 ? "text-destructive font-semibold" : ""}`}><Clock className="size-3" />{daysLeft > 0 ? `${daysLeft}d left` : "Closed"}</span>}
@@ -663,7 +663,7 @@ function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => v
         {j.category && <span>{j.category}</span>}
         {j.job_type && <span>· {j.job_type}</span>}
         <span>· {j.is_remote ? "🌍" : "📍"} {j.location}</span>
-        {!j.is_remote && <span className="rounded bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
+        {!j.is_remote && <span className="rounded badge-warning px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
         {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
       </div>
       {j.tags?.length > 0 && (
