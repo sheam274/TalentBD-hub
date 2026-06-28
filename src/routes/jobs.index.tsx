@@ -360,7 +360,7 @@ function Jobs() {
         <h2 className="text-lg font-semibold flex items-center gap-2">
           {featured.length ? "All jobs" : "Open positions"}
           {(category || hasFilters) && liveFiltered.length > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
               <Radio className="size-3 animate-pulse" /> {liveFiltered.length} live
             </span>
           )}
@@ -393,7 +393,7 @@ function Jobs() {
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Globe className="size-5" style={{ color: "var(--color-primary)" }} />
             Live jobs (remote & on-site)
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+            <span className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
               <Radio className="size-3 animate-pulse" /> Live
             </span>
           </h2>
@@ -655,7 +655,7 @@ function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => v
           <h3 className="font-semibold leading-tight line-clamp-2">{j.title}</h3>
           <p className="text-xs text-muted-foreground truncate">{j.company}</p>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+        <span className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
           <Radio className="size-3 animate-pulse" /> Live
         </span>
       </div>
