@@ -40,18 +40,18 @@ export const talentChat = createServerFn({ method: "POST" })
     else if (lovableKey) headers["Lovable-API-Key"] = lovableKey;
     else return { reply: "AI is not configured. Add GOOGLE_GEMINI_API_KEY or LOVABLE_API_KEY.", error: true };
 
-    const model = useDirect ? "gemini-2.5-pro" : "google/gemini-3-flash-preview";
+    // Default to gemini-2.5-flash (free-tier eligible). 2.5-pro often returns
+    // RESOURCE_EXHAUSTED on free keys; we fall back to flash automatically.
+    const primaryModel = useDirect ? "gemini-2.5-flash" : "google/gemini-3-flash-preview";
+    const body = (m: string) =>
+      JSON.stringify({ model: m, messages: [{ role: "system", content: SYSTEM }, ...data.messages] });
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        model,
-        messages: [{ role: "system", content: SYSTEM }, ...data.messages],
-      }),
-    });
+    let res = await fetch(url, { method: "POST", headers, body: body(primaryModel) });
+    if (res.status === 429 && useDirect) {
+      res = await fetch(url, { method: "POST", headers, body: body("gemini-2.5-flash-lite") });
+    }
 
-    if (res.status === 429) return { reply: "Too many requests. Please wait a moment and try again.", error: true };
+    if (res.status === 429) return { reply: "Gemini quota exceeded. Try again shortly.", error: true };
     if (res.status === 402) return { reply: "AI credits exhausted. Please contact support.", error: true };
     if (!res.ok) {
       const t = await res.text().catch(() => "");
