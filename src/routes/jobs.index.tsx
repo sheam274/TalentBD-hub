@@ -226,6 +226,43 @@ function Jobs() {
   const hasFilters = !!(search || category || location || exp || type || remote !== "all");
   const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
 
+  // Apply the same UI filters to the live (external) feed so category chips,
+  // search, location, type, and remote toggle drive live jobs too.
+  const liveFiltered = useMemo(() => {
+    const tokens = debouncedSearch
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .filter((t) => t.length >= 2)
+      .map(stem);
+    const loc = location.trim().toLowerCase();
+    const typeL = type.toLowerCase();
+    const catL = category.toLowerCase();
+    return (remoteQ.data ?? []).filter((j: any) => {
+      if (remote === "remote" && !j.is_remote) return false;
+      if (remote === "onsite" && j.is_remote) return false;
+      if (loc && !(j.location ?? "").toLowerCase().includes(loc)) return false;
+      if (typeL
+          && !(j.job_type ?? "").toLowerCase().includes(typeL.replace("-", "_"))
+          && !(j.job_type ?? "").toLowerCase().includes(typeL)) return false;
+      if (catL) {
+        const catHay = `${j.category ?? ""} ${j.title ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+        const parts = catL.split(/[\s/&-]+/).filter(Boolean);
+        if (!parts.some((p) => catHay.includes(p))) return false;
+      }
+      if (!tokens.length) return true;
+      const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
+      return tokens.some((tok) => hay.includes(tok));
+    });
+  }, [remoteQ.data, debouncedSearch, category, location, exp, type, remote]);
+
+  // Live jobs to splice into the "Open positions" section so every category
+  // shows real openings even when the local DB is empty for that filter.
+  const liveForOpenPositions = useMemo(() => {
+    // Take up to 6, skipping ones we've already shown in featured (by url).
+    const seen = new Set([...featured, ...rest].map((j: any) => j.apply_url ?? j.id));
+    return liveFiltered.filter((j: any) => !seen.has(j.url)).slice(0, 6);
+  }, [liveFiltered, featured, rest]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 page-enter">
       <h1 className="text-3xl font-bold">Jobs marketplace</h1>
@@ -281,13 +318,34 @@ function Jobs() {
       )}
 
       <section className="mt-8">
-        <h2 className="text-lg font-semibold">{featured.length ? "All jobs" : "Open positions"}</h2>
+        <h2 className="text-lg font-semibold flex items-center gap-2">
+          {featured.length ? "All jobs" : "Open positions"}
+          {(category || hasFilters) && liveFiltered.length > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+              <Radio className="size-3 animate-pulse" /> {liveFiltered.length} live
+            </span>
+          )}
+        </h2>
         <div className="mt-3 grid gap-4 md:grid-cols-2">
           {rest.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} canApply={!!user} /></ScrollReveal>
           ))}
-          {filtered.length === 0 && <p className="text-sm text-muted-foreground">No jobs match those filters.</p>}
+          {liveForOpenPositions.map((j: any, i: number) => (
+            <ScrollReveal key={`live-${j.id}`} delay={(i % 4) * 60}>
+              <LiveJobCard j={j} />
+            </ScrollReveal>
+          ))}
+          {filtered.length === 0 && liveForOpenPositions.length === 0 && (
+            <p className="text-sm text-muted-foreground">No jobs match those filters.</p>
+          )}
         </div>
+        {liveFiltered.length > liveForOpenPositions.length && (
+          <div className="mt-4 text-center">
+            <a href="#live-remote-feed" className="text-xs font-semibold underline text-muted-foreground hover:text-foreground">
+              See {liveFiltered.length - liveForOpenPositions.length} more live {category || "matching"} jobs ↓
+            </a>
+        </div>
+        )}
       </section>
 
       {/* Live Remote Jobs — pulled live from Remotive public API */}
@@ -477,3 +535,46 @@ const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visible
     );
   },
 );
+
+function LiveJobCard({ j }: { j: any }) {
+  return (
+    <a href={j.url ?? "#"} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 h-full flex flex-col">
+      <div className="flex items-start gap-3">
+        {j.company_logo ? (
+          <img src={j.company_logo} alt={j.company} className="size-10 rounded-md object-contain bg-white" />
+        ) : (
+          <div className="size-10 rounded-md grid place-items-center bg-white/70 font-bold text-sm" style={{ color: "var(--color-primary)" }}>
+            {j.company?.[0] ?? "?"}
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold leading-tight line-clamp-2">{j.title}</h3>
+          <p className="text-xs text-muted-foreground truncate">{j.company}</p>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+          <Radio className="size-3 animate-pulse" /> Live
+        </span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        {j.category && <span>{j.category}</span>}
+        {j.job_type && <span>· {j.job_type}</span>}
+        <span>· {j.is_remote ? "🌍" : "📍"} {j.location}</span>
+        {!j.is_remote && <span className="rounded bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
+        {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
+      </div>
+      {j.tags?.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1">
+          {j.tags.slice(0, 4).map((t: string) => (
+            <span key={t} className="rounded border bg-white/60 px-2 py-0.5 text-[11px]">{t}</span>
+          ))}
+        </div>
+      )}
+      <div className="mt-auto pt-3 flex items-center justify-between">
+        {j.salary && <p className="text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
+        <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--color-primary)" }}>
+          View & Apply <ExternalLink className="size-3" />
+        </span>
+      </div>
+    </a>
+  );
+}
