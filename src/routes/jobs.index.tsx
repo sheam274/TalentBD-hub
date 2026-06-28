@@ -293,12 +293,11 @@ function Jobs() {
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 page-enter">
       <h1 className="text-3xl font-bold">Jobs marketplace</h1>
       <p className="mt-1 text-muted-foreground">Local Bangladesh roles + global remote engineering jobs.</p>
-      <div className="mt-2 text-xs text-muted-foreground">
-        Showing <span className="font-semibold text-foreground">{filtered.length}</span> of {all.length} local jobs
-        {hasFilters && (
-          <button onClick={clearFilters} className="ml-3 underline hover:text-foreground">Clear filters</button>
-        )}
-      </div>
+      {hasFilters && (
+        <div className="mt-2 text-xs text-muted-foreground">
+          <button onClick={clearFilters} className="underline hover:text-foreground">Clear filters</button>
+        </div>
+      )}
 
       {/* Category chips */}
       <ScrollReveal>
