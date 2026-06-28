@@ -334,17 +334,8 @@ function Jobs() {
               const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
               return tokens.some((tok) => hay.includes(tok));
             });
-            // Sort: relevance (when searching) else recency.
-            if (tokens.length) {
-              list.sort((a: any, b: any) =>
-                scoreJob({ title: b.title, company: b.company, category: b.category, tags: b.tags, date: b.publication_date }, tokens) -
-                scoreJob({ title: a.title, company: a.company, category: a.category, tags: a.tags, date: a.publication_date }, tokens),
-              );
-            } else {
-              list.sort((a: any, b: any) =>
-                new Date(b.publication_date ?? 0).getTime() - new Date(a.publication_date ?? 0).getTime(),
-              );
-            }
+            // Server returns results pre-sorted by relevance + recency, so
+            // pagination stays stable as more pages append. Don't re-sort here.
             if (tokens.length && list.length === 0) {
               return <p className="text-sm text-muted-foreground">No live jobs match "{search}".</p>;
             }
