@@ -31,14 +31,14 @@ const STATS = [
 ];
 
 const FEATURED_JOBS = [
-  { initial: "P", color: "#0f1b3d", title: "Senior Frontend Engineer", meta: "Pathao • Dhaka, BD", tag: "Full-Time" },
-  { initial: "B", color: "#3b6fa0", title: "Backend Developer", meta: "Brain Station 23 • Remote", tag: "Full-Time" },
-  { initial: "G", color: "#1e3a5f", title: "Product Designer", meta: "Grameenphone • Hybrid", tag: "Contract" },
+  { initial: "P", color: "var(--eduma-ink)",   title: "Senior Frontend Engineer", meta: "Pathao • Dhaka, BD", tag: "Full-Time" },
+  { initial: "B", color: "var(--eduma-red)",   title: "Backend Developer",        meta: "Brain Station 23 • Remote", tag: "Full-Time" },
+  { initial: "G", color: "var(--eduma-navy)",  title: "Product Designer",         meta: "Grameenphone • Hybrid", tag: "Contract" },
 ];
 
 const FEATURED_MODULES = [
-  { tag: "Featured", title: "Full-Stack Web Development", desc: "Master React, Node and modern deployment workflows.", bg: "#1e3a5f", href: "/learn#cse" },
-  { tag: "Popular", title: "Power Systems Essentials", desc: "From transmission to smart grids, taught by industry leads.", bg: "#3b6fa0", href: "/learn#eee" },
+  { tag: "Featured", title: "Full-Stack Web Development", desc: "Master React, Node and modern deployment workflows.", bg: "var(--eduma-ink)", href: "/learn#cse" },
+  { tag: "Popular",  title: "Power Systems Essentials",   desc: "From transmission to smart grids, taught by industry leads.", bg: "var(--eduma-red)", href: "/learn#eee" },
 ];
 
 function Landing() {
