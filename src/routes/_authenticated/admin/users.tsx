@@ -104,7 +104,7 @@ function AdminUsers() {
           </thead>
           <tbody>
             {filtered.map((p: any) => {
-              const userCreds = data.credentials.filter((c: any) => c.user_id === p.id);
+              const userCreds = (data?.credentials ?? []).filter((c: any) => c.user_id === p.id);
               const roles = rolesOf(p.id);
               return (
                 <tr key={p.id} className="border-t">
