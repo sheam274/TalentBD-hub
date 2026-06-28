@@ -1,10 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { applyToJob, getJobPublic, getMyApplicationForJob } from "@/lib/jobs.functions";
+import { getJobPublic, getMyApplicationForJob } from "@/lib/jobs.functions";
 import { useAuth } from "@/lib/auth-context";
-import { toast } from "sonner";
 import {
   Briefcase, MapPin, Clock, GraduationCap, Star, ArrowLeft, Building2, DollarSign, CalendarDays, CheckCircle2,
 } from "lucide-react";
@@ -43,11 +41,9 @@ function statusColor(s: string) {
 function JobDetails() {
   const { jobId } = Route.useParams();
   const { user } = useAuth();
-  const qc = useQueryClient();
 
   const getJobFn = useServerFn(getJobPublic);
   const getAppFn = useServerFn(getMyApplicationForJob);
-  const applyFn = useServerFn(applyToJob);
 
   const jobQ = useQuery({
     queryKey: ["job", jobId],
@@ -57,21 +53,6 @@ function JobDetails() {
     queryKey: ["my-app", jobId],
     queryFn: () => getAppFn({ data: { jobId } }),
     enabled: !!user,
-  });
-
-  const [cover, setCover] = useState("");
-  const [open, setOpen] = useState(false);
-
-  const apply = useMutation({
-    mutationFn: () => applyFn({ data: { jobId, coverNote: cover } }),
-    onSuccess: () => {
-      toast.success("Application submitted");
-      setOpen(false);
-      setCover("");
-      qc.invalidateQueries({ queryKey: ["my-app", jobId] });
-      qc.invalidateQueries({ queryKey: ["my-apps"] });
-    },
-    onError: (e: any) => toast.error(e.message),
   });
 
   if (jobQ.isLoading) return <p className="mx-auto max-w-4xl px-4 py-10 text-sm text-muted-foreground">Loading job…</p>;
@@ -114,13 +95,14 @@ function JobDetails() {
                 <Link to="/my-applications" className="text-xs underline text-muted-foreground">Track in dashboard →</Link>
               </div>
             ) : user ? (
-              <button
-                onClick={() => setOpen(true)}
+              <Link
+                to="/jobs/$jobId/apply"
+                params={{ jobId }}
                 className="rounded-md px-5 py-2 text-sm font-semibold text-white shadow"
                 style={{ background: "var(--color-primary)" }}
               >
                 Apply for this job
-              </button>
+              </Link>
             ) : (
               <Link to="/auth" className="rounded-md border px-5 py-2 text-sm font-semibold">Sign in to apply</Link>
             )}
@@ -178,13 +160,14 @@ function JobDetails() {
           </div>
 
           {!alreadyApplied && user && (
-            <button
-              onClick={() => setOpen(true)}
-              className="w-full rounded-md px-4 py-3 text-sm font-semibold text-white shadow"
+            <Link
+              to="/jobs/$jobId/apply"
+              params={{ jobId }}
+              className="block w-full rounded-md px-4 py-3 text-center text-sm font-semibold text-white shadow"
               style={{ background: "var(--color-primary)" }}
             >
               Apply for this job
-            </button>
+            </Link>
           )}
           {alreadyApplied && (
             <Link to="/my-applications" className="block w-full rounded-md border px-4 py-3 text-center text-sm font-semibold hover:bg-white/60">
@@ -193,22 +176,6 @@ function JobDetails() {
           )}
         </aside>
       </div>
-
-      {open && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" onClick={() => setOpen(false)}>
-          <div className="glass rounded-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-semibold">Apply to {j.job_title}</h3>
-            <p className="mt-1 text-xs text-muted-foreground">Add a short cover note (optional).</p>
-            <textarea value={cover} onChange={(e) => setCover(e.target.value)} rows={5} className="mt-3 w-full rounded-md border px-3 py-2 text-sm" placeholder="Why you're a great fit…" />
-            <div className="mt-3 flex justify-end gap-2">
-              <button onClick={() => setOpen(false)} className="rounded-md border px-3 py-1.5 text-sm">Cancel</button>
-              <button onClick={() => apply.mutate()} disabled={apply.isPending} className="rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>
-                {apply.isPending ? "Submitting…" : "Submit application"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
