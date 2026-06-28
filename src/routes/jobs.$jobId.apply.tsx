@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { applyToJob, getJobPublic, getMyApplicationForJob } from "@/lib/jobs.functions";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
@@ -53,15 +53,48 @@ function ApplyPage() {
     enabled: !!user,
   });
 
+  const storageKey = `talentbd:apply-draft:${jobId}`;
   const [cover, setCover] = useState("");
   const [method, setMethod] = useState<"internal" | "external">("internal");
   const [error, setError] = useState<string | null>(null);
+  const hydrated = useRef(false);
+
+  // Load draft once on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (raw) {
+        const saved = JSON.parse(raw) as { cover?: string; method?: "internal" | "external" };
+        if (typeof saved.cover === "string") setCover(saved.cover);
+        if (saved.method === "internal" || saved.method === "external") setMethod(saved.method);
+      }
+    } catch {
+      /* ignore */
+    }
+    hydrated.current = true;
+  }, [storageKey]);
+
+  // Persist draft on change (after hydration)
+  useEffect(() => {
+    if (typeof window === "undefined" || !hydrated.current) return;
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify({ cover, method }));
+    } catch {
+      /* ignore quota */
+    }
+  }, [cover, method, storageKey]);
 
   const apply = useMutation({
     mutationFn: (vars: { method: "internal" | "external" }) =>
       applyFn({ data: { jobId, coverNote: cover.trim(), method: vars.method } }),
     onSuccess: (_res, vars) => {
       toast.success("Application submitted");
+      try {
+        if (typeof window !== "undefined") window.localStorage.removeItem(storageKey);
+      } catch {
+        /* ignore */
+      }
       qc.invalidateQueries({ queryKey: ["my-app", jobId] });
       qc.invalidateQueries({ queryKey: ["my-apps"] });
       if (vars.method === "external" && externalUrl) {
