@@ -137,8 +137,8 @@ export function SiteFooter() {
             <a href="/" className="transition-colors hover:text-white">Terms</a>
             <a href="/" className="transition-colors hover:text-white">Cookie policy</a>
             <a href="/" className="transition-colors hover:text-white">Accessibility</a>
-            <span className="flex items-center gap-1.5 font-mono text-success">
-              <span className="size-2 animate-pulse rounded-full bg-success" />
+            <span className="flex items-center gap-1.5 font-mono" style={{ color: "#4ade80" }}>
+              <span className="size-2 animate-pulse rounded-full" style={{ background: "#4ade80" }} />
               All Systems Operational
             </span>
           </div>
