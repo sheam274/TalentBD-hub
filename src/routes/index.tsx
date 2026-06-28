@@ -105,7 +105,7 @@ function Landing() {
           >
             <Link
               to="/jobs"
-              aria-label="Browse live engineering jobs"
+              aria-label="Browse Live Jobs — view live engineering roles"
               className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] px-8 py-4 text-center text-sm font-bold tracking-wide text-white shadow-lg outline-none transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--eduma-red-hover)] focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
               style={{
                 background: "var(--eduma-red-strong)",
@@ -117,7 +117,7 @@ function Landing() {
             </Link>
             <Link
               to="/learn"
-              aria-label="Start learning with free engineering modules"
+              aria-label="Start Learning Free — open engineering modules"
               className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-white/25 bg-white/10 px-8 py-4 text-center text-sm font-bold tracking-wide text-white outline-none backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--eduma-gold)] hover:bg-white/15 hover:text-[var(--eduma-gold)] focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
             >
               <span>Start Learning Free</span>
