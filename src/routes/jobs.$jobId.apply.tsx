@@ -160,11 +160,11 @@ function ApplyPage() {
         </div>
 
         {alreadyApplied ? (
-          <div className="mt-5 rounded-xl border bg-emerald-50 p-4 text-sm">
-            <p className="inline-flex items-center gap-2 font-medium text-emerald-800">
+          <div className="mt-5 rounded-xl border border-success/30 bg-success-soft p-4 text-sm">
+            <p className="inline-flex items-center gap-2 font-medium text-success">
               <CheckCircle2 className="size-4" /> You've already applied to this job ({appQ.data!.status}).
             </p>
-            <Link to="/my-applications" className="mt-2 inline-block underline text-emerald-900">Track in dashboard →</Link>
+            <Link to="/my-applications" className="mt-2 inline-block font-semibold underline text-success hover:opacity-80">Track in dashboard →</Link>
           </div>
         ) : !user ? (
           <div className="mt-5 rounded-xl border p-4 text-sm">

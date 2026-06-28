@@ -52,7 +52,7 @@ function ResultPage() {
               </div>
               {a?.answer_text && <p className="mt-2 whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-sm">{a.answer_text}</p>}
               {a?.feedback && <p className="mt-2 text-sm text-muted-foreground"><span className="font-semibold text-foreground">Feedback: </span>{a.feedback}</p>}
-              {a?.strengths && <p className="mt-1 text-sm text-emerald-700"><span className="font-semibold">Strengths: </span>{a.strengths}</p>}
+              {a?.strengths && <p className="mt-1 text-sm text-success"><span className="font-semibold">Strengths: </span>{a.strengths}</p>}
               {a?.weaknesses && <p className="mt-1 text-sm text-amber-700"><span className="font-semibold">Improve: </span>{a.weaknesses}</p>}
             </div>
           );

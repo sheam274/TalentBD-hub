@@ -258,7 +258,7 @@ function ContactBar({ d }: { d: Payload }) {
     { i: <Github className="size-3" />, t: d.github },
   ].filter((x) => x.t);
   return (
-    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-gray-700">
+    <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
       {items.map((x, i) => (
         <span key={i} className="inline-flex items-center gap-1">{x.i}{x.t}</span>
       ))}
