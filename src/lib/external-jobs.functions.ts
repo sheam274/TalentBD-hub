@@ -4,6 +4,20 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { scoreAndSortJobs } from "./external-jobs.scoring";
 
+const BLOCKED_JOB_HOSTS = new Set(["jobicy.com", "www.jobicy.com", "himalayas.app", "www.himalayas.app"]);
+
+function normalizeJobUrl(raw?: string | null) {
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
+    if (BLOCKED_JOB_HOSTS.has(parsed.hostname.toLowerCase())) return null;
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Fetches real remote jobs from the public Remotive API (no auth required, CORS-free server-side).
  * https://remotive.com/api-documentation
@@ -49,12 +63,12 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
         job_type: r.job_type,
         location: r.location ?? "Worldwide",
         salary: r.salary,
-        url: r.url,
+        url: normalizeJobUrl(r.url),
         publication_date: r.publication_date,
         tags: r.tags ?? [],
         source: r.source,
         is_remote: !!r.is_remote,
-      }));
+      })).filter((j) => j.url);
     } catch { cached = []; }
 
     // ---- Source 1: Remotive ----
@@ -76,7 +90,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
           job_type: j.job_type ?? null,
           location: j.candidate_required_location ?? "Worldwide",
           salary: j.salary ?? null,
-          url: j.url ?? null,
+          url: normalizeJobUrl(j.url),
           publication_date: j.publication_date ?? null,
           tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
           source: "Remotive",
@@ -98,7 +112,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
           job_type: Array.isArray(j.job_types) && j.job_types[0] ? j.job_types[0] : null,
           location: j.remote ? "Remote" : j.location ?? "Worldwide",
           salary: null,
-          url: j.url ?? null,
+          url: normalizeJobUrl(j.url),
           publication_date: j.created_at ? new Date(j.created_at * 1000).toISOString() : null,
           tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
           source: "Arbeitnow",
@@ -121,7 +135,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
           job_type: null,
           location: j.location || "Remote",
           salary: j.salary || (j.salary_min && j.salary_max ? `$${j.salary_min} - $${j.salary_max}` : null),
-          url: j.url ?? (j.slug ? `https://remoteok.com/remote-jobs/${j.slug}` : null),
+          url: normalizeJobUrl(j.url ?? (j.slug ? `https://remoteok.com/remote-jobs/${j.slug}` : null)),
           publication_date: j.date ?? null,
           tags: Array.isArray(j.tags) ? j.tags.slice(0, 8) : [],
           source: "RemoteOK",
@@ -153,7 +167,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
           job_type: Array.isArray(j.levels) && j.levels[0]?.name ? j.levels[0].name : null,
           location: loc,
           salary: null,
-          url: j.refs?.landing_page ?? null,
+          url: normalizeJobUrl(j.refs?.landing_page),
           publication_date: j.publication_date ?? null,
           tags: [
             ...(Array.isArray(j.categories) ? j.categories.map((c: any) => c.name).filter(Boolean) : []),
@@ -171,7 +185,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       remoteokP,
       museP,
     ]);
-    let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok, ...muse];
+    let combined = [...cached, ...remotive, ...arbeitnow, ...remoteok, ...muse].filter((j) => j.url);
 
     // Dedupe by id (cached first wins).
     const seen = new Set<string>();

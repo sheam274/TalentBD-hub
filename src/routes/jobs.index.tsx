@@ -238,14 +238,27 @@ function Jobs() {
   const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
 
   const openExternalJob = (url?: string | null) => {
-    if (!url || typeof window === "undefined") return;
-    const nextWindow = window.open("", "_blank");
-    if (nextWindow) {
-      nextWindow.opener = null;
-      nextWindow.location.href = url;
+    if (typeof window === "undefined") return;
+    if (!url) {
+      toast.error("This job does not have a valid apply link yet.");
       return;
     }
-    navigator.clipboard?.writeText(url).then(() => {
+    let safeUrl: string;
+    try {
+      const parsed = new URL(url);
+      if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("Invalid protocol");
+      safeUrl = parsed.toString();
+    } catch {
+      toast.error("This job apply link is invalid.");
+      return;
+    }
+    const nextWindow = window.open(safeUrl, "_blank", "noopener,noreferrer");
+    if (nextWindow) {
+      nextWindow.opener = null;
+      nextWindow.focus();
+      return;
+    }
+    navigator.clipboard?.writeText(safeUrl).then(() => {
       toast.info("Job link copied. Paste it into a new browser tab to apply.");
     }).catch(() => {
       toast.error("Pop-up blocked. Allow pop-ups, then try opening the job again.");
