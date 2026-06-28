@@ -109,7 +109,7 @@ function Page() {
             <div key={l.id} className="mt-2 rounded border p-2 text-xs">
               <div className="font-semibold">{l.position}</div>
               <Link to="/appointment/$letterId" params={{ letterId: l.id }} className="text-primary underline">View letter</Link>
-              {l.accepted_at && <span className="ml-2 text-emerald-600">Accepted</span>}
+              {l.accepted_at && <span className="ml-2 text-success">Accepted</span>}
             </div>
           ))}
         </div>

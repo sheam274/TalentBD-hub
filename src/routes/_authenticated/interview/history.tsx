@@ -42,7 +42,7 @@ function HistoryPage() {
                   <td className="px-4 py-2 font-medium">{s.role}</td>
                   <td className="px-4 py-2 capitalize">{s.mode}</td>
                   <td className="px-4 py-2 capitalize">{s.difficulty}</td>
-                  <td className="px-4 py-2">{s.status === "completed" ? `${s.score}%` : <span className="text-amber-700">In progress</span>}</td>
+                  <td className="px-4 py-2">{s.status === "completed" ? `${s.score}%` : <span className="text-warning">In progress</span>}</td>
                   <td className="px-4 py-2 text-muted-foreground">{new Date(s.started_at).toLocaleDateString()}</td>
                   <td className="px-4 py-2 text-right">
                     <Link to="/interview/result/$sessionId" params={{ sessionId: s.id }} className="text-primary hover:underline">Open</Link>

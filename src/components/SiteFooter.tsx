@@ -59,18 +59,18 @@ const columns: Col[] = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-slate-900 bg-slate-950 font-sans text-slate-300">
+    <footer className="mt-20 border-t border-eduma-ink-2 bg-eduma-ink font-sans text-white/70">
       <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
         <div className="grid gap-8 md:grid-cols-[1.2fr_3fr]">
           <div>
             <a href="/" className="flex items-center gap-2 font-extrabold tracking-tight">
-              <span className="inline-flex size-10 items-center justify-center rounded-lg bg-sky-500 p-1.5 shadow-[0_0_20px_rgba(14,165,233,0.35)]">
+              <span className="inline-flex size-10 items-center justify-center rounded-lg bg-primary p-1.5 shadow-md">
                 <BrandMark size={28} />
               </span>
-              <span className="text-xl text-white">Talent<span className="text-sky-500">BD</span></span>
-              <span className="rounded-full border border-sky-500/40 bg-sky-500/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sky-400">Premium</span>
+              <span className="text-xl text-white">Talent<span className="text-primary">BD</span></span>
+              <span className="rounded-full border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">Premium</span>
             </a>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-400">
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/55">
               Bangladesh's premium learn-and-earn platform. Build skills, earn verified credentials, and land local or global remote jobs.
             </p>
             <div className="mt-5 flex items-center gap-3">
@@ -81,7 +81,7 @@ export function SiteFooter() {
                 { Icon: Youtube, href: "https://youtube.com" },
                 { Icon: Globe, href: "https://w3schools.com" },
               ].map(({ Icon, href }, i) => (
-                <a key={i} href={href} target="_blank" rel="noreferrer" className="inline-flex size-9 items-center justify-center rounded-full border border-slate-800 bg-slate-900 text-slate-400 transition hover:border-sky-400/50 hover:text-sky-400">
+                <a key={i} href={href} target="_blank" rel="noreferrer" className="inline-flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/55 transition hover:border-primary/50 hover:text-primary">
                   <Icon className="size-4" />
                 </a>
               ))}
@@ -91,8 +91,8 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-5">
             {columns.map((col) => (
               <div key={col.title}>
-                <h4 className="font-mono text-xs font-bold uppercase tracking-widest text-sky-500">{col.title}</h4>
-                <ul className="mt-4 space-y-3 text-sm text-slate-300">
+                <h4 className="font-mono text-xs font-bold uppercase tracking-widest text-primary">{col.title}</h4>
+                <ul className="mt-4 space-y-3 text-sm text-white/75">
                   {col.links.map((l) => (
                     <li key={l.label}>
                       <a href={l.href} className="transition-colors hover:text-white">{l.label}</a>
@@ -104,7 +104,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 grid gap-4 rounded-xl border border-slate-900 bg-slate-900/50 p-5 md:grid-cols-4 text-center">
+        <div className="mt-12 grid gap-4 rounded-xl border border-white/10 bg-white/5 p-5 md:grid-cols-4 text-center">
           {[
             ["10K+", "Active learners"],
             ["500+", "Live jobs"],
@@ -112,23 +112,23 @@ export function SiteFooter() {
             ["80%", "Pass rate to certify"],
           ].map(([n, l]) => (
             <div key={l as string}>
-              <div className="text-2xl font-extrabold text-sky-400">{n}</div>
-              <div className="mt-1 text-xs text-slate-500">{l}</div>
+              <div className="text-2xl font-extrabold text-primary">{n}</div>
+              <div className="mt-1 text-xs text-white/50">{l}</div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="border-t border-slate-900 px-4 py-5">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs text-slate-500 md:flex-row md:px-6">
+      <div className="border-t border-white/10 px-4 py-5">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs text-white/50 md:flex-row md:px-6">
           <p>© {new Date().getFullYear()} TalentBD. Built in Bangladesh.</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <a href="/" className="transition-colors hover:text-white">Privacy</a>
             <a href="/" className="transition-colors hover:text-white">Terms</a>
             <a href="/" className="transition-colors hover:text-white">Cookie policy</a>
             <a href="/" className="transition-colors hover:text-white">Accessibility</a>
-            <span className="flex items-center gap-1.5 font-mono text-emerald-500">
-              <span className="size-2 animate-pulse rounded-full bg-emerald-500" />
+            <span className="flex items-center gap-1.5 font-mono text-success">
+              <span className="size-2 animate-pulse rounded-full bg-success" />
               All Systems Operational
             </span>
           </div>

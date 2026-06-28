@@ -32,10 +32,10 @@ export const Route = createFileRoute("/jobs/$jobId")({
 });
 
 function statusColor(s: string) {
-  if (s === "accepted") return "bg-emerald-100 text-emerald-700";
-  if (s === "rejected") return "bg-red-100 text-red-700";
-  if (s === "reviewing") return "bg-amber-100 text-amber-700";
-  return "bg-slate-100 text-slate-700";
+  if (s === "accepted") return "badge-success";
+  if (s === "rejected") return "badge-danger";
+  if (s === "reviewing") return "badge-warning";
+  return "badge-neutral";
 }
 
 function JobDetails() {
@@ -111,7 +111,7 @@ function JobDetails() {
 
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
           {j.location && <span className="inline-flex items-center gap-1"><MapPin className="size-4" />{j.location}</span>}
-          {j.is_remote && <span className="rounded bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs">Remote</span>}
+          {j.is_remote && <span className="rounded badge-success px-2 py-0.5 text-xs">Remote</span>}
           {j.job_type && <span className="inline-flex items-center gap-1"><Briefcase className="size-4" />{j.job_type}</span>}
           {j.experience_level && <span className="inline-flex items-center gap-1"><GraduationCap className="size-4" />{j.experience_level}</span>}
           {j.salary_range && <span className="inline-flex items-center gap-1 font-medium" style={{ color: "var(--color-primary)" }}><DollarSign className="size-4" />{j.salary_range}</span>}

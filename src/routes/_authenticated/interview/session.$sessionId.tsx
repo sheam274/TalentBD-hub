@@ -106,9 +106,9 @@ function SessionPage() {
           )}
 
           {feedback ? (
-            <div className="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4">
-              <div className="flex items-center gap-2 font-semibold text-emerald-800"><CheckCircle2 className="size-4" /> Score: {feedback.score}/10</div>
-              <p className="mt-1 text-sm text-emerald-900">{feedback.feedback}</p>
+            <div className="mt-4 rounded-md border border-success/30 bg-success-soft p-4">
+              <div className="flex items-center gap-2 font-semibold text-success"><CheckCircle2 className="size-4" /> Score: {feedback.score}/10</div>
+              <p className="mt-1 text-sm text-success">{feedback.feedback}</p>
             </div>
           ) : alreadyAnswered ? (
             <div className="mt-4 rounded-md border bg-muted/30 p-4 text-sm">Already answered (score {alreadyAnswered.score}/10). You can move on.</div>
@@ -210,7 +210,7 @@ function MediaRecorderBox({
             {kind === "video" ? <Video className="size-4" /> : <Mic className="size-4" />} Start recording
           </button>
         ) : (
-          <button type="button" onClick={stop} className="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white">
+          <button type="button" onClick={stop} className="inline-flex items-center gap-2 rounded-md bg-destructive px-4 py-2 text-sm font-semibold text-white">
             <Square className="size-4" /> Stop
           </button>
         )}

@@ -76,7 +76,7 @@ function SetupPage() {
           <input type="range" min={3} max={15} value={count} onChange={(e) => setCount(parseInt(e.target.value))} className="w-full" />
         </Field>
 
-        {err && <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">{err}</div>}
+        {err && <div className="rounded-md border border-destructive/30 bg-danger-soft p-3 text-sm text-destructive">{err}</div>}
 
         <button
           onClick={() => { setErr(null); m.mutate(); }}

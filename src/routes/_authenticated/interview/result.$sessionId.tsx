@@ -28,9 +28,9 @@ function ResultPage() {
             <h1 className="mt-1 text-3xl font-bold">Overall score: {session.score ?? 0}%</h1>
           </div>
           {passed ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700"><BadgeCheck className="size-4" /> Credential awarded</span>
+            <span className="inline-flex items-center gap-1 rounded-full badge-success px-3 py-1 text-sm font-semibold"><BadgeCheck className="size-4" /> Credential awarded</span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-700"><Trophy className="size-4" /> Keep practicing</span>
+            <span className="inline-flex items-center gap-1 rounded-full badge-warning px-3 py-1 text-sm font-semibold"><Trophy className="size-4" /> Keep practicing</span>
           )}
         </div>
         {session.overall_feedback && <p className="mt-3 text-sm text-muted-foreground">{session.overall_feedback}</p>}
