@@ -26,22 +26,34 @@ export function ChatAssistant() {
   const [lastModel, setLastModel] = useState<string | null>(null);
   const [lastFellBack, setLastFellBack] = useState(false);
   const [geminiMode, setGeminiMode] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("talentbd.chatMode") === "gemini";
+    try {
+      if (typeof window === "undefined") return false;
+      return window.localStorage?.getItem("talentbd.chatMode") === "gemini";
+    } catch {
+      return false;
+    }
   });
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem("talentbd.chatMode", geminiMode ? "gemini" : "coach");
+    try {
+      window.localStorage?.setItem("talentbd.chatMode", geminiMode ? "gemini" : "coach");
+    } catch {
+      /* storage unavailable (Safari private mode, quota, disabled) — ignore */
+    }
   }, [geminiMode]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const onStorage = (e: StorageEvent) => {
-      if (e.key === "talentbd.chatMode") setGeminiMode(e.newValue === "gemini");
+      if (e.key !== "talentbd.chatMode" || e.storageArea !== window.localStorage) return;
+      setGeminiMode(e.newValue === "gemini");
     };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    try {
+      window.addEventListener("storage", onStorage);
+      return () => window.removeEventListener("storage", onStorage);
+    } catch {
+      return;
+    }
   }, []);
 
   const send = useMutation({
