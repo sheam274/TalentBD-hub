@@ -47,7 +47,7 @@ export const talentChat = createServerFn({ method: "POST" })
       JSON.stringify({ model: m, messages: [{ role: "system", content: SYSTEM }, ...data.messages] });
 
     let res = await fetch(url, { method: "POST", headers, body: body(primaryModel) });
-    if (res.status === 429 && useDirect && primaryModel !== "gemini-2.5-flash-lite") {
+    if (res.status === 429 && useDirect) {
       res = await fetch(url, { method: "POST", headers, body: body("gemini-2.5-flash-lite") });
     }
 
