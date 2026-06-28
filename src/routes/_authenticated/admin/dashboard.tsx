@@ -24,7 +24,7 @@ const CARDS: { key: StatKey; label: string; to?: string; hint: string }[] = [
   { key: "interviews", label: "Interviews", to: "/admin/interviews", hint: "Interview sessions" },
   { key: "letters", label: "Appointment letters", to: "/admin/letters", hint: "Issued letters" },
   { key: "modules", label: "Learning modules", to: "/admin/modules", hint: "Topics & quizzes" },
-  { key: "credentials", label: "Credentials", hint: "Earned by users" },
+  { key: "credentials", label: "Credentials", to: "/admin/credentials", hint: "Earned by users" },
 ];
 
 function AdminDash() {
