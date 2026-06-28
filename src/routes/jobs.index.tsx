@@ -284,8 +284,10 @@ function Jobs() {
               return <p className="text-sm text-muted-foreground">No live jobs match "{search}".</p>;
             }
             const shown = list.slice(0, visibleCount);
-            (window as any).__liveJobsHasMore = list.length > visibleCount;
-            (window as any).__liveJobsTotal = list.length;
+            if (typeof window !== "undefined") {
+              (window as any).__liveJobsHasMore = list.length > visibleCount;
+              (window as any).__liveJobsTotal = list.length;
+            }
             return shown.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 6) * 40}>
               <a href={j.url ?? "#"} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 h-full flex flex-col">
