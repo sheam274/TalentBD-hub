@@ -171,7 +171,7 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
       .then((r) => (r.ok ? r.json() : { jobs: [] }))
       .then((j: any) =>
         (Array.isArray(j?.jobs) ? j.jobs : []).map((j: any) => ({
-          id: `hima-${encodeURIComponent(String(j.guid ?? j.applicationLink ?? j.title ?? crypto.randomUUID()))}`,
+          id: `hima-${encodeURIComponent(String(j.guid ?? j.applicationLink ?? `${j.companyName ?? "unknown"}-${j.title ?? "untitled"}`))}`,
           title: j.title ?? "Untitled role",
           company: j.companyName ?? "Unknown company",
           company_logo: j.companyLogo || null,
