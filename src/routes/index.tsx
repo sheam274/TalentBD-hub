@@ -179,7 +179,7 @@ function Landing() {
               </div>
             </div>
           </section>
-        </ScrollReveal>
+        )}</ScrollReveal>
 
         {/* Stats band */}
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
