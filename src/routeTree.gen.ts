@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VisualHarnessRouteImport } from './routes/visual-harness'
 import { Route as SalariesRouteImport } from './routes/salaries'
 import { Route as InterviewPrepRouteImport } from './routes/interview-prep'
 import { Route as CareerAdviceRouteImport } from './routes/career-advice'
@@ -54,6 +55,11 @@ import { Route as AuthenticatedInterviewSessionSessionIdRouteImport } from './ro
 import { Route as AuthenticatedInterviewResultSessionIdRouteImport } from './routes/_authenticated/interview/result.$sessionId'
 import { Route as AuthenticatedEmployerApplicantsAppIdRouteImport } from './routes/_authenticated/employer/applicants.$appId'
 
+const VisualHarnessRoute = VisualHarnessRouteImport.update({
+  id: '/visual-harness',
+  path: '/visual-harness',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SalariesRoute = SalariesRouteImport.update({
   id: '/salaries',
   path: '/salaries',
@@ -306,6 +312,7 @@ export interface FileRoutesByFullPath {
   '/career-advice': typeof CareerAdviceRoute
   '/interview-prep': typeof InterviewPrepRoute
   '/salaries': typeof SalariesRoute
+  '/visual-harness': typeof VisualHarnessRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/employer': typeof AuthenticatedEmployerRouteRouteWithChildren
   '/assessments': typeof AuthenticatedAssessmentsRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/career-advice': typeof CareerAdviceRoute
   '/interview-prep': typeof InterviewPrepRoute
   '/salaries': typeof SalariesRoute
+  '/visual-harness': typeof VisualHarnessRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/employer': typeof AuthenticatedEmployerRouteRouteWithChildren
   '/assessments': typeof AuthenticatedAssessmentsRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/career-advice': typeof CareerAdviceRoute
   '/interview-prep': typeof InterviewPrepRoute
   '/salaries': typeof SalariesRoute
+  '/visual-harness': typeof VisualHarnessRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/employer': typeof AuthenticatedEmployerRouteRouteWithChildren
   '/_authenticated/assessments': typeof AuthenticatedAssessmentsRoute
@@ -445,6 +454,7 @@ export interface FileRouteTypes {
     | '/career-advice'
     | '/interview-prep'
     | '/salaries'
+    | '/visual-harness'
     | '/admin'
     | '/employer'
     | '/assessments'
@@ -490,6 +500,7 @@ export interface FileRouteTypes {
     | '/career-advice'
     | '/interview-prep'
     | '/salaries'
+    | '/visual-harness'
     | '/admin'
     | '/employer'
     | '/assessments'
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/career-advice'
     | '/interview-prep'
     | '/salaries'
+    | '/visual-harness'
     | '/_authenticated/admin'
     | '/_authenticated/employer'
     | '/_authenticated/assessments'
@@ -583,6 +595,7 @@ export interface RootRouteChildren {
   CareerAdviceRoute: typeof CareerAdviceRoute
   InterviewPrepRoute: typeof InterviewPrepRoute
   SalariesRoute: typeof SalariesRoute
+  VisualHarnessRoute: typeof VisualHarnessRoute
   CompaniesSlugRoute: typeof CompaniesSlugRoute
   JobsJobIdRoute: typeof JobsJobIdRouteWithChildren
   CompaniesIndexRoute: typeof CompaniesIndexRoute
@@ -592,6 +605,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/visual-harness': {
+      id: '/visual-harness'
+      path: '/visual-harness'
+      fullPath: '/visual-harness'
+      preLoaderRoute: typeof VisualHarnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/salaries': {
       id: '/salaries'
       path: '/salaries'
@@ -1050,6 +1070,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareerAdviceRoute: CareerAdviceRoute,
   InterviewPrepRoute: InterviewPrepRoute,
   SalariesRoute: SalariesRoute,
+  VisualHarnessRoute: VisualHarnessRoute,
   CompaniesSlugRoute: CompaniesSlugRoute,
   JobsJobIdRoute: JobsJobIdRouteWithChildren,
   CompaniesIndexRoute: CompaniesIndexRoute,

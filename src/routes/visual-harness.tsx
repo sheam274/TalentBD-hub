@@ -19,7 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Hidden visual-regression harness. Renders every interactive primitive in
 // a stable, deterministic layout so the Playwright suite can screenshot
 // each state and diff it against a stored baseline.
-export const Route = createFileRoute("/__visual-harness")({
+export const Route = createFileRoute("/visual-harness")({
   component: VisualHarness,
   head: () => ({ meta: [{ title: "Visual Harness" }] }),
 });
