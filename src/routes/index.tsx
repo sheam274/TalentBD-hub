@@ -99,26 +99,31 @@ function Landing() {
           </p>
 
           {/* CTAs */}
-          <div className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row">
+          <nav
+            aria-label="Primary hero actions"
+            className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
+          >
             <Link
               to="/jobs"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] px-8 py-4 text-center text-sm font-semibold tracking-wide text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] sm:w-auto"
+              aria-label="Browse live engineering jobs"
+              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] px-8 py-4 text-center text-sm font-semibold tracking-wide text-white shadow-lg outline-none transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
               style={{
                 background: "var(--eduma-red)",
                 boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red) 50%, transparent)",
               }}
             >
-              Browse Live Jobs
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <span>Browse Live Jobs</span>
+              <ArrowRight aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />
             </Link>
             <Link
               to="/learn"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-[10px] border border-white/15 bg-white/5 px-8 py-4 text-center text-sm font-semibold tracking-wide text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--eduma-gold)] hover:bg-white/10 hover:text-[var(--eduma-gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] sm:w-auto"
+              aria-label="Start learning with free engineering modules"
+              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-white/15 bg-white/5 px-8 py-4 text-center text-sm font-semibold tracking-wide text-white outline-none backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--eduma-gold)] hover:bg-white/10 hover:text-[var(--eduma-gold)] focus-visible:ring-2 focus-visible:ring-[var(--eduma-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--eduma-ink)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:w-auto"
             >
-              Start Learning Free
-              <GraduationCap className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+              <span>Start Learning Free</span>
+              <GraduationCap aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none" />
             </Link>
-          </div>
+          </nav>
 
           {/* Trust */}
           <div className="mt-20 w-full max-w-xl border-t border-white/5 pt-8">
