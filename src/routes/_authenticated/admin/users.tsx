@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListUsers, adminSetRole, adminAdjustCredential } from "@/lib/admin.functions";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({ meta: [{ title: "Admin — Users" }] }),
@@ -17,6 +17,9 @@ function AdminUsers() {
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["admin-users"], queryFn: () => listFn() });
   const [credForm, setCredForm] = useState<{ userId: string; name: string; score: string }>({ userId: "", name: "", score: "100" });
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "student" | "employer">("all");
+  const [disciplineFilter, setDisciplineFilter] = useState("all");
 
   const setRole = useMutation({
     mutationFn: (v: { userId: string; grant: boolean }) => roleFn({ data: { userId: v.userId, role: "admin", grant: v.grant } }),
@@ -31,24 +34,95 @@ function AdminUsers() {
   if (q.isLoading) return <p>Loading…</p>;
   const data = q.data;
   const isAdmin = (uid: string) => data?.roles.some((r: any) => r.user_id === uid && r.role === "admin");
+  const rolesOf = (uid: string) =>
+    (data?.roles ?? []).filter((r: any) => r.user_id === uid).map((r: any) => r.role as string);
+
+  const disciplines = useMemo(() => {
+    const set = new Set<string>();
+    (data?.profiles ?? []).forEach((p: any) => p.discipline && set.add(p.discipline));
+    return Array.from(set).sort();
+  }, [data]);
+
+  const filtered = (data?.profiles ?? []).filter((p: any) => {
+    const roles = rolesOf(p.id);
+    if (roleFilter !== "all" && !roles.includes(roleFilter)) return false;
+    if (disciplineFilter !== "all" && p.discipline !== disciplineFilter) return false;
+    if (search) {
+      const s = search.toLowerCase();
+      if (!(p.name ?? "").toLowerCase().includes(s) && !p.id.includes(s)) return false;
+    }
+    return true;
+  });
+
+  const totalAdmins = (data?.roles ?? []).filter((r: any) => r.role === "admin").length;
+  const totalEmployers = (data?.roles ?? []).filter((r: any) => r.role === "employer").length;
+  const totalCreds = (data?.credentials ?? []).length;
 
   return (
     <div>
       <h1 className="text-2xl font-bold">Users</h1>
+      <p className="text-sm text-muted-foreground">Profiles, roles, and earned credentials.</p>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          { label: "Total users", value: data?.profiles.length ?? 0 },
+          { label: "Admins", value: totalAdmins },
+          { label: "Employers", value: totalEmployers },
+          { label: "Credentials issued", value: totalCreds },
+        ].map((c) => (
+          <div key={c.label} className="rounded-xl border bg-card p-4">
+            <div className="text-xs uppercase text-muted-foreground">{c.label}</div>
+            <div className="mt-1 text-2xl font-bold">{c.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center gap-2">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by name or id…"
+          className="w-64 rounded-md border px-3 py-1.5 text-sm"
+        />
+        <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value as any)} className="rounded-md border px-2 py-1.5 text-sm">
+          <option value="all">All roles</option>
+          <option value="admin">Admin</option>
+          <option value="employer">Employer</option>
+          <option value="student">Student</option>
+        </select>
+        <select value={disciplineFilter} onChange={(e) => setDisciplineFilter(e.target.value)} className="rounded-md border px-2 py-1.5 text-sm">
+          <option value="all">All disciplines</option>
+          {disciplines.map((d) => <option key={d} value={d}>{d}</option>)}
+        </select>
+        <span className="ml-auto text-xs text-muted-foreground">Showing {filtered.length} of {data?.profiles.length ?? 0}</span>
+      </div>
+
       <div className="mt-5 overflow-x-auto rounded-xl border bg-white">
         <table className="w-full text-left text-sm">
           <thead className="bg-muted text-xs uppercase">
-            <tr><th className="p-3">Name</th><th className="p-3">Discipline</th><th className="p-3">Credentials</th><th className="p-3">Role</th><th className="p-3">Actions</th></tr>
+            <tr><th className="p-3">Name</th><th className="p-3">Discipline</th><th className="p-3">Joined</th><th className="p-3">Credentials</th><th className="p-3">Roles</th><th className="p-3">Actions</th></tr>
           </thead>
           <tbody>
-            {data?.profiles.map((p: any) => {
-              const userCreds = data.credentials.filter((c: any) => c.user_id === p.id);
+            {filtered.map((p: any) => {
+              const userCreds = (data?.credentials ?? []).filter((c: any) => c.user_id === p.id);
+              const roles = rolesOf(p.id);
               return (
                 <tr key={p.id} className="border-t">
-                  <td className="p-3">{p.name ?? "—"}</td>
+                  <td className="p-3">
+                    <div>{p.name ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground">{p.id.slice(0, 8)}</div>
+                  </td>
                   <td className="p-3">{p.discipline ?? "—"}</td>
+                  <td className="p-3 text-xs">{p.created_at ? new Date(p.created_at).toLocaleDateString() : "—"}</td>
                   <td className="p-3">{userCreds.length}</td>
-                  <td className="p-3">{isAdmin(p.id) ? <span className="rounded bg-muted px-2 py-0.5 text-xs">Admin</span> : "Student"}</td>
+                  <td className="p-3">
+                    <div className="flex flex-wrap gap-1">
+                      {roles.length === 0 && <span className="text-xs text-muted-foreground">—</span>}
+                      {roles.map((r) => (
+                        <span key={r} className="rounded bg-muted px-2 py-0.5 text-xs">{r}</span>
+                      ))}
+                    </div>
+                  </td>
                   <td className="p-3">
                     <button onClick={() => setRole.mutate({ userId: p.id, grant: !isAdmin(p.id) })} className="rounded-md border px-2 py-1 text-xs">
                       {isAdmin(p.id) ? "Revoke admin" : "Grant admin"}
@@ -58,6 +132,9 @@ function AdminUsers() {
                 </tr>
               );
             })}
+            {filtered.length === 0 && (
+              <tr><td className="p-3 text-muted-foreground" colSpan={6}>No users match these filters.</td></tr>
+            )}
           </tbody>
         </table>
       </div>
