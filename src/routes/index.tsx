@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
+import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart, CheckCircle2, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,16 +45,15 @@ function Landing() {
   return (
     <div className="page-enter bg-background">
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 md:px-6 md:py-20">
-        {/* Hero — split layout with AI interview card */}
+        {/* Hero — asymmetric, stat-rich */}
         <ScrollReveal>
-          <section className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            {/* Content */}
+          <section className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
+            {/* Text */}
             <div className="space-y-8">
               <div
-                className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-medium"
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold tracking-wide"
                 style={{
-                  background: "color-mix(in oklab, var(--eduma-red) 8%, transparent)",
-                  borderColor: "color-mix(in oklab, var(--eduma-red) 20%, transparent)",
+                  background: "color-mix(in oklab, var(--eduma-red) 10%, transparent)",
                   color: "var(--eduma-red)",
                 }}
               >
@@ -62,143 +61,109 @@ function Landing() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: "var(--eduma-red)" }} />
                   <span className="relative inline-flex size-2 rounded-full" style={{ background: "var(--eduma-red)" }} />
                 </span>
-                AI-Powered Career Growth
+                Bangladesh's Career Community
               </div>
 
-              <div className="space-y-4">
-                <h1 className="text-5xl font-extrabold leading-tight tracking-tight lg:text-6xl" style={{ color: "var(--eduma-ink)" }}>
-                  Unlock Your Potential in{" "}
-                  <span style={{ color: "var(--eduma-red)" }}>Bangladesh</span>
-                </h1>
-                <p className="max-w-xl text-xl leading-relaxed text-muted-foreground">
-                  The all-in-one platform to find top jobs, master new skills with professional
-                  courses, and ace your next interview using our AI simulator.
-                </p>
-              </div>
+              <h1 className="text-5xl font-bold leading-tight lg:text-7xl" style={{ color: "var(--eduma-ink)" }}>
+                Unlock Your <span style={{ color: "var(--eduma-red)" }}>Potential</span> With Expert Mentors
+              </h1>
+
+              <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
+                TalentBD bridges the gap between ambition and success. Explore 1,200+ curated courses, live jobs, and AI interview prep built by industry professionals.
+              </p>
 
               <div className="flex flex-wrap gap-4">
                 <a
                   href="/jobs"
-                  className="inline-flex items-center gap-2 rounded-xl px-8 py-4 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 rounded-[10px] px-8 py-4 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5"
                   style={{
                     background: "var(--eduma-red)",
                     boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red) 45%, transparent)",
                   }}
                 >
-                  Find Your Dream Job <ArrowRight className="size-5" />
+                  Explore Jobs <ArrowRight className="size-5" />
                 </a>
                 <a
                   href="/learn"
-                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-white px-8 py-4 font-semibold shadow-sm transition-all hover:border-[var(--eduma-red)] hover:text-[var(--eduma-red)]"
-                  style={{ color: "var(--eduma-ink)" }}
+                  className="inline-flex items-center gap-2 rounded-[10px] border-2 bg-white px-8 py-4 font-semibold transition-all hover:text-[var(--eduma-red)]"
+                  style={{
+                    color: "var(--eduma-ink)",
+                    borderColor: "color-mix(in oklab, var(--eduma-ink) 10%, transparent)",
+                  }}
                 >
-                  Start Learning
+                  View Curriculum
                 </a>
               </div>
 
-              <div className="grid grid-cols-3 gap-8 border-t border-border pt-8">
+              <div className="grid grid-cols-3 gap-8 border-t pt-10" style={{ borderColor: "color-mix(in oklab, var(--eduma-ink) 6%, transparent)" }}>
                 <div>
-                  <div className="text-2xl font-bold" style={{ color: "var(--eduma-ink)" }}>50k+</div>
-                  <div className="text-sm text-muted-foreground">Active Users</div>
+                  <div className="text-3xl font-bold" style={{ color: "var(--eduma-ink)" }}>15k+</div>
+                  <div className="text-sm font-medium text-muted-foreground">Graduates</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold" style={{ color: "var(--eduma-ink)" }}>200+</div>
-                  <div className="text-sm text-muted-foreground">Top Companies</div>
+                  <div className="text-3xl font-bold" style={{ color: "var(--eduma-ink)" }}>4.9</div>
+                  <div className="text-sm font-medium text-muted-foreground">User Rating</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold" style={{ color: "var(--eduma-ink)" }}>15k+</div>
-                  <div className="text-sm text-muted-foreground">AI Interviews Done</div>
+                  <div className="text-3xl font-bold" style={{ color: "var(--eduma-ink)" }}>250+</div>
+                  <div className="text-sm font-medium text-muted-foreground">Instructors</div>
                 </div>
               </div>
             </div>
 
-            {/* Visual — AI interview mock card */}
-            <div className="relative hidden lg:block">
+            {/* Visual */}
+            <div className="relative">
+              {/* Decorative glows */}
+              <div className="pointer-events-none absolute -left-10 -top-10 -z-10 size-48 rounded-full blur-3xl" style={{ background: "color-mix(in oklab, var(--eduma-red) 12%, transparent)" }} />
+              <div className="pointer-events-none absolute -bottom-10 -right-10 -z-10 size-48 rounded-full blur-3xl" style={{ background: "color-mix(in oklab, var(--eduma-gold) 14%, transparent)" }} />
+
+              {/* Hero panel */}
               <div
-                className="absolute -inset-4 rounded-3xl opacity-30 blur-2xl"
-                style={{ background: "color-mix(in oklab, var(--eduma-red) 30%, transparent)" }}
-              />
-
-              <div className="relative rounded-3xl border border-border bg-white p-8 shadow-2xl">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-border pb-4">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="flex size-10 items-center justify-center rounded-full font-bold text-white"
-                        style={{ background: "var(--eduma-red)" }}
-                      >
-                        AI
-                      </div>
-                      <div>
-                        <h4 className="font-bold" style={{ color: "var(--eduma-ink)" }}>Interview Simulation</h4>
-                        <p className="text-xs font-medium" style={{ color: "var(--eduma-red)" }}>
-                          Live Analysis Running…
-                        </p>
-                      </div>
-                    </div>
-                    <div className="rounded bg-muted px-2 py-1 text-xs font-bold text-muted-foreground">
-                      BETA
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="rounded-xl bg-muted p-4">
-                      <div className="mb-1 flex justify-between">
-                        <span className="text-xs font-semibold text-muted-foreground">Communication Score</span>
-                        <span className="text-xs font-bold" style={{ color: "var(--eduma-red)" }}>88%</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-border">
-                        <div className="h-1.5 rounded-full" style={{ width: "88%", background: "var(--eduma-red)" }} />
-                      </div>
-                    </div>
-
-                    <div className="rounded-xl bg-muted p-4">
-                      <div className="mb-1 flex justify-between">
-                        <span className="text-xs font-semibold text-muted-foreground">Technical Accuracy</span>
-                        <span className="text-xs font-bold" style={{ color: "var(--eduma-gold)" }}>92%</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-border">
-                        <div className="h-1.5 rounded-full" style={{ width: "92%", background: "var(--eduma-gold)" }} />
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <div className="flex-1 rounded-xl border border-border bg-white p-3 shadow-sm">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Job Match</p>
-                        <p className="text-sm font-bold" style={{ color: "var(--eduma-ink)" }}>Software Engineer</p>
-                      </div>
-                      <div className="flex-1 rounded-xl border border-border bg-white p-3 shadow-sm">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Location</p>
-                        <p className="text-sm font-bold" style={{ color: "var(--eduma-ink)" }}>Dhaka, BD</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    className="flex gap-2 rounded-lg p-3 text-xs"
-                    style={{
-                      background: "color-mix(in oklab, var(--eduma-red) 8%, transparent)",
-                      color: "var(--eduma-red)",
-                    }}
-                  >
-                    <Zap className="mt-0.5 size-4 shrink-0" />
-                    <p>Great confidence detected! You are in the top 5% of candidates for this role.</p>
-                  </div>
+                className="relative h-[560px] overflow-hidden rounded-[10px] shadow-2xl"
+                style={{
+                  background:
+                    "linear-gradient(135deg, color-mix(in oklab, var(--eduma-ink) 92%, transparent) 0%, color-mix(in oklab, var(--eduma-red) 55%, var(--eduma-ink)) 100%)",
+                }}
+              >
+                <div className="absolute inset-0 opacity-30" style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--eduma-gold) 40%, transparent) 0%, transparent 40%), radial-gradient(circle at 80% 80%, color-mix(in oklab, var(--eduma-red) 50%, transparent) 0%, transparent 45%)",
+                }} />
+                <div className="relative flex h-full flex-col justify-end p-8 text-white">
+                  <Sparkles className="mb-4 size-10" style={{ color: "var(--eduma-gold)" }} />
+                  <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: "var(--eduma-gold)" }}>
+                    Learn · Apply · Grow
+                  </p>
+                  <h3 className="mt-2 text-3xl font-bold leading-tight">
+                    Built for the next generation of Bangladeshi talent.
+                  </h3>
                 </div>
               </div>
 
-              {/* Floating new-course chip */}
-              <div className="absolute -right-6 -top-6 rounded-2xl border border-border bg-white p-4 shadow-xl">
+              {/* Floating badge — top right */}
+              <div className="absolute -right-6 -top-6 z-10 flex items-center gap-4 rounded-[10px] border bg-white p-5 shadow-xl" style={{ borderColor: "color-mix(in oklab, var(--eduma-ink) 6%, transparent)" }}>
+                <div className="flex size-12 items-center justify-center rounded-full" style={{ background: "var(--eduma-gold)", color: "var(--eduma-ink)" }}>
+                  <CheckCircle2 className="size-6" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold" style={{ color: "var(--eduma-ink)" }}>Certified Courses</div>
+                  <div className="text-xs text-muted-foreground">Industry Recognized</div>
+                </div>
+              </div>
+
+              {/* Floating badge — bottom left */}
+              <div className="absolute -bottom-8 -left-8 z-10 rounded-[10px] p-6 shadow-2xl text-white" style={{ background: "var(--eduma-ink)" }}>
                 <div className="flex items-center gap-3">
-                  <div
-                    className="flex size-8 items-center justify-center rounded-lg"
-                    style={{ background: "color-mix(in oklab, var(--eduma-gold) 18%, transparent)", color: "var(--eduma-gold)" }}
-                  >
-                    <GraduationCap className="size-5" />
+                  <div className="flex -space-x-3">
+                    <div className="size-10 rounded-full border-2" style={{ borderColor: "var(--eduma-ink)", background: "color-mix(in oklab, var(--eduma-gold) 70%, white)" }} />
+                    <div className="size-10 rounded-full border-2" style={{ borderColor: "var(--eduma-ink)", background: "color-mix(in oklab, var(--eduma-red) 60%, white)" }} />
+                    <div className="flex size-10 items-center justify-center rounded-full border-2 text-[10px] font-bold" style={{ borderColor: "var(--eduma-ink)", background: "var(--eduma-red)" }}>
+                      +5k
+                    </div>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase text-muted-foreground">New Course</p>
-                    <p className="text-xs font-bold" style={{ color: "var(--eduma-ink)" }}>Fullstack Dev</p>
+                    <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--eduma-gold)" }}>Joined this month</div>
+                    <div className="text-sm font-medium">Join our active community</div>
                   </div>
                 </div>
               </div>
