@@ -226,6 +226,21 @@ function Jobs() {
   const hasFilters = !!(search || category || location || exp || type || remote !== "all");
   const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
 
+  const openExternalJob = (url?: string | null) => {
+    if (!url || typeof window === "undefined") return;
+    const nextWindow = window.open("", "_blank");
+    if (nextWindow) {
+      nextWindow.opener = null;
+      nextWindow.location.href = url;
+      return;
+    }
+    navigator.clipboard?.writeText(url).then(() => {
+      toast.info("Job link copied. Paste it into a new browser tab to apply.");
+    }).catch(() => {
+      toast.error("Pop-up blocked. Allow pop-ups, then try opening the job again.");
+    });
+  };
+
   // Apply the same UI filters to the live (external) feed so category chips,
   // search, location, type, and remote toggle drive live jobs too.
   const liveFiltered = useMemo(() => {
@@ -332,7 +347,7 @@ function Jobs() {
           ))}
           {liveForOpenPositions.map((j: any, i: number) => (
             <ScrollReveal key={`live-${j.id}`} delay={(i % 4) * 60}>
-              <LiveJobCard j={j} />
+              <LiveJobCard j={j} onOpen={openExternalJob} />
             </ScrollReveal>
           ))}
           {filtered.length === 0 && liveForOpenPositions.length === 0 && (
@@ -404,16 +419,10 @@ function Jobs() {
             }
             return shown.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 6) * 40}>
-              <a
-                href={j.url ?? "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  if (!j.url) return;
-                  e.preventDefault();
-                  window.open(j.url, "_blank", "noopener,noreferrer");
-                }}
-                className="lift glass rounded-xl p-5 h-full flex flex-col"
+              <button
+                type="button"
+                onClick={() => openExternalJob(j.url)}
+                className="lift glass rounded-xl p-5 h-full flex flex-col text-left"
               >
                 <div className="flex items-start gap-3">
                   {j.company_logo ? (
@@ -444,7 +453,7 @@ function Jobs() {
                   </div>
                 )}
                 {j.salary && <p className="mt-3 text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
-              </a>
+              </button>
             </ScrollReveal>
             ));
           })()}
@@ -546,18 +555,12 @@ const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visible
   },
 );
 
-function LiveJobCard({ j }: { j: any }) {
+function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => void }) {
   return (
-    <a
-      href={j.url ?? "#"}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e) => {
-        if (!j.url) return;
-        e.preventDefault();
-        window.open(j.url, "_blank", "noopener,noreferrer");
-      }}
-      className="lift glass rounded-xl p-5 h-full flex flex-col"
+    <button
+      type="button"
+      onClick={() => onOpen(j.url)}
+      className="lift glass rounded-xl p-5 h-full flex flex-col text-left"
     >
       <div className="flex items-start gap-3">
         {j.company_logo ? (
@@ -595,6 +598,6 @@ function LiveJobCard({ j }: { j: any }) {
           View & Apply <ExternalLink className="size-3" />
         </span>
       </div>
-    </a>
+    </button>
   );
 }
