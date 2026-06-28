@@ -226,6 +226,43 @@ function Jobs() {
   const hasFilters = !!(search || category || location || exp || type || remote !== "all");
   const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
 
+  // Apply the same UI filters to the live (external) feed so category chips,
+  // search, location, type, and remote toggle drive live jobs too.
+  const liveFiltered = useMemo(() => {
+    const tokens = debouncedSearch
+      .toLowerCase()
+      .split(/[\s,]+/)
+      .filter((t) => t.length >= 2)
+      .map(stem);
+    const loc = location.trim().toLowerCase();
+    const typeL = type.toLowerCase();
+    const catL = category.toLowerCase();
+    return (remoteQ.data ?? []).filter((j: any) => {
+      if (remote === "remote" && !j.is_remote) return false;
+      if (remote === "onsite" && j.is_remote) return false;
+      if (loc && !(j.location ?? "").toLowerCase().includes(loc)) return false;
+      if (typeL
+          && !(j.job_type ?? "").toLowerCase().includes(typeL.replace("-", "_"))
+          && !(j.job_type ?? "").toLowerCase().includes(typeL)) return false;
+      if (catL) {
+        const catHay = `${j.category ?? ""} ${j.title ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+        const parts = catL.split(/[\s/&-]+/).filter(Boolean);
+        if (!parts.some((p) => catHay.includes(p))) return false;
+      }
+      if (!tokens.length) return true;
+      const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
+      return tokens.some((tok) => hay.includes(tok));
+    });
+  }, [remoteQ.data, debouncedSearch, category, location, exp, type, remote]);
+
+  // Live jobs to splice into the "Open positions" section so every category
+  // shows real openings even when the local DB is empty for that filter.
+  const liveForOpenPositions = useMemo(() => {
+    // Take up to 6, skipping ones we've already shown in featured (by url).
+    const seen = new Set([...featured, ...rest].map((j: any) => j.apply_url ?? j.id));
+    return liveFiltered.filter((j: any) => !seen.has(j.url)).slice(0, 6);
+  }, [liveFiltered, featured, rest]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 page-enter">
       <h1 className="text-3xl font-bold">Jobs marketplace</h1>
