@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,239 +14,235 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const CATS = [
-  { name: "IT/Software", icon: "💻", category: "IT/Software" },
-  { name: "Engineering", icon: "⚙️", category: "Engineering" },
-  { name: "Banking/Finance", icon: "🏦", category: "Banking/Finance" },
-  { name: "Marketing", icon: "📣", category: "Marketing" },
-  { name: "Design", icon: "🎨", category: "Design" },
-  { name: "Healthcare", icon: "🩺", category: "Healthcare" },
-  { name: "Education", icon: "🎓", category: "Education" },
-  { name: "Sales", icon: "💼", category: "Sales" },
+const DISCIPLINES = [
+  { name: "Computer Science", desc: "Web, mobile, data, networking and modern software engineering tracks.", icon: Cpu, href: "/learn#cse" },
+  { name: "Electrical & Electronic", desc: "Power systems, VLSI, embedded design and industrial automation.", icon: Zap, href: "/learn#eee" },
+  { name: "Civil Engineering", desc: "Structural, BIM/CAD and project management for the built world.", icon: Building2, href: "/learn#civil" },
+  { name: "Banking & Finance", desc: "Land roles across local banks, fintech and global remote finance.", icon: LineChart, href: "/jobs?category=Banking%2FFinance" },
+  { name: "Design & Creative", desc: "Product design, UI, motion and brand for digital products.", icon: GraduationCap, href: "/jobs?category=Design" },
+  { name: "Sales & Marketing", desc: "Growth, brand and revenue roles across SaaS and consumer.", icon: Briefcase, href: "/jobs?category=Marketing" },
+];
+
+const STATS = [
+  ["12k+", "Active Jobs"],
+  ["450+", "Top Companies"],
+  ["1.2k", "Expert Courses"],
+  ["98%", "Hire Rate"],
+];
+
+const FEATURED_JOBS = [
+  { initial: "P", color: "#0f1b3d", title: "Senior Frontend Engineer", meta: "Pathao • Dhaka, BD", tag: "Full-Time" },
+  { initial: "B", color: "#3b6fa0", title: "Backend Developer", meta: "Brain Station 23 • Remote", tag: "Full-Time" },
+  { initial: "G", color: "#1e3a5f", title: "Product Designer", meta: "Grameenphone • Hybrid", tag: "Contract" },
+];
+
+const FEATURED_MODULES = [
+  { tag: "Featured", title: "Full-Stack Web Development", desc: "Master React, Node and modern deployment workflows.", bg: "#1e3a5f", href: "/learn#cse" },
+  { tag: "Popular", title: "Power Systems Essentials", desc: "From transmission to smart grids, taught by industry leads.", bg: "#3b6fa0", href: "/learn#eee" },
 ];
 
 function Landing() {
   return (
-    <div className="page-enter">
-      {/* Premium Hero */}
-      <section className="relative overflow-hidden min-h-[640px]">
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 md:py-24 md:px-6">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-semibold">
-              <Sparkles className="size-3.5" style={{ color: "var(--color-primary)" }} />
-              <span className="text-gradient">Premium · Bangladesh's #1 learn-and-earn</span>
-            </div>
-            <h1 className="mt-5 text-4xl font-extrabold leading-[1.05] tracking-tight md:text-6xl">
-              Build skills.<br />
-              Earn credentials.<br />
-              <span className="text-gradient">Land the job.</span>
-            </h1>
-            <p className="mt-5 max-w-xl text-base text-muted-foreground md:text-lg">
-              TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified certifications,
-              a dual-style CV builder, an ATS parser, and a local + global jobs marketplace.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <a
-                href="/auth"
-                className="inline-flex items-center gap-2 rounded-md px-5 py-3 font-semibold text-white shadow-lg"
-                style={{ background: "linear-gradient(135deg, var(--color-primary), oklch(0.45 0.18 250))" }}
+    <div className="page-enter bg-background">
+      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 md:px-6 md:py-20">
+        {/* Hero — rounded premium navy slab */}
+        <ScrollReveal>
+          <section
+            className="relative overflow-hidden rounded-[2.5rem] border p-10 text-white shadow-2xl md:p-20"
+            style={{ background: "#0f1b3d", borderColor: "rgba(255,255,255,0.06)" }}
+          >
+            <div className="relative z-10 max-w-2xl">
+              <span
+                className="mb-6 inline-block rounded-full border px-4 py-1 text-xs font-bold uppercase tracking-widest"
+                style={{ background: "rgba(59,111,160,0.18)", color: "#7aa6cf", borderColor: "rgba(59,111,160,0.35)" }}
               >
-                Get started free <ArrowRight className="size-4" />
-              </a>
-              <a href="/jobs" className="rounded-md border bg-white/70 px-5 py-3 font-semibold backdrop-blur hover:bg-white">
-                Browse jobs
-              </a>
+                Premium Career Portal · Bangladesh
+              </span>
+              <h1 className="mb-8 text-4xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+                Elevate Your <span style={{ color: "#3b6fa0" }}>Career</span> with TalentBD
+              </h1>
+              <p className="mb-10 max-w-lg text-lg leading-relaxed text-slate-300/85 md:text-xl">
+                Connect with top-tier local and global opportunities, world-class learning modules,
+                and verified credentials — built for the modern engineering professional.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <a
+                  href="/jobs"
+                  className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[#1e3a5f] md:px-10 md:py-5"
+                  style={{ background: "#3b6fa0", boxShadow: "0 12px 28px -8px rgba(59,111,160,0.45)" }}
+                >
+                  Explore Jobs <ArrowRight className="size-4" />
+                </a>
+                <a
+                  href="/learn"
+                  className="rounded-xl border px-8 py-4 text-sm font-bold uppercase tracking-widest text-white transition-all hover:bg-white/10 md:px-10 md:py-5"
+                  style={{ background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.2)" }}
+                >
+                  Start Learning
+                </a>
+              </div>
             </div>
-            <div className="mt-9 grid max-w-md grid-cols-3 gap-3">
-              {[["12+", "Courses"], ["3", "Disciplines"], ["100%", "Free start"]].map(([n, l]) => (
-                <div key={l} className="glass rounded-xl p-3 text-center">
-                  <div className="text-xl font-extrabold text-gradient">{n}</div>
-                  <div className="text-xs text-muted-foreground">{l}</div>
+            {/* Premium glow accents */}
+            <div
+              className="pointer-events-none absolute -right-20 -top-20 size-[30rem] rounded-full opacity-40"
+              style={{ background: "#1e3a5f", filter: "blur(120px)" }}
+            />
+            <div
+              className="pointer-events-none absolute bottom-0 right-40 size-80 rounded-full opacity-20"
+              style={{ background: "#3b6fa0", filter: "blur(100px)" }}
+            />
+          </section>
+        </ScrollReveal>
+
+        {/* Stats band */}
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {STATS.map(([n, l], i) => (
+            <ScrollReveal key={l} delay={i * 60}>
+              <div className="rounded-3xl border border-slate-200/60 bg-white p-8 text-center shadow-sm transition-shadow hover:shadow-md">
+                <div className="mb-1 text-4xl font-bold" style={{ color: "#0f1b3d", fontFamily: "Space Grotesk, sans-serif" }}>
+                  {n}
                 </div>
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-400">{l}</div>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+
+        {/* Disciplines grid */}
+        <section>
+          <div className="mb-10 flex flex-col items-end justify-between gap-4 md:flex-row">
+            <div>
+              <h2 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl" style={{ color: "#0f1b3d" }}>
+                Browse Disciplines
+              </h2>
+              <div className="h-1.5 w-12 rounded-full" style={{ background: "#3b6fa0" }} />
+            </div>
+            <a
+              href="/jobs"
+              className="border-b-2 pb-1 text-sm font-bold uppercase tracking-widest transition-all hover:border-[#3b6fa0]"
+              style={{ color: "#3b6fa0", borderColor: "rgba(59,111,160,0.2)" }}
+            >
+              View All Categories
+            </a>
+          </div>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {DISCIPLINES.map((d, i) => {
+              const Icon = d.icon;
+              return (
+                <ScrollReveal key={d.name} delay={(i % 3) * 80}>
+                  <a
+                    href={d.href}
+                    className="group block h-full rounded-3xl border border-slate-100 bg-white p-10 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                  >
+                    <div
+                      className="mb-8 flex size-14 items-center justify-center rounded-2xl transition-colors group-hover:bg-[#0f1b3d]"
+                      style={{ background: "#e8edf3" }}
+                    >
+                      <Icon className="size-6 transition-colors group-hover:text-white" style={{ color: "#3b6fa0" }} />
+                    </div>
+                    <h3 className="mb-3 text-2xl font-bold" style={{ color: "#0f1b3d" }}>
+                      {d.name}
+                    </h3>
+                    <p className="leading-relaxed text-slate-500">{d.desc}</p>
+                  </a>
+                </ScrollReveal>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Dual: Jobs + Learning */}
+        <div className="grid gap-16 lg:grid-cols-2">
+          {/* Jobs */}
+          <div className="space-y-8">
+            <h3 className="flex items-center gap-4 text-2xl font-bold md:text-3xl" style={{ color: "#0f1b3d" }}>
+              Premium Roles
+              <span className="h-[2px] flex-1 bg-slate-200/60" />
+            </h3>
+            <div className="space-y-4">
+              {FEATURED_JOBS.map((j) => (
+                <a
+                  key={j.title}
+                  href="/jobs"
+                  className="group flex cursor-pointer items-center rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-colors hover:border-[#3b6fa0]"
+                >
+                  <div
+                    className="flex size-12 flex-shrink-0 items-center justify-center rounded-xl font-bold text-white"
+                    style={{ background: j.color }}
+                  >
+                    {j.initial}
+                  </div>
+                  <div className="ml-5 flex-1">
+                    <h4 className="text-lg font-bold" style={{ color: "#0f1b3d" }}>{j.title}</h4>
+                    <p className="text-sm text-slate-500">{j.meta}</p>
+                  </div>
+                  <div
+                    className="rounded-full px-4 py-1.5 text-xs font-bold transition-colors group-hover:bg-[#3b6fa0] group-hover:text-white"
+                    style={{ background: "#e8edf3", color: "#3b6fa0" }}
+                  >
+                    {j.tag}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Modules */}
+          <div className="space-y-8">
+            <h3 className="flex items-center gap-4 text-2xl font-bold md:text-3xl" style={{ color: "#0f1b3d" }}>
+              Learning Modules
+              <span className="h-[2px] flex-1 bg-slate-200/60" />
+            </h3>
+            <div className="grid grid-cols-1 gap-6">
+              {FEATURED_MODULES.map((m) => (
+                <a
+                  key={m.title}
+                  href={m.href}
+                  className="group relative flex h-60 cursor-pointer flex-col justify-end overflow-hidden rounded-3xl p-8"
+                  style={{ background: m.bg }}
+                >
+                  <div
+                    className="absolute inset-0 opacity-80"
+                    style={{ background: "linear-gradient(to top, #0f1b3d, transparent)" }}
+                  />
+                  <div
+                    className="absolute left-8 top-8 rounded-xl border p-3 text-xs font-bold uppercase tracking-tighter text-white backdrop-blur-md"
+                    style={{ background: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.1)" }}
+                  >
+                    {m.tag}
+                  </div>
+                  <div className="relative z-10">
+                    <h4 className="mb-2 text-2xl font-bold text-white">{m.title}</h4>
+                    <p className="text-sm text-white/70">{m.desc}</p>
+                  </div>
+                  <div
+                    className="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
+                    style={{ background: "#3b6fa0" }}
+                  />
+                </a>
               ))}
             </div>
           </div>
         </div>
 
-        {/* MacBook anchored bottom-right of hero */}
-      </section>
-
-      {/* Crossover */}
-      <section className="mx-auto max-w-7xl px-4 md:px-6">
+        {/* Final CTA */}
         <ScrollReveal>
-          <div className="crossover grid gap-4 rounded-2xl glass p-6 md:grid-cols-3">
-            {[
-              { title: "Learn", body: "Structured tracks across web dev, networking, VLSI, power systems, BIM and more.", href: "/learn" },
-              { title: "Certify", body: "Pass timed quizzes to write a verified credential straight to your profile.", href: "/assessments" },
-              { title: "Get hired", body: "Apply to vetted local and global remote engineering roles.", href: "/jobs" },
-            ].map((c, i) => (
-              <ScrollReveal key={c.title} delay={i * 80}>
-                <a href={c.href} className="lift rounded-xl bg-white/70 backdrop-blur p-5 h-full block">
-                  <h3 className="text-lg font-semibold text-gradient">{c.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{c.body}</p>
-                </a>
-              </ScrollReveal>
-            ))}
-          </div>
+          <section
+            className="relative overflow-hidden rounded-[2.5rem] p-10 text-center text-white shadow-xl md:p-16"
+            style={{ background: "linear-gradient(135deg, #0f1b3d, #1e3a5f)" }}
+          >
+            <h2 className="mb-3 text-3xl font-bold md:text-4xl">Ready to grow your career?</h2>
+            <p className="mb-7 text-white/75">Join thousands of Bangladeshi engineers learning, certifying and getting hired on TalentBD.</p>
+            <a
+              href="/auth"
+              className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[#1e3a5f]"
+              style={{ background: "#3b6fa0" }}
+            >
+              Create free account <ArrowRight className="size-4" />
+            </a>
+          </section>
         </ScrollReveal>
-      </section>
-
-      {/* Categories */}
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
-        <ScrollReveal>
-          <h2 className="text-3xl font-bold">Popular job categories</h2>
-          <p className="mt-1 text-muted-foreground">Like bdjobs — but with built-in learning to get you hired faster.</p>
-        </ScrollReveal>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-          {CATS.map((c, i) => (
-            <ScrollReveal key={c.name} delay={(i % 4) * 60}>
-              <a href={`/jobs?category=${encodeURIComponent(c.category)}`} className="lift glass rounded-xl p-5 block">
-                <div className="text-3xl">{c.icon}</div>
-                <div className="mt-2 font-semibold">{c.name}</div>
-                <div className="text-xs text-muted-foreground">View jobs →</div>
-              </a>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
-
-      {/* Disciplines */}
-      <section className="mx-auto max-w-7xl px-4 pb-20 md:px-6">
-        <ScrollReveal><h2 className="text-3xl font-bold">Disciplines we cover</h2></ScrollReveal>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {[
-            { d: "Computer Science", disc: "cse", thumb: "thumb-cse", items: [
-              { label: "Web Development", slug: "web-development" },
-              { label: "Networking", slug: "networking" },
-              { label: "Data Science", slug: "data-science" },
-              { label: "Mobile Apps", slug: "mobile-apps" },
-              { label: "3D Animation", slug: "3d-animation" },
-              { label: "Digital Marketing", slug: "digital-marketing" },
-            ] },
-            { d: "Electrical & Electronic", disc: "eee", thumb: "thumb-eee", items: [
-              { label: "Power Systems", slug: "power-systems" },
-              { label: "VLSI", slug: "vlsi" },
-              { label: "Industrial Automation", slug: "industrial-automation" },
-            ] },
-            { d: "Civil Engineering", disc: "civil", thumb: "thumb-civil", items: [
-              { label: "Structural", slug: "structural" },
-              { label: "CAD & BIM", slug: "cad-bim" },
-              { label: "Project Management", slug: "project-management" },
-            ] },
-          ].map((g, i) => (
-            <ScrollReveal key={g.d} delay={i * 100}>
-              <div className="lift glass rounded-xl overflow-hidden h-full flex flex-col">
-                <a href={`/learn#${g.disc}`} className={`${g.thumb} thumb-grid h-28 relative block group`} aria-label={`Open ${g.d} tracks`}>
-                  <div className="absolute inset-0 bg-black/35" />
-                  <div className="absolute inset-0 flex items-end justify-between p-4">
-                    <h3 className="font-bold text-lg text-white" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}>{g.d}</h3>
-                    <span className="text-white/90 text-xs font-semibold opacity-0 group-hover:opacity-100 transition">Explore →</span>
-                  </div>
-                </a>
-                <ul className="p-5 space-y-1 text-sm text-foreground/80 flex-1">
-                  {g.items.map((it) => (
-                    <li key={it.slug}>
-                      <a
-                        href={`/learn/${g.disc}/${it.slug}`}
-                        className="block rounded-md px-2 py-1 -mx-2 hover:bg-primary/10 hover:text-primary transition"
-                      >
-                        • {it.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="mx-auto max-w-7xl px-4 pb-20 md:px-6">
-        <ScrollReveal>
-          <div className="glass-dark rounded-2xl p-10 text-center" style={{ background: "linear-gradient(135deg, var(--color-primary), oklch(0.45 0.18 250))" }}>
-            <h2 className="text-3xl font-bold text-white">Ready to grow your career?</h2>
-            <p className="mt-2 text-white/85">Sign up free and start learning today.</p>
-            <a href="/auth" className="mt-5 inline-block rounded-md px-6 py-3 font-semibold shimmer" style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}>Create free account</a>
-          </div>
-        </ScrollReveal>
-      </section>
-    </div>
-  );
-}
-
-function CseHeroScene() {
-  const chips = [
-    { t: "const job = await apply()", cls: "", x: "4%", y: "12%", d: "0s" },
-    { t: "git commit -m 'shipped 🚀'", cls: "commit", x: "62%", y: "8%", d: "2s" },
-    { t: "💼 Senior Frontend · Dhaka", cls: "briefcase", x: "70%", y: "70%", d: "4s" },
-    { t: "<Resume ats-ready />", cls: "", x: "10%", y: "62%", d: "6s" },
-    { t: "npm run build ✓", cls: "commit", x: "48%", y: "40%", d: "1s" },
-    { t: "💼 Remote · USD 80k", cls: "briefcase", x: "30%", y: "80%", d: "3s" },
-    { t: "function getHired() {}", cls: "", x: "82%", y: "32%", d: "5s" },
-  ];
-  return (
-    <div className="cse-scene" aria-hidden="true">
-      <svg className="cse-net" viewBox="0 0 1200 600" preserveAspectRatio="none">
-        <path className="edge" d="M120,120 L320,260 L560,180 L820,300 L1080,200" />
-        <path className="edge" d="M180,460 L380,360 L600,440 L860,360 L1100,460" style={{ animationDelay: "1.5s" }} />
-        <path className="edge" d="M320,260 L380,360" />
-        <path className="edge" d="M560,180 L600,440" style={{ animationDelay: "0.8s" }} />
-        <path className="edge" d="M820,300 L860,360" />
-        <circle className="node" cx="120" cy="120" r="3" />
-        <circle className="node b" cx="320" cy="260" r="3" />
-        <circle className="node" cx="560" cy="180" r="3" />
-        <circle className="node b" cx="820" cy="300" r="3" />
-        <circle className="node" cx="1080" cy="200" r="3" />
-        <circle className="node b" cx="380" cy="360" r="3" />
-        <circle className="node" cx="600" cy="440" r="3" />
-        <circle className="node b" cx="860" cy="360" r="3" />
-      </svg>
-      {chips.map((c, i) => (
-        <span
-          key={i}
-          className={`chip ${c.cls}`}
-          style={{ left: c.x, top: c.y, animationDelay: c.d }}
-        >
-          {c.t}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function MacbookHero() {
-  return (
-    <div className="macbook" aria-label="Code preview running inside a MacBook Pro">
-      <div className="macbook-lid">
-        <div className="macbook-screen">
-          <div className="macbook-bezel">
-            <span className="macbook-notch" />
-          </div>
-          <div className="macbook-display">
-            <div className="mac-window">
-              <div className="mac-traffic">
-                <span /><span /><span />
-                <span className="mac-title">talentbd ~ /career</span>
-              </div>
-              <div className="mac-code">
-                <span className="ln"><em>$</em> talentbd login <i>--as student</i></span>
-                <span className="ln out">→ welcome, future engineer</span>
-                <span className="ln"><em>$</em> learn react <i>--track cse</i></span>
-                <span className="ln out">→ progress ████████░░ 80%</span>
-                <span className="ln"><em>$</em> certify frontend</span>
-                <span className="ln ok">→ credential issued ✓</span>
-                <span className="ln"><em>$</em> apply <i>--job</i> <b>"Frontend @ Pathao"</b><span className="caret" /></span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-      <div className="macbook-base">
-        <div className="macbook-keyboard" />
-        <div className="macbook-trackpad" />
-      </div>
-      <div className="macbook-shadow" />
     </div>
   );
 }
