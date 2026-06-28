@@ -330,17 +330,17 @@ function Jobs() {
 
       {/* Filters */}
       <div className="mt-4 glass rounded-xl p-4 grid gap-3 md:grid-cols-6">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, company, skill" className="md:col-span-2 rounded-md border px-3 py-2 text-sm bg-white/60" />
-        <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" className="rounded-md border px-3 py-2 text-sm bg-white/60" />
-        <select value={exp} onChange={(e) => setExp(e.target.value)} className="rounded-md border px-3 py-2 text-sm bg-white/60">
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, company, skill" aria-label="Search jobs" className="md:col-span-2 rounded-md border px-3 py-2 text-sm bg-white/60" />
+        <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" aria-label="Filter by location" className="rounded-md border px-3 py-2 text-sm bg-white/60" />
+        <select value={exp} onChange={(e) => setExp(e.target.value)} aria-label="Filter by experience level" className="rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="">Any experience</option>
           <option>Entry-level</option><option>Mid-level</option><option>Senior</option>
         </select>
-        <select value={type} onChange={(e) => setType(e.target.value)} className="rounded-md border px-3 py-2 text-sm bg-white/60">
+        <select value={type} onChange={(e) => setType(e.target.value)} aria-label="Filter by employment type" className="rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="">Any type</option>
           <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
         </select>
-        <select value={remote} onChange={(e) => setRemote(e.target.value as any)} className="rounded-md border px-3 py-2 text-sm bg-white/60">
+        <select value={remote} onChange={(e) => setRemote(e.target.value as any)} aria-label="Filter by remote or on-site" className="rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="all">Remote + On-site</option><option value="remote">Remote only</option><option value="onsite">On-site only</option>
         </select>
       </div>
