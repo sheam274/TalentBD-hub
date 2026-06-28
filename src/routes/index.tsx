@@ -61,7 +61,7 @@ function Landing() {
               <h1 className="mb-8 text-4xl font-bold leading-[1.05] tracking-tight md:text-7xl">
                 Elevate Your <span style={{ color: "var(--eduma-red)" }}>Career</span> with TalentBD
               </h1>
-              <p className="mb-10 max-w-lg text-lg leading-relaxed text-slate-300/85 md:text-xl">
+              <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80 md:text-xl">
                 Connect with top-tier local and global opportunities, world-class learning modules,
                 and verified credentials — built for the modern engineering professional.
               </p>
@@ -98,11 +98,11 @@ function Landing() {
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {STATS.map(([n, l], i) => (
             <ScrollReveal key={l} delay={i * 60}>
-              <div className="rounded-3xl border border-slate-200/60 bg-white p-8 text-center shadow-sm transition-shadow hover:shadow-md">
+              <div className="rounded-3xl border border-border bg-white p-8 text-center shadow-sm transition-shadow hover:shadow-md">
                 <div className="mb-1 text-4xl font-bold" style={{ color: "var(--eduma-ink)", fontFamily: "Space Grotesk, sans-serif" }}>
                   {n}
                 </div>
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-400">{l}</div>
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{l}</div>
               </div>
             </ScrollReveal>
           ))}
@@ -132,7 +132,7 @@ function Landing() {
                 <ScrollReveal key={d.name} delay={(i % 3) * 80}>
                   <a
                     href={d.href}
-                    className="group block h-full rounded-3xl border border-slate-100 bg-white p-10 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                    className="group block h-full rounded-3xl border border-border bg-white p-10 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
                   >
                     <div
                       className="mb-8 flex size-14 items-center justify-center rounded-2xl transition-colors group-hover:bg-[var(--eduma-ink)]"
@@ -143,7 +143,7 @@ function Landing() {
                     <h3 className="mb-3 text-2xl font-bold" style={{ color: "var(--eduma-ink)" }}>
                       {d.name}
                     </h3>
-                    <p className="leading-relaxed text-slate-500">{d.desc}</p>
+                    <p className="leading-relaxed text-muted-foreground">{d.desc}</p>
                   </a>
                 </ScrollReveal>
               );
@@ -157,14 +157,14 @@ function Landing() {
           <div className="space-y-8">
             <h3 className="flex items-center gap-4 text-2xl font-bold md:text-3xl" style={{ color: "var(--eduma-ink)" }}>
               Premium Roles
-              <span className="h-[2px] flex-1 bg-slate-200/60" />
+              <span className="h-[2px] flex-1 bg-border" />
             </h3>
             <div className="space-y-4">
               {FEATURED_JOBS.map((j) => (
                 <a
                   key={j.title}
                   href="/jobs"
-                  className="group flex cursor-pointer items-center rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-colors hover:border-[var(--eduma-red)]"
+                  className="group flex cursor-pointer items-center rounded-2xl border border-border bg-white p-6 shadow-sm transition-colors hover:border-[var(--eduma-red)]"
                 >
                   <div
                     className="flex size-12 flex-shrink-0 items-center justify-center rounded-xl font-bold text-white"
@@ -174,7 +174,7 @@ function Landing() {
                   </div>
                   <div className="ml-5 flex-1">
                     <h4 className="text-lg font-bold" style={{ color: "var(--eduma-ink)" }}>{j.title}</h4>
-                    <p className="text-sm text-slate-500">{j.meta}</p>
+                    <p className="text-sm text-muted-foreground">{j.meta}</p>
                   </div>
                   <div
                     className="rounded-full px-4 py-1.5 text-xs font-bold transition-colors group-hover:bg-[var(--eduma-red)] group-hover:text-white"
@@ -191,7 +191,7 @@ function Landing() {
           <div className="space-y-8">
             <h3 className="flex items-center gap-4 text-2xl font-bold md:text-3xl" style={{ color: "var(--eduma-ink)" }}>
               Learning Modules
-              <span className="h-[2px] flex-1 bg-slate-200/60" />
+              <span className="h-[2px] flex-1 bg-border" />
             </h3>
             <div className="grid grid-cols-1 gap-6">
               {FEATURED_MODULES.map((m) => (
