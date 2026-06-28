@@ -1,16 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart, CheckCircle2, Sparkles } from "lucide-react";
-import {
-  HeroCenteredEditorial,
-  HeroMarketplaceGrid,
-  HeroSearchImmersive,
-  HeroDualPath,
-} from "@/components/hero/HeroVariants";
-
-// Swap the hero template by changing this value:
-// "asymmetric" (default) | "editorial" | "marketplace" | "search" | "dual"
-const HERO_VARIANT: "asymmetric" | "editorial" | "marketplace" | "search" | "dual" = "asymmetric";
+import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -54,132 +44,96 @@ const FEATURED_MODULES = [
 function Landing() {
   return (
     <div className="page-enter bg-background">
+      {/* Hero — Ink Ambient Glow (premium dark) */}
+      <section
+        className="relative w-full overflow-hidden px-6 py-24 md:py-32"
+        style={{ background: "var(--eduma-ink)" }}
+      >
+        {/* Dotted grid */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-25"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        {/* Ambient orbs */}
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/4 size-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]"
+          style={{ background: "color-mix(in oklab, var(--eduma-red) 100%, transparent)", opacity: 0.18 }}
+        />
+        <div
+          className="pointer-events-none absolute bottom-1/4 left-1/3 size-[400px] rounded-full blur-[130px]"
+          style={{ background: "color-mix(in oklab, var(--eduma-gold) 100%, transparent)", opacity: 0.14 }}
+        />
+
+        <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
+          {/* Badge */}
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-md">
+            <span className="size-2 rounded-full" style={{ background: "var(--eduma-gold)" }} />
+            <span className="text-xs font-medium uppercase tracking-wider text-white/80">
+              The Premium Talent Network
+            </span>
+          </div>
+
+          {/* Headline */}
+          <h1 className="mb-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-6xl md:text-7xl">
+            Engineered for elite talent.
+            <br />
+            <span
+              className="bg-clip-text text-transparent"
+              style={{
+                backgroundImage:
+                  "linear-gradient(to right, var(--eduma-red), var(--eduma-gold))",
+              }}
+            >
+              Built for scale.
+            </span>
+          </h1>
+
+          {/* Subhead */}
+          <p className="mb-10 max-w-2xl text-base leading-relaxed text-white/60 sm:text-xl">
+            Connect with deeply vetted developers, designers, and tech leaders steering Bangladesh's
+            most ambitious teams — learn, apply, and grow on one premium platform.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row">
+            <a
+              href="/jobs"
+              className="w-full rounded-[10px] px-8 py-4 text-center text-sm font-semibold tracking-wide text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 sm:w-auto"
+              style={{
+                background: "var(--eduma-red)",
+                boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red) 50%, transparent)",
+              }}
+            >
+              Explore Jobs
+            </a>
+            <a
+              href="/learn"
+              className="w-full rounded-[10px] border border-white/10 bg-white/5 px-8 py-4 text-center text-sm font-semibold tracking-wide text-white backdrop-blur-md transition-all duration-300 hover:border-[var(--eduma-gold)] hover:bg-white/10 sm:w-auto"
+            >
+              Start Learning
+            </a>
+          </div>
+
+          {/* Trust */}
+          <div className="mt-20 w-full max-w-xl border-t border-white/5 pt-8">
+            <p className="mb-4 text-xs uppercase tracking-widest text-white/40">
+              Trusted by innovators worldwide
+            </p>
+            <div className="flex items-center justify-center gap-8 text-sm font-bold tracking-wider text-white/50">
+              <span>PATHAO</span>
+              <span>BRAINSTATION</span>
+              <span>BKASH</span>
+              <span>GRAMEENPHONE</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 md:px-6 md:py-20">
-        {/* Hero — asymmetric, stat-rich */}
-        <ScrollReveal>{HERO_VARIANT === "editorial" ? <HeroCenteredEditorial /> : HERO_VARIANT === "marketplace" ? <HeroMarketplaceGrid /> : HERO_VARIANT === "search" ? <HeroSearchImmersive /> : HERO_VARIANT === "dual" ? <HeroDualPath /> : (
-          <section className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-            {/* Text */}
-            <div className="space-y-8">
-              <div
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold tracking-wide"
-                style={{
-                  background: "color-mix(in oklab, var(--eduma-red) 10%, transparent)",
-                  color: "var(--eduma-red)",
-                }}
-              >
-                <span className="relative flex size-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: "var(--eduma-red)" }} />
-                  <span className="relative inline-flex size-2 rounded-full" style={{ background: "var(--eduma-red)" }} />
-                </span>
-                Bangladesh's Career Community
-              </div>
-
-              <h1 className="text-5xl font-bold leading-tight lg:text-7xl" style={{ color: "var(--eduma-ink)" }}>
-                Unlock Your <span style={{ color: "var(--eduma-red)" }}>Potential</span> With Expert Mentors
-              </h1>
-
-              <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
-                TalentBD bridges the gap between ambition and success. Explore 1,200+ curated courses, live jobs, and AI interview prep built by industry professionals.
-              </p>
-
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="/jobs"
-                  className="inline-flex items-center gap-2 rounded-[10px] px-8 py-4 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5"
-                  style={{
-                    background: "var(--eduma-red)",
-                    boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red) 45%, transparent)",
-                  }}
-                >
-                  Explore Jobs <ArrowRight className="size-5" />
-                </a>
-                <a
-                  href="/learn"
-                  className="inline-flex items-center gap-2 rounded-[10px] border-2 bg-white px-8 py-4 font-semibold transition-all hover:text-[var(--eduma-red)]"
-                  style={{
-                    color: "var(--eduma-ink)",
-                    borderColor: "color-mix(in oklab, var(--eduma-ink) 10%, transparent)",
-                  }}
-                >
-                  View Curriculum
-                </a>
-              </div>
-
-              <div className="grid grid-cols-3 gap-8 border-t pt-10" style={{ borderColor: "color-mix(in oklab, var(--eduma-ink) 6%, transparent)" }}>
-                <div>
-                  <div className="text-3xl font-bold" style={{ color: "var(--eduma-ink)" }}>15k+</div>
-                  <div className="text-sm font-medium text-muted-foreground">Graduates</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold" style={{ color: "var(--eduma-ink)" }}>4.9</div>
-                  <div className="text-sm font-medium text-muted-foreground">User Rating</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold" style={{ color: "var(--eduma-ink)" }}>250+</div>
-                  <div className="text-sm font-medium text-muted-foreground">Instructors</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Visual */}
-            <div className="relative">
-              {/* Decorative glows */}
-              <div className="pointer-events-none absolute -left-10 -top-10 -z-10 size-48 rounded-full blur-3xl" style={{ background: "color-mix(in oklab, var(--eduma-red) 12%, transparent)" }} />
-              <div className="pointer-events-none absolute -bottom-10 -right-10 -z-10 size-48 rounded-full blur-3xl" style={{ background: "color-mix(in oklab, var(--eduma-gold) 14%, transparent)" }} />
-
-              {/* Hero panel */}
-              <div
-                className="relative h-[560px] overflow-hidden rounded-[10px] shadow-2xl"
-                style={{
-                  background:
-                    "linear-gradient(135deg, color-mix(in oklab, var(--eduma-ink) 92%, transparent) 0%, color-mix(in oklab, var(--eduma-red) 55%, var(--eduma-ink)) 100%)",
-                }}
-              >
-                <div className="absolute inset-0 opacity-30" style={{
-                  backgroundImage:
-                    "radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--eduma-gold) 40%, transparent) 0%, transparent 40%), radial-gradient(circle at 80% 80%, color-mix(in oklab, var(--eduma-red) 50%, transparent) 0%, transparent 45%)",
-                }} />
-                <div className="relative flex h-full flex-col justify-end p-8 text-white">
-                  <Sparkles className="mb-4 size-10" style={{ color: "var(--eduma-gold)" }} />
-                  <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: "var(--eduma-gold)" }}>
-                    Learn · Apply · Grow
-                  </p>
-                  <h3 className="mt-2 text-3xl font-bold leading-tight">
-                    Built for the next generation of Bangladeshi talent.
-                  </h3>
-                </div>
-              </div>
-
-              {/* Floating badge — top right */}
-              <div className="absolute -right-6 -top-6 z-10 flex items-center gap-4 rounded-[10px] border bg-white p-5 shadow-xl" style={{ borderColor: "color-mix(in oklab, var(--eduma-ink) 6%, transparent)" }}>
-                <div className="flex size-12 items-center justify-center rounded-full" style={{ background: "var(--eduma-gold)", color: "var(--eduma-ink)" }}>
-                  <CheckCircle2 className="size-6" />
-                </div>
-                <div>
-                  <div className="text-sm font-bold" style={{ color: "var(--eduma-ink)" }}>Certified Courses</div>
-                  <div className="text-xs text-muted-foreground">Industry Recognized</div>
-                </div>
-              </div>
-
-              {/* Floating badge — bottom left */}
-              <div className="absolute -bottom-8 -left-8 z-10 rounded-[10px] p-6 shadow-2xl text-white" style={{ background: "var(--eduma-ink)" }}>
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-3">
-                    <div className="size-10 rounded-full border-2" style={{ borderColor: "var(--eduma-ink)", background: "color-mix(in oklab, var(--eduma-gold) 70%, white)" }} />
-                    <div className="size-10 rounded-full border-2" style={{ borderColor: "var(--eduma-ink)", background: "color-mix(in oklab, var(--eduma-red) 60%, white)" }} />
-                    <div className="flex size-10 items-center justify-center rounded-full border-2 text-[10px] font-bold" style={{ borderColor: "var(--eduma-ink)", background: "var(--eduma-red)" }}>
-                      +5k
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--eduma-gold)" }}>Joined this month</div>
-                    <div className="text-sm font-medium">Join our active community</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}</ScrollReveal>
 
         {/* Stats band */}
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
