@@ -6,6 +6,25 @@ import { applyToJob, getJobPublic, getMyApplicationForJob } from "@/lib/jobs.fun
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { ArrowLeft, Building2, MapPin, Briefcase, ExternalLink, FileText, CheckCircle2 } from "lucide-react";
+import { z } from "zod";
+
+const MIN_COVER = 20;
+const MAX_COVER = 2000;
+
+const internalSchema = z.object({
+  method: z.literal("internal"),
+  coverNote: z
+    .string()
+    .trim()
+    .min(MIN_COVER, `Cover note must be at least ${MIN_COVER} characters`)
+    .max(MAX_COVER, `Cover note must be under ${MAX_COVER} characters`),
+});
+
+const externalSchema = z.object({
+  method: z.literal("external"),
+  externalUrl: z.string().url("This job has no valid external link"),
+  coverNote: z.string().trim().max(MAX_COVER, `Cover note must be under ${MAX_COVER} characters`).optional(),
+});
 
 export const Route = createFileRoute("/jobs/$jobId/apply")({
   head: () => ({
@@ -36,10 +55,11 @@ function ApplyPage() {
 
   const [cover, setCover] = useState("");
   const [method, setMethod] = useState<"internal" | "external">("internal");
+  const [error, setError] = useState<string | null>(null);
 
   const apply = useMutation({
     mutationFn: (vars: { method: "internal" | "external" }) =>
-      applyFn({ data: { jobId, coverNote: cover, method: vars.method } }),
+      applyFn({ data: { jobId, coverNote: cover.trim(), method: vars.method } }),
     onSuccess: (_res, vars) => {
       toast.success("Application submitted");
       qc.invalidateQueries({ queryKey: ["my-app", jobId] });
@@ -63,6 +83,25 @@ function ApplyPage() {
 
   const alreadyApplied = !!appQ.data;
   const externalUrl: string | null = (j as any).external_url ?? (j as any).apply_url ?? null;
+
+  const submit = (chosen: "internal" | "external") => {
+    setError(null);
+    const parsed =
+      chosen === "internal"
+        ? internalSchema.safeParse({ method: chosen, coverNote: cover })
+        : externalSchema.safeParse({ method: chosen, externalUrl, coverNote: cover });
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message ?? "Invalid input";
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
+    apply.mutate({ method: chosen });
+  };
+
+  const coverLen = cover.trim().length;
+  const coverTooShort = method === "internal" && coverLen > 0 && coverLen < MIN_COVER;
+  const coverTooLong = coverLen > MAX_COVER;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 md:px-6 page-enter">
@@ -126,20 +165,33 @@ function ApplyPage() {
 
             {method === "internal" ? (
               <div className="mt-5">
-                <label className="text-sm font-medium">Cover note (optional)</label>
+                <label className="text-sm font-medium">
+                  Cover note <span className="text-destructive">*</span>
+                </label>
                 <textarea
                   value={cover}
                   onChange={(e) => setCover(e.target.value)}
                   rows={6}
-                  className="mt-2 w-full rounded-md border px-3 py-2 text-sm"
+                  maxLength={MAX_COVER}
+                  aria-invalid={coverTooShort || coverTooLong}
+                  className={`mt-2 w-full rounded-md border px-3 py-2 text-sm ${coverTooShort || coverTooLong ? "border-destructive" : ""}`}
                   placeholder="Why you're a great fit…"
                 />
+                <div className="mt-1 flex justify-between text-xs">
+                  <span className={coverTooShort ? "text-destructive" : "text-muted-foreground"}>
+                    Min {MIN_COVER} characters
+                  </span>
+                  <span className={coverTooLong ? "text-destructive" : "text-muted-foreground"}>
+                    {coverLen}/{MAX_COVER}
+                  </span>
+                </div>
+                {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
                 <div className="mt-4 flex justify-end gap-2">
                   <Link to="/jobs/$jobId" params={{ jobId }} className="rounded-md border px-4 py-2 text-sm">Cancel</Link>
                   <button
-                    onClick={() => apply.mutate({ method: "internal" })}
-                    disabled={apply.isPending}
-                    className="rounded-md px-4 py-2 text-sm font-semibold text-white"
+                    onClick={() => submit("internal")}
+                    disabled={apply.isPending || coverLen < MIN_COVER || coverTooLong}
+                    className="rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
                     style={{ background: "var(--color-primary)" }}
                   >
                     {apply.isPending ? "Submitting…" : "Submit application"}
@@ -150,7 +202,7 @@ function ApplyPage() {
               <div className="mt-5 flex justify-end gap-2">
                 <Link to="/jobs/$jobId" params={{ jobId }} className="rounded-md border px-4 py-2 text-sm">Cancel</Link>
                 <button
-                  onClick={() => apply.mutate({ method: "external" })}
+                  onClick={() => submit("external")}
                   disabled={apply.isPending || !externalUrl}
                   className="rounded-md px-4 py-2 text-sm font-semibold text-white inline-flex items-center gap-1 disabled:opacity-50"
                   style={{ background: "var(--color-primary)" }}
