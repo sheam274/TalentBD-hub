@@ -535,3 +535,46 @@ const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visible
     );
   },
 );
+
+function LiveJobCard({ j }: { j: any }) {
+  return (
+    <a href={j.url ?? "#"} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 h-full flex flex-col">
+      <div className="flex items-start gap-3">
+        {j.company_logo ? (
+          <img src={j.company_logo} alt={j.company} className="size-10 rounded-md object-contain bg-white" />
+        ) : (
+          <div className="size-10 rounded-md grid place-items-center bg-white/70 font-bold text-sm" style={{ color: "var(--color-primary)" }}>
+            {j.company?.[0] ?? "?"}
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold leading-tight line-clamp-2">{j.title}</h3>
+          <p className="text-xs text-muted-foreground truncate">{j.company}</p>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+          <Radio className="size-3 animate-pulse" /> Live
+        </span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        {j.category && <span>{j.category}</span>}
+        {j.job_type && <span>· {j.job_type}</span>}
+        <span>· {j.is_remote ? "🌍" : "📍"} {j.location}</span>
+        {!j.is_remote && <span className="rounded bg-amber-100 text-amber-800 px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
+        {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
+      </div>
+      {j.tags?.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1">
+          {j.tags.slice(0, 4).map((t: string) => (
+            <span key={t} className="rounded border bg-white/60 px-2 py-0.5 text-[11px]">{t}</span>
+          ))}
+        </div>
+      )}
+      <div className="mt-auto pt-3 flex items-center justify-between">
+        {j.salary && <p className="text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
+        <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--color-primary)" }}>
+          View & Apply <ExternalLink className="size-3" />
+        </span>
+      </div>
+    </a>
+  );
+}
