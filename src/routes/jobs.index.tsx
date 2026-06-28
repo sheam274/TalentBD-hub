@@ -222,6 +222,17 @@ function Jobs() {
   const rest = filtered.filter((j: any) => !j.is_featured);
   const counts: Record<string, number> = {};
   for (const j of all) counts[j.category ?? "General"] = (counts[j.category ?? "General"] ?? 0) + 1;
+  // Include live jobs in category counts so chips reflect what's actually shown.
+  const liveAll = remoteQ.data ?? [];
+  for (const c of CATEGORIES) {
+    const parts = c.toLowerCase().split(/[\s/&-]+/).filter(Boolean);
+    const liveCount = liveAll.reduce((n: number, j: any) => {
+      const hay = `${j.category ?? ""} ${j.title ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
+      return n + (parts.some((p) => hay.includes(p)) ? 1 : 0);
+    }, 0);
+    counts[c] = (counts[c] ?? 0) + liveCount;
+  }
+  const totalAll = all.length + liveAll.length;
 
   const hasFilters = !!(search || category || location || exp || type || remote !== "all");
   const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
@@ -294,7 +305,7 @@ function Jobs() {
         <div className="mt-6 glass rounded-xl p-4">
           <p className="text-xs font-semibold uppercase text-muted-foreground">Browse by category</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            <button onClick={() => setCategory("")} className={`rounded-full px-3 py-1.5 text-xs font-medium border ${category === "" ? "bg-primary text-white" : "bg-white/60"}`} style={category === "" ? { background: "var(--color-primary)", color: "white" } : {}}>All ({all.length})</button>
+            <button onClick={() => setCategory("")} className={`rounded-full px-3 py-1.5 text-xs font-medium border ${category === "" ? "bg-primary text-white" : "bg-white/60"}`} style={category === "" ? { background: "var(--color-primary)", color: "white" } : {}}>All ({totalAll})</button>
             {CATEGORIES.map((c) => (
               <button key={c} onClick={() => setCategory(c === category ? "" : c)} className={`rounded-full px-3 py-1.5 text-xs font-medium border ${category === c ? "text-white" : "bg-white/60"}`} style={category === c ? { background: "var(--color-primary)", color: "white" } : {}}>
                 {c} {counts[c] ? `(${counts[c]})` : ""}
