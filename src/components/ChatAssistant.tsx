@@ -123,7 +123,7 @@ export function ChatAssistant() {
                 {lastModel ? (
                   <>
                     Powered by <span className="font-semibold">{lastModel}</span>
-                    {lastFellBack && <span className="ml-1 rounded bg-amber-400/90 px-1 text-[10px] font-semibold text-amber-950">fallback</span>}
+                    {lastFellBack && <span className="ml-1 rounded bg-warning px-1 text-[10px] font-semibold text-warning-foreground">fallback</span>}
                   </>
                 ) : (
                   <>Powered by Google Gemini</>
@@ -135,7 +135,7 @@ export function ChatAssistant() {
               onClick={() => setGeminiMode((v) => !v)}
               title="Toggle pure Gemini mode (minimal system prompt)"
               className={`rounded-full px-2 py-1 text-[10px] font-semibold transition ${
-                geminiMode ? "bg-white text-slate-900" : "bg-white/20 text-white hover:bg-white/30"
+                geminiMode ? "bg-white text-ink" : "bg-white/20 text-white hover:bg-white/30"
               }`}
             >
               {geminiMode ? "Gemini" : "Coach"}
@@ -156,7 +156,7 @@ export function ChatAssistant() {
                   {m.role === "user" ? (
                     m.content
                   ) : (
-                    <div className="prose prose-sm max-w-none prose-pre:bg-slate-900 prose-pre:text-slate-50 prose-code:before:hidden prose-code:after:hidden">
+                    <div className="prose prose-sm max-w-none prose-pre:bg-ink prose-pre:text-white prose-code:before:hidden prose-code:after:hidden">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
                     </div>
                   )}
