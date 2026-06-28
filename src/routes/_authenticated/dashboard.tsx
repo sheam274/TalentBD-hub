@@ -137,8 +137,8 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 function appColor(s: string) {
-  if (s === "accepted") return "bg-emerald-100 text-emerald-700";
-  if (s === "rejected") return "bg-red-100 text-red-700";
-  if (s === "reviewing") return "bg-amber-100 text-amber-700";
-  return "bg-slate-100 text-slate-700";
+  if (s === "accepted") return "badge-success";
+  if (s === "rejected") return "badge-danger";
+  if (s === "reviewing") return "badge-warning";
+  return "badge-neutral";
 }
