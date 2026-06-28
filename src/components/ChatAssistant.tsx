@@ -35,6 +35,15 @@ export function ChatAssistant() {
     window.localStorage.setItem("talentbd.chatMode", geminiMode ? "gemini" : "coach");
   }, [geminiMode]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "talentbd.chatMode") setGeminiMode(e.newValue === "gemini");
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const send = useMutation({
     mutationFn: (next: Msg[]) =>
       chatFn({ data: { messages: next, mode: geminiMode ? "gemini" : "coach" } }),
