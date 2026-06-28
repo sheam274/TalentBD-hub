@@ -44,6 +44,7 @@ import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminInterviewsRouteImport } from './routes/_authenticated/admin/interviews'
 import { Route as AuthenticatedAdminEmployersRouteImport } from './routes/_authenticated/admin/employers'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
+import { Route as AuthenticatedAdminCredentialsRouteImport } from './routes/_authenticated/admin/credentials'
 import { Route as AuthenticatedAdminCompaniesRouteImport } from './routes/_authenticated/admin/companies'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 import { Route as ApiPublicHooksSyncExternalJobsRouteImport } from './routes/api/public/hooks/sync-external-jobs'
@@ -243,6 +244,12 @@ const AuthenticatedAdminDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminCredentialsRoute =
+  AuthenticatedAdminCredentialsRouteImport.update({
+    id: '/credentials',
+    path: '/credentials',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminCompaniesRoute =
   AuthenticatedAdminCompaniesRouteImport.update({
     id: '/companies',
@@ -305,6 +312,7 @@ export interface FileRoutesByFullPath {
   '/jobs/': typeof JobsIndexRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/admin/companies': typeof AuthenticatedAdminCompaniesRoute
+  '/admin/credentials': typeof AuthenticatedAdminCredentialsRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/employers': typeof AuthenticatedAdminEmployersRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
@@ -348,6 +356,7 @@ export interface FileRoutesByTo {
   '/jobs': typeof JobsIndexRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/admin/companies': typeof AuthenticatedAdminCompaniesRoute
+  '/admin/credentials': typeof AuthenticatedAdminCredentialsRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/employers': typeof AuthenticatedAdminEmployersRoute
   '/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
@@ -393,6 +402,7 @@ export interface FileRoutesById {
   '/jobs/': typeof JobsIndexRoute
   '/_authenticated/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/_authenticated/admin/companies': typeof AuthenticatedAdminCompaniesRoute
+  '/_authenticated/admin/credentials': typeof AuthenticatedAdminCredentialsRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/employers': typeof AuthenticatedAdminEmployersRoute
   '/_authenticated/admin/interviews': typeof AuthenticatedAdminInterviewsRoute
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/jobs/'
     | '/admin/applications'
     | '/admin/companies'
+    | '/admin/credentials'
     | '/admin/dashboard'
     | '/admin/employers'
     | '/admin/interviews'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/admin/applications'
     | '/admin/companies'
+    | '/admin/credentials'
     | '/admin/dashboard'
     | '/admin/employers'
     | '/admin/interviews'
@@ -525,6 +537,7 @@ export interface FileRouteTypes {
     | '/jobs/'
     | '/_authenticated/admin/applications'
     | '/_authenticated/admin/companies'
+    | '/_authenticated/admin/credentials'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/employers'
     | '/_authenticated/admin/interviews'
@@ -811,6 +824,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/credentials': {
+      id: '/_authenticated/admin/credentials'
+      path: '/credentials'
+      fullPath: '/admin/credentials'
+      preLoaderRoute: typeof AuthenticatedAdminCredentialsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/companies': {
       id: '/_authenticated/admin/companies'
       path: '/companies'
@@ -866,6 +886,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
   AuthenticatedAdminCompaniesRoute: typeof AuthenticatedAdminCompaniesRoute
+  AuthenticatedAdminCredentialsRoute: typeof AuthenticatedAdminCredentialsRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
   AuthenticatedAdminEmployersRoute: typeof AuthenticatedAdminEmployersRoute
   AuthenticatedAdminInterviewsRoute: typeof AuthenticatedAdminInterviewsRoute
@@ -879,6 +900,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
   {
     AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
     AuthenticatedAdminCompaniesRoute: AuthenticatedAdminCompaniesRoute,
+    AuthenticatedAdminCredentialsRoute: AuthenticatedAdminCredentialsRoute,
     AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
     AuthenticatedAdminEmployersRoute: AuthenticatedAdminEmployersRoute,
     AuthenticatedAdminInterviewsRoute: AuthenticatedAdminInterviewsRoute,
