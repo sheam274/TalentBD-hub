@@ -145,14 +145,14 @@ function Landing() {
               ].map((c) => (
                 <img
                   key={c.domain}
-                  src={`https://icons.duckduckgo.com/ip3/${c.domain}.ico`}
+                  src={`https://www.google.com/s2/favicons?domain=${c.domain}&sz=128`}
                   alt=""
                   aria-label={`${c.name} logo`}
                   loading="lazy"
                   onError={(e) => {
                     const img = e.currentTarget;
                     img.onerror = null;
-                    img.src = `https://www.google.com/s2/favicons?domain=${c.domain}&sz=128`;
+                    img.src = `https://icons.duckduckgo.com/ip3/${c.domain}.ico`;
                   }}
                   className="h-10 w-10 object-contain"
                 />
