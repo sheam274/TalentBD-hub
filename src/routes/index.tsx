@@ -6,6 +6,7 @@ import pathaoAsset from "@/assets/partners/pathao.png.asset.json";
 import brainstationAsset from "@/assets/partners/brainstation.png.asset.json";
 import bkashAsset from "@/assets/partners/bkash.png.asset.json";
 import grameenphoneAsset from "@/assets/partners/grameenphone.png.asset.json";
+import learningVideoAsset from "@/assets/learning-modules.mp4.asset.json";
 
 const PARTNER_LOGOS = [
   { name: "Pathao", url: pathaoAsset.url },
@@ -263,31 +264,30 @@ function Landing() {
               <span className="h-[2px] flex-1 bg-border" />
             </h3>
             <div className="grid grid-cols-1 overflow-hidden rounded-3xl border border-border bg-white shadow-sm md:grid-cols-2">
-              {/* Left — animated visual */}
+              {/* Left — module preview video */}
               <div
-                className="relative flex min-h-[280px] items-center justify-center overflow-hidden p-10"
+                className="relative aspect-video w-full overflow-hidden md:aspect-auto md:h-full md:min-h-[320px]"
                 style={{ background: "linear-gradient(135deg, var(--eduma-ink), var(--eduma-navy))" }}
               >
-                <div
-                  className="absolute inset-0 opacity-25"
-                  style={{
-                    backgroundImage: "radial-gradient(rgba(255,255,255,0.25) 1px, transparent 1px)",
-                    backgroundSize: "24px 24px",
-                  }}
+                <video
+                  src={learningVideoAsset.url}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label="Learning modules preview"
+                  className="absolute inset-0 size-full object-cover"
                 />
                 <div
-                  className="absolute -left-10 -top-10 size-64 rounded-full blur-3xl animate-pulse"
-                  style={{ background: "color-mix(in oklab, var(--eduma-red) 70%, transparent)", opacity: 0.5 }}
+                  className="pointer-events-none absolute inset-0"
+                  style={{ background: "linear-gradient(to top, rgba(11,16,32,0.85), rgba(11,16,32,0.15) 55%, transparent)" }}
                 />
-                <div
-                  className="absolute -bottom-12 -right-8 size-72 rounded-full blur-3xl animate-pulse"
-                  style={{ background: "color-mix(in oklab, var(--eduma-gold) 70%, transparent)", opacity: 0.4, animationDelay: "1s" }}
-                />
-                <div className="relative z-10 text-center">
-                  <div className="mb-4 inline-flex size-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/20 animate-[scale-in_0.6s_ease-out]">
-                    <GraduationCap className="size-10 text-white" />
+                <div className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-3 p-5 sm:p-6">
+                  <div className="inline-flex size-12 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur-md ring-1 ring-white/25">
+                    <GraduationCap className="size-6 text-white" />
                   </div>
-                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/70">Learn • Build • Earn</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-white/85 sm:text-xs">Learn • Build • Earn</p>
                 </div>
               </div>
 
