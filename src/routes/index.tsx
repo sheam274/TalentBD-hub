@@ -113,7 +113,6 @@ function Landing() {
             <CtaButton
               to="/jobs"
               variant="primary"
-              disabled={false}
               aria-label="Browse Live Jobs — view live engineering roles"
             >
               <span>Browse Live Jobs</span>
@@ -122,7 +121,6 @@ function Landing() {
             <CtaButton
               to="/learn"
               variant="secondary"
-              disabled={false}
               aria-label="Start Learning Free — open engineering modules"
             >
               <span>Start Learning Free</span>
