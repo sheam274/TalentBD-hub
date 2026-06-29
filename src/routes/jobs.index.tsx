@@ -52,10 +52,7 @@ function Jobs() {
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
-    return () => clearTimeout(t);
-  }, [search]);
+  // Search only runs when the user presses Enter or clicks the Search button.
   const [showSuggest, setShowSuggest] = useState(false);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -83,7 +80,7 @@ function Jobs() {
     if (r === "remote" || r === "onsite" || r === "all") setRemote(r);
     const c = p.get("category"); if (c) setCategory(c);
     const t = p.get("type"); if (t) setType(t);
-    const s = p.get("search"); if (s) setSearch(s);
+    const s = p.get("search"); if (s) { setSearch(s); setDebouncedSearch(s); }
     const loc = p.get("location"); if (loc) setLocation(loc);
     const e = p.get("exp"); if (e) setExp(e);
   }, []);
@@ -240,7 +237,7 @@ function Jobs() {
   const totalAll = all.length + liveAll.length;
 
   const hasFilters = !!(search || category || location || exp || type || remote !== "all");
-  const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
+  const clearFilters = () => { setSearch(""); setDebouncedSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
 
   const openExternalJob = (url?: string | null) => {
     if (typeof window === "undefined") return;
