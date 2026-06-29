@@ -290,20 +290,20 @@ function Landing() {
               </div>
 
               {/* Right — module list (same content as before) */}
-              <div className="flex flex-col gap-5 p-8">
+              <div className="flex flex-col justify-center gap-4 p-6 md:p-8">
                 {FEATURED_MODULES.map((m) => (
                   <a
                     key={m.title}
                     href={m.href}
-                    className="group relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-2xl p-6 min-h-[140px]"
+                    className="group relative flex flex-1 cursor-pointer flex-col justify-center gap-2 overflow-hidden rounded-2xl p-6"
                     style={{ background: m.bg }}
                   >
                     <div
                       className="absolute inset-0 opacity-80"
                       style={{ background: "linear-gradient(to top, var(--eduma-ink), transparent)" }}
                     />
-                    <h4 className="relative z-10 text-xl font-bold text-white">{m.title}</h4>
-                    <p className="relative z-10 text-sm text-white/80">{m.desc}</p>
+                    <h4 className="relative z-10 text-lg font-bold leading-tight text-white md:text-xl">{m.title}</h4>
+                    <p className="relative z-10 text-sm leading-relaxed text-white/80">{m.desc}</p>
                     <div
                       className="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
                       style={{ background: "var(--eduma-red)" }}
