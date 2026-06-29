@@ -304,9 +304,9 @@ function Jobs() {
   }, [liveFiltered, featured, rest]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 page-enter">
-      <h1 className="text-3xl font-bold">Jobs marketplace</h1>
-      <p className="mt-1 text-muted-foreground">Local Bangladesh roles + global remote engineering jobs.</p>
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
+      <h1 className="text-2xl sm:text-3xl font-bold">Jobs marketplace</h1>
+      <p className="mt-1 text-sm sm:text-base text-muted-foreground">Local Bangladesh roles + global remote engineering jobs.</p>
       {hasFilters && (
         <div className="mt-2 text-xs text-muted-foreground">
           <button onClick={clearFilters} className="underline hover:text-foreground">Clear filters</button>
@@ -329,18 +329,18 @@ function Jobs() {
       </ScrollReveal>
 
       {/* Filters */}
-      <div className="mt-4 glass rounded-xl p-4 grid gap-3 md:grid-cols-6">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, company, skill" aria-label="Search jobs" className="md:col-span-2 rounded-md border px-3 py-2 text-sm bg-white/60" />
-        <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" aria-label="Filter by location" className="rounded-md border px-3 py-2 text-sm bg-white/60" />
-        <select value={exp} onChange={(e) => setExp(e.target.value)} aria-label="Filter by experience level" className="rounded-md border px-3 py-2 text-sm bg-white/60">
+      <div className="mt-4 glass rounded-xl p-3 sm:p-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
+        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, company, skill" aria-label="Search jobs" className="sm:col-span-2 min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60" />
+        <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" aria-label="Filter by location" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60" />
+        <select value={exp} onChange={(e) => setExp(e.target.value)} aria-label="Filter by experience level" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="">Any experience</option>
           <option>Entry-level</option><option>Mid-level</option><option>Senior</option>
         </select>
-        <select value={type} onChange={(e) => setType(e.target.value)} aria-label="Filter by employment type" className="rounded-md border px-3 py-2 text-sm bg-white/60">
+        <select value={type} onChange={(e) => setType(e.target.value)} aria-label="Filter by employment type" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="">Any type</option>
           <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
         </select>
-        <select value={remote} onChange={(e) => setRemote(e.target.value as any)} aria-label="Filter by remote or on-site" className="rounded-md border px-3 py-2 text-sm bg-white/60">
+        <select value={remote} onChange={(e) => setRemote(e.target.value as any)} aria-label="Filter by remote or on-site" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="all">Remote + On-site</option><option value="remote">Remote only</option><option value="onsite">On-site only</option>
         </select>
       </div>
@@ -348,7 +348,7 @@ function Jobs() {
       {featured.length > 0 && (
         <section className="mt-8">
           <h2 className="text-lg font-semibold flex items-center gap-2"><Star className="size-4 text-amber-500" /> Featured / Hot jobs</h2>
-          <div className="mt-3 grid gap-4 md:grid-cols-2">
+          <div className="mt-3 grid gap-4 grid-cols-1 md:grid-cols-2">
             {featured.map((j: any, i: number) => (
               <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
             ))}
@@ -365,7 +365,7 @@ function Jobs() {
             </span>
           )}
         </h2>
-        <div className="mt-3 grid gap-4 md:grid-cols-2">
+        <div className="mt-3 grid gap-4 grid-cols-1 md:grid-cols-2">
           {rest.map((j: any, i: number) => (
             <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
           ))}
@@ -405,7 +405,7 @@ function Jobs() {
           <p className="mt-4 text-sm text-muted-foreground">Live feed is taking a break — check back soon.</p>
         )}
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {(() => {
             const tokens = debouncedSearch
               .toLowerCase()
@@ -569,19 +569,19 @@ function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => v
   const deadline = j.application_deadline ? new Date(j.application_deadline) : null;
   const daysLeft = deadline ? Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
   return (
-    <article className="lift glass rounded-xl p-5 h-full">
+    <article className="lift glass rounded-xl p-4 sm:p-5 h-full flex flex-col">
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="font-semibold hover:underline">{j.job_title}</Link>
-          <p className="text-sm text-muted-foreground">{j.company}</p>
+        <div className="min-w-0 flex-1">
+          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="font-semibold hover:underline break-words line-clamp-2">{j.job_title}</Link>
+          <p className="text-sm text-muted-foreground truncate">{j.company}</p>
         </div>
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-col items-end gap-1 shrink-0">
           {j.is_featured && <span className="badge-featured">Hot</span>}
           {j.is_live && <span className="badge-live">Live</span>}
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        {j.location && <span className="inline-flex items-center gap-1"><MapPin className="size-3" />{j.location}</span>}
+        {j.location && <span className="inline-flex items-center gap-1 min-w-0"><MapPin className="size-3 shrink-0" /><span className="truncate max-w-[12rem]">{j.location}</span></span>}
         {j.is_remote && <span className="rounded badge-success px-2 py-0.5">Remote</span>}
         {j.job_type && <span className="inline-flex items-center gap-1"><Briefcase className="size-3" />{j.job_type}</span>}
         {j.experience_level && <span className="inline-flex items-center gap-1"><GraduationCap className="size-3" />{j.experience_level}</span>}
@@ -593,14 +593,14 @@ function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => v
           <span key={r} className="rounded border bg-white/60 px-2 py-0.5 text-xs">{r}</span>
         ))}
       </div>
-      <div className="mt-4 flex items-center justify-between gap-2">
-        {j.salary_range && <p className="text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary_range}</p>}
-        <div className="ml-auto flex items-center gap-2">
-          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="rounded-md border px-3 py-1.5 text-sm font-semibold hover:bg-white/60">View details</Link>
+      <div className="mt-auto pt-4 flex flex-wrap items-center justify-between gap-2">
+        {j.salary_range && <p className="text-sm font-medium min-w-0 break-words" style={{ color: "var(--color-primary)" }}>{j.salary_range}</p>}
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="rounded-md border px-3 py-1.5 text-sm font-semibold hover:bg-white/60 whitespace-nowrap">View details</Link>
           {canApply ? (
-            <button onClick={onApply} className="rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>Apply</button>
+            <button onClick={onApply} className="rounded-md px-3 py-1.5 text-sm font-semibold text-white whitespace-nowrap" style={{ background: "var(--color-primary)" }}>Apply</button>
           ) : (
-            <a href="/auth" className="rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>Sign in</a>
+            <a href="/auth" className="rounded-md px-3 py-1.5 text-sm font-semibold text-white whitespace-nowrap" style={{ background: "var(--color-primary)" }}>Sign in</a>
           )}
         </div>
       </div>
