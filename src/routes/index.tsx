@@ -217,75 +217,108 @@ function Landing() {
         </section>
 
         {/* Dual: Jobs + Learning */}
-        <div className="grid gap-16 lg:grid-cols-2">
-          {/* Jobs */}
+        <div className="flex flex-col gap-12">
+          {/* Jobs — single full-width card */}
           <div className="space-y-8">
             <h3 className="flex items-center gap-4 text-2xl font-bold md:text-3xl" style={{ color: "var(--eduma-ink)" }}>
               Premium Roles
               <span className="h-[2px] flex-1 bg-border" />
             </h3>
-            <div className="space-y-4">
-              {FEATURED_JOBS.map((j) => (
-                <a
-                  key={j.title}
-                  href="/jobs"
-                  className="group flex cursor-pointer items-center rounded-2xl border border-border bg-white p-6 shadow-sm transition-colors hover:border-[var(--eduma-red)]"
-                >
-                  <div
-                    className="flex size-12 flex-shrink-0 items-center justify-center rounded-xl font-bold text-white"
-                    style={{ background: j.color }}
+            <div className="rounded-3xl border border-border bg-white p-6 shadow-sm md:p-8">
+              <div className="divide-y divide-border">
+                {FEATURED_JOBS.map((j) => (
+                  <a
+                    key={j.title}
+                    href="/jobs"
+                    className="group flex cursor-pointer items-center py-5 first:pt-0 last:pb-0 transition-colors"
                   >
-                    {j.initial}
-                  </div>
-                  <div className="ml-5 flex-1">
-                    <h4 className="text-lg font-bold" style={{ color: "var(--eduma-ink)" }}>{j.title}</h4>
-                    <p className="text-sm text-muted-foreground">{j.meta}</p>
-                  </div>
-                  <div
-                    className="rounded-full px-4 py-1.5 text-xs font-bold transition-colors group-hover:bg-[var(--eduma-red-strong)] group-hover:text-white"
-                    style={{ background: "var(--eduma-red-soft)", color: "var(--eduma-red-strong)" }}
-                  >
-                    {j.tag}
-                  </div>
-                </a>
-              ))}
+                    <div
+                      className="flex size-12 flex-shrink-0 items-center justify-center rounded-xl font-bold text-white"
+                      style={{ background: j.color }}
+                    >
+                      {j.initial}
+                    </div>
+                    <div className="ml-5 flex-1">
+                      <h4 className="text-lg font-bold transition-colors group-hover:text-[var(--eduma-red-strong)]" style={{ color: "var(--eduma-ink)" }}>{j.title}</h4>
+                      <p className="text-sm text-muted-foreground">{j.meta}</p>
+                    </div>
+                    <div
+                      className="rounded-full px-4 py-1.5 text-xs font-bold transition-colors group-hover:bg-[var(--eduma-red-strong)] group-hover:text-white"
+                      style={{ background: "var(--eduma-red-soft)", color: "var(--eduma-red-strong)" }}
+                    >
+                      {j.tag}
+                    </div>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Modules */}
+          {/* Modules — split card: animation | content */}
           <div className="space-y-8">
             <h3 className="flex items-center gap-4 text-2xl font-bold md:text-3xl" style={{ color: "var(--eduma-ink)" }}>
               Learning Modules
               <span className="h-[2px] flex-1 bg-border" />
             </h3>
-            <div className="grid grid-cols-1 gap-6">
-              {FEATURED_MODULES.map((m) => (
-                <a
-                  key={m.title}
-                  href={m.href}
-                  className="group relative flex h-60 cursor-pointer flex-col justify-end overflow-hidden rounded-3xl p-8"
-                  style={{ background: m.bg }}
-                >
-                  <div
-                    className="absolute inset-0 opacity-80"
-                    style={{ background: "linear-gradient(to top, var(--eduma-ink), transparent)" }}
-                  />
-                  <div
-                    className="absolute left-8 top-8 rounded-xl border p-3 text-xs font-bold uppercase tracking-tighter text-white backdrop-blur-md"
-                    style={{ background: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.1)" }}
+            <div className="grid grid-cols-1 overflow-hidden rounded-3xl border border-border bg-white shadow-sm md:grid-cols-2">
+              {/* Left — animated visual */}
+              <div
+                className="relative flex min-h-[280px] items-center justify-center overflow-hidden p-10"
+                style={{ background: "linear-gradient(135deg, var(--eduma-ink), var(--eduma-navy))" }}
+              >
+                <div
+                  className="absolute inset-0 opacity-25"
+                  style={{
+                    backgroundImage: "radial-gradient(rgba(255,255,255,0.25) 1px, transparent 1px)",
+                    backgroundSize: "24px 24px",
+                  }}
+                />
+                <div
+                  className="absolute -left-10 -top-10 size-64 rounded-full blur-3xl animate-pulse"
+                  style={{ background: "color-mix(in oklab, var(--eduma-red) 70%, transparent)", opacity: 0.5 }}
+                />
+                <div
+                  className="absolute -bottom-12 -right-8 size-72 rounded-full blur-3xl animate-pulse"
+                  style={{ background: "color-mix(in oklab, var(--eduma-gold) 70%, transparent)", opacity: 0.4, animationDelay: "1s" }}
+                />
+                <div className="relative z-10 text-center">
+                  <div className="mb-4 inline-flex size-20 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/20 animate-[scale-in_0.6s_ease-out]">
+                    <GraduationCap className="size-10 text-white" />
+                  </div>
+                  <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/70">Learn • Build • Earn</p>
+                </div>
+              </div>
+
+              {/* Right — module list (same content as before) */}
+              <div className="flex flex-col gap-5 p-8">
+                {FEATURED_MODULES.map((m) => (
+                  <a
+                    key={m.title}
+                    href={m.href}
+                    className="group relative flex flex-1 cursor-pointer flex-col justify-end overflow-hidden rounded-2xl p-6"
+                    style={{ background: m.bg }}
                   >
-                    {m.tag}
-                  </div>
-                  <div className="relative z-10">
-                    <h4 className="mb-2 text-2xl font-bold text-white">{m.title}</h4>
-                    <p className="text-sm text-white/70">{m.desc}</p>
-                  </div>
-                  <div
-                    className="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
-                    style={{ background: "var(--eduma-red)" }}
-                  />
-                </a>
-              ))}
+                    <div
+                      className="absolute inset-0 opacity-80"
+                      style={{ background: "linear-gradient(to top, var(--eduma-ink), transparent)" }}
+                    />
+                    <div
+                      className="absolute left-6 top-6 rounded-xl border p-2.5 text-[10px] font-bold uppercase tracking-tighter text-white backdrop-blur-md"
+                      style={{ background: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.1)" }}
+                    >
+                      {m.tag}
+                    </div>
+                    <div className="relative z-10">
+                      <h4 className="mb-1 text-xl font-bold text-white">{m.title}</h4>
+                      <p className="text-sm text-white/70">{m.desc}</p>
+                    </div>
+                    <div
+                      className="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
+                      style={{ background: "var(--eduma-red)" }}
+                    />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
