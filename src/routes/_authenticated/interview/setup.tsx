@@ -35,11 +35,11 @@ function SetupPage() {
   });
 
   return (
-    <div className="page-enter mx-auto max-w-3xl px-4 py-10 md:px-6">
-      <h1 className="text-3xl font-bold">Set up your interview</h1>
+    <div className="page-enter mx-auto max-w-3xl px-4 py-6 sm:py-10 md:px-6">
+      <h1 className="text-2xl sm:text-3xl font-bold">Set up your interview</h1>
       <p className="mt-1 text-muted-foreground">AI will generate questions tailored to your selection.</p>
 
-      <div className="mt-6 space-y-5 rounded-2xl border bg-white p-6 shadow-sm">
+      <div className="mt-6 space-y-5 rounded-2xl border bg-white p-4 sm:p-6 shadow-sm">
         <Field label="Discipline">
           <select className="w-full rounded-md border px-3 py-2" value={discipline} onChange={(e) => setDiscipline(e.target.value)}>
             {DISCIPLINES.map((d) => <option key={d}>{d}</option>)}
@@ -52,9 +52,9 @@ function SetupPage() {
         </Field>
 
         <Field label="Difficulty">
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {(["easy", "medium", "hard"] as const).map((d) => (
-              <button key={d} type="button" onClick={() => setDifficulty(d)} className={`rounded-md border px-4 py-2 text-sm capitalize ${difficulty === d ? "bg-primary text-primary-foreground border-primary" : "bg-white"}`}>{d}</button>
+              <button key={d} type="button" onClick={() => setDifficulty(d)} className={`flex-1 sm:flex-none rounded-md border px-4 py-2 text-sm capitalize ${difficulty === d ? "bg-primary text-primary-foreground border-primary" : "bg-white"}`}>{d}</button>
             ))}
           </div>
         </Field>

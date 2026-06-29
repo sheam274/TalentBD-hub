@@ -33,14 +33,14 @@ function AdminDash() {
   const s = (q.data ?? {}) as Partial<Record<StatKey, number>>;
   return (
     <div>
-      <div className="flex items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Admin overview</h1>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold">Admin overview</h1>
           <p className="text-sm text-muted-foreground">Live counts across every module in TalentBD.</p>
         </div>
         <button
           onClick={() => q.refetch()}
-          className="rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
+          className="shrink-0 rounded-md border px-3 py-1.5 text-sm hover:bg-muted"
         >
           {q.isFetching ? "Refreshing…" : "Refresh"}
         </button>

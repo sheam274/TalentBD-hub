@@ -38,10 +38,10 @@ function Topic() {
   const { module: m, quizzes } = q.data;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 md:px-6 page-enter">
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:py-10 md:px-6 page-enter">
       <Link to="/learn" className="text-sm" style={{ color: "var(--color-primary)" }}>← All tracks</Link>
-      <h1 className="mt-2 text-3xl font-bold">{m.title}</h1>
-      <p className="mt-1 text-muted-foreground">{m.description}</p>
+      <h1 className="mt-2 text-2xl sm:text-3xl font-bold break-words">{m.title}</h1>
+      <p className="mt-1 text-muted-foreground text-sm sm:text-base">{m.description}</p>
 
       {m.video_url && (
         <div className="mt-6 aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl">
@@ -55,13 +55,13 @@ function Topic() {
         </div>
       )}
 
-      <div className="mt-6 rounded-xl border bg-white">
+      <div className="mt-6 rounded-xl border bg-white overflow-hidden">
         <button onClick={() => setDocOpen((v) => !v)} className="flex w-full items-center justify-between p-4 text-left font-semibold">
           <span>📖 Documentation</span>
           <span className="text-sm text-muted-foreground">{docOpen ? "Hide" : "Show"}</span>
         </button>
         {docOpen && (
-          <pre className="whitespace-pre-wrap border-t p-4 text-sm leading-relaxed">{m.documentation_body}</pre>
+          <pre className="whitespace-pre-wrap break-words border-t p-4 text-sm leading-relaxed overflow-x-auto">{m.documentation_body}</pre>
         )}
       </div>
 
@@ -89,8 +89,8 @@ function Topic() {
       )}
 
       {quizzes.length > 0 && (
-        <div className="mt-8 rounded-xl border bg-white p-6">
-          <h2 className="text-xl font-semibold">Assessment</h2>
+        <div className="mt-8 rounded-xl border bg-white p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold">Assessment</h2>
           <p className="text-sm text-muted-foreground">Score 80% or higher to earn a credential.</p>
           <div className="mt-4 space-y-5">
             {quizzes.map((qz: any, idx: number) => (

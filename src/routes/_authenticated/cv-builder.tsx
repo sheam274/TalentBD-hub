@@ -86,14 +86,14 @@ function CvBuilder() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 page-enter">
-      <div className="no-print flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-extrabold">CV <span className="text-gradient">Builder</span></h1>
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
+      <div className="no-print flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-extrabold">CV <span className="text-gradient">Builder</span></h1>
           <p className="text-sm text-muted-foreground">Real-time preview · ATS-friendly · Print to PDF</p>
         </div>
-        <div className="flex items-center gap-2">
-          <select aria-label="CV template style" value={style} onChange={(e) => setStyle(e.target.value as any)} className="rounded-md border px-3 py-2 text-sm bg-white">
+        <div className="flex w-full sm:w-auto flex-wrap items-center gap-2">
+          <select aria-label="CV template style" value={style} onChange={(e) => setStyle(e.target.value as any)} className="flex-1 sm:flex-none rounded-md border px-3 py-2 text-sm bg-white">
             <option value="standard">Standard (single column)</option>
             <option value="premium">Premium (two-column)</option>
           </select>
@@ -107,9 +107,9 @@ function CvBuilder() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div className="no-print space-y-5 rounded-xl border bg-white p-5">
+        <div className="no-print space-y-5 rounded-xl border bg-white p-4 sm:p-5">
           <Section title="Personal">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Full name" value={data.name} onChange={(v) => set("name", v)} />
               <Input label="Title / Role" value={data.title} onChange={(v) => set("title", v)} />
               <Input label="Email" value={data.email} onChange={(v) => set("email", v)} />
@@ -118,7 +118,7 @@ function CvBuilder() {
               <Input label="Website" value={data.website} onChange={(v) => set("website", v)} />
               <Input label="LinkedIn" value={data.linkedin} onChange={(v) => set("linkedin", v)} />
               <Input label="GitHub" value={data.github} onChange={(v) => set("github", v)} />
-              <Input label="Photo URL (optional)" value={data.photo} onChange={(v) => set("photo", v)} className="col-span-2" />
+              <Input label="Photo URL (optional)" value={data.photo} onChange={(v) => set("photo", v)} className="sm:col-span-2" />
             </div>
           </Section>
 
@@ -138,7 +138,7 @@ function CvBuilder() {
             create={() => ({ id: uid(), role: "", company: "", period: "", bullets: "" })}
             render={(item, update) => (
               <>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input label="Role" value={item.role} onChange={(v) => update({ ...item, role: v })} />
                   <Input label="Company" value={item.company} onChange={(v) => update({ ...item, company: v })} />
                 </div>
@@ -155,7 +155,7 @@ function CvBuilder() {
             create={() => ({ id: uid(), degree: "", school: "", period: "", details: "" })}
             render={(item, update) => (
               <>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input label="Degree" value={item.degree} onChange={(v) => update({ ...item, degree: v })} />
                   <Input label="School" value={item.school} onChange={(v) => update({ ...item, school: v })} />
                 </div>
@@ -172,7 +172,7 @@ function CvBuilder() {
             create={() => ({ id: uid(), name: "", link: "", description: "" })}
             render={(item, update) => (
               <>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input label="Name" value={item.name} onChange={(v) => update({ ...item, name: v })} />
                   <Input label="Link" value={item.link} onChange={(v) => update({ ...item, link: v })} />
                 </div>
@@ -183,7 +183,7 @@ function CvBuilder() {
         </div>
 
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <div className="cv-print-area rounded-xl border bg-white p-8 shadow-sm">
+          <div className="cv-print-area rounded-xl border bg-white p-4 sm:p-6 md:p-8 shadow-sm overflow-x-auto">
             {style === "standard" ? <StandardCv d={data} /> : <PremiumCv d={data} />}
           </div>
         </div>

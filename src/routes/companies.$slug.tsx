@@ -41,21 +41,21 @@ function CompanyDetail() {
   const { company, jobs } = q.data;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 md:px-6 page-enter">
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:py-10 md:px-6 page-enter">
       <Link to="/companies" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-4" /> All companies
       </Link>
 
       <ScrollReveal>
-        <header className="mt-4 glass rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6">
+        <header className="mt-4 glass rounded-2xl p-5 sm:p-6 md:p-8 flex flex-col md:flex-row gap-5 md:gap-6">
           <CompanyLogo name={company.name} url={company.logo_url} website={company.website} size={96} className="!rounded-2xl" />
           <div className="min-w-0 flex-1">
-            <h1 className="text-3xl font-bold">{company.name}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold break-words">{company.name}</h1>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               {company.industry && <span className="inline-flex items-center gap-1"><Building2 className="size-4" />{company.industry}</span>}
               {company.location && <span className="inline-flex items-center gap-1"><MapPin className="size-4" />{company.location}</span>}
               {company.website && (
-                <a href={company.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:underline" style={{ color: "var(--color-primary)" }}>
+                <a href={company.website} target="_blank" rel="noreferrer" className="inline-flex min-w-0 items-center gap-1 hover:underline break-all" style={{ color: "var(--color-primary)" }}>
                   <Globe className="size-4" />{company.website.replace(/^https?:\/\//, "")}
                 </a>
               )}
@@ -65,8 +65,8 @@ function CompanyDetail() {
         </header>
       </ScrollReveal>
 
-      <section className="mt-10">
-        <h2 className="text-xl font-bold flex items-center gap-2">
+      <section className="mt-8 sm:mt-10">
+        <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2">
           <Briefcase className="size-5" style={{ color: "var(--color-primary)" }} /> Open roles at {company.name}
         </h2>
         {jobs.length === 0 && (

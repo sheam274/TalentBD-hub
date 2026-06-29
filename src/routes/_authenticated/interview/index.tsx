@@ -24,21 +24,21 @@ function InterviewLanding() {
   return (
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
-          <div className="glass-dark rounded-2xl p-8">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:py-14 md:px-6">
+          <div className="glass-dark rounded-2xl p-5 sm:p-8">
             <p className="inline-flex items-center gap-1 rounded-full bg-black/25 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white"><Sparkles className="size-3.5" /> AI Interviewer</p>
-            <h1 className="mt-3 text-4xl font-bold">Give an AI-graded interview</h1>
-            <p className="mt-2 max-w-2xl text-white">Pick a role, choose a difficulty, and answer in text, voice, video, or MCQ. Our AI scores each answer, gives you per-question feedback, and issues a verifiable credential at 80%+.</p>
+            <h1 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">Give an AI-graded interview</h1>
+            <p className="mt-2 max-w-2xl text-sm sm:text-base text-white">Pick a role, choose a difficulty, and answer in text, voice, video, or MCQ. Our AI scores each answer, gives you per-question feedback, and issues a verifiable credential at 80%+.</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Link to="/interview/setup" className="rounded-md px-5 py-2.5 font-semibold" style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}>Start a new interview</Link>
-              <Link to="/interview/history" className="rounded-md border-2 border-white px-5 py-2.5 font-semibold text-white hover:bg-white/10">View history</Link>
+              <Link to="/interview/setup" className="rounded-md px-4 sm:px-5 py-2.5 text-sm sm:text-base font-semibold" style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}>Start a new interview</Link>
+              <Link to="/interview/history" className="rounded-md border-2 border-white px-4 sm:px-5 py-2.5 text-sm sm:text-base font-semibold text-white hover:bg-white/10">View history</Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-12 md:px-6">
-        <h2 className="text-2xl font-bold">Interview modes</h2>
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:px-6">
+        <h2 className="text-xl sm:text-2xl font-bold">Interview modes</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {MODES.map((m) => (
             <Link key={m.id} to="/interview/setup" search={{ mode: m.id }} className="group rounded-2xl border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
@@ -50,9 +50,9 @@ function InterviewLanding() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-16 md:px-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Recent attempts</h2>
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:pb-16 md:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold">Recent attempts</h2>
           <Link to="/interview/history" className="text-sm text-primary hover:underline">View all</Link>
         </div>
         <div className="mt-4 overflow-hidden rounded-2xl border bg-white shadow-sm">
@@ -61,12 +61,12 @@ function InterviewLanding() {
           ) : (
             <ul className="divide-y">
               {recent.map((s) => (
-                <li key={s.id} className="flex items-center justify-between gap-4 px-5 py-4">
-                  <div className="min-w-0">
+                <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-5 py-4">
+                  <div className="min-w-0 flex-1">
                     <div className="truncate font-medium">{s.role} <span className="text-xs text-muted-foreground">· {s.discipline} · {s.difficulty} · {s.mode}</span></div>
                     <div className="text-xs text-muted-foreground">{new Date(s.started_at).toLocaleString()}</div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex shrink-0 items-center gap-3">
                     {s.status === "completed" ? (
                       <span className="inline-flex items-center gap-1 rounded-full badge-success px-2 py-0.5 text-xs font-semibold"><Trophy className="size-3" /> {s.score}%</span>
                     ) : (
