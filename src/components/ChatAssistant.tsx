@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { MessageCircle, X, Send, Sparkles, Loader2 } from "lucide-react";
+import { MessageCircle, X, Send, Sparkles, Loader2, Paperclip } from "lucide-react";
 import { talentChat } from "@/lib/chat.functions";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -23,6 +23,8 @@ export function ChatAssistant() {
   const [input, setInput] = useState("");
   const chatFn = useServerFn(talentChat);
   const endRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [attachments, setAttachments] = useState<{ name: string; size: number; type: string }[]>([]);
   const [lastModel, setLastModel] = useState<string | null>(null);
   const [lastFellBack, setLastFellBack] = useState(false);
   const [geminiMode, setGeminiMode] = useState<boolean>(() => {
@@ -78,10 +80,16 @@ export function ChatAssistant() {
 
   function submit(text?: string) {
     const content = (text ?? input).trim();
-    if (!content || send.isPending) return;
-    const next: Msg[] = [...messages, { role: "user", content }];
+    if ((!content && attachments.length === 0) || send.isPending) return;
+    const attachNote =
+      attachments.length > 0
+        ? `\n\n📎 Attached: ${attachments.map((a) => `${a.name} (${Math.round(a.size / 1024)} KB)`).join(", ")}`
+        : "";
+    const finalContent = (content || "Please review the attached file(s).") + attachNote;
+    const next: Msg[] = [...messages, { role: "user", content: finalContent }];
     setMessages(next);
     setInput("");
+    setAttachments([]);
     send.mutate(next.filter((m) => m.role !== "assistant" || messages.indexOf(m) !== 0).slice(-20));
   }
 
@@ -130,16 +138,32 @@ export function ChatAssistant() {
                 )}
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setGeminiMode((v) => !v)}
-              title="Toggle pure Gemini mode (minimal system prompt)"
-              className={`rounded-full px-2 py-1 text-[10px] font-semibold transition ${
-                geminiMode ? "bg-white text-ink" : "bg-white/20 text-white hover:bg-white/30"
-              }`}
+            <div
+              role="group"
+              aria-label="Assistant mode"
+              className="flex items-center gap-0.5 rounded-full bg-white/15 p-0.5 text-[10px] font-semibold backdrop-blur transition hover:bg-white/25"
             >
-              {geminiMode ? "Gemini" : "Coach"}
-            </button>
+              <button
+                type="button"
+                onClick={() => setGeminiMode(false)}
+                title="Career coach with TalentBD context"
+                className={`rounded-full px-2 py-1 transition ${
+                  !geminiMode ? "bg-white text-ink shadow" : "text-white/80 hover:text-white"
+                }`}
+              >
+                Coach
+              </button>
+              <button
+                type="button"
+                onClick={() => setGeminiMode(true)}
+                title="Pure Gemini mode (minimal system prompt)"
+                className={`rounded-full px-2 py-1 transition ${
+                  geminiMode ? "bg-white text-ink shadow" : "text-white/80 hover:text-white"
+                }`}
+              >
+                Gemini
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto p-3" style={{ background: "color-mix(in oklab, var(--color-primary) 4%, white)" }}>
@@ -192,8 +216,53 @@ export function ChatAssistant() {
               e.preventDefault();
               submit();
             }}
-            className="flex items-center gap-2 border-t bg-white p-2"
+            className="flex flex-col gap-2 border-t bg-white p-2"
           >
+            {attachments.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {attachments.map((a, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1 rounded-full border bg-muted px-2 py-0.5 text-[11px]"
+                  >
+                    <Paperclip className="size-3" />
+                    <span className="max-w-[140px] truncate">{a.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label={`Remove ${a.name}`}
+                    >
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <input
+                ref={fileRef}
+                type="file"
+                multiple
+                className="hidden"
+                accept=".pdf,.doc,.docx,.txt,.md,image/*"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? []);
+                  setAttachments((prev) =>
+                    [...prev, ...files.map((f) => ({ name: f.name, size: f.size, type: f.type }))].slice(0, 5)
+                  );
+                  if (fileRef.current) fileRef.current.value = "";
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="rounded-md border p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                aria-label="Attach file"
+                title="Attach file (CV, PDF, image…)"
+              >
+                <Paperclip className="size-4" />
+              </button>
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -203,13 +272,14 @@ export function ChatAssistant() {
             />
             <button
               type="submit"
-              disabled={send.isPending || !input.trim()}
+              disabled={send.isPending || (!input.trim() && attachments.length === 0)}
               className="rounded-md p-2 text-white disabled:opacity-50"
               style={{ background: "var(--color-primary)" }}
               aria-label="Send"
             >
               <Send className="size-4" />
             </button>
+            </div>
           </form>
         </div>
       )}
