@@ -136,7 +136,7 @@ function Landing() {
             <p className="mb-4 text-xs uppercase tracking-widest text-white/40">
               Trusted by innovators worldwide
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+            <div className="flex flex-nowrap items-center justify-center gap-x-4 sm:gap-x-6 overflow-x-auto whitespace-nowrap">
               {[
                 { name: "Pathao", color: "#E2136E", style: "italic font-extrabold" },
                 { name: "BrainStation 23", color: "#F58220", style: "font-bold" },
@@ -146,7 +146,7 @@ function Landing() {
                 <span
                   key={c.name}
                   aria-label={`${c.name} logo`}
-                  className={`rounded-md bg-white px-4 py-2 text-base sm:text-lg ${c.style}`}
+                  className={`shrink-0 rounded-md bg-white px-3 py-1.5 text-sm sm:text-base ${c.style}`}
                   style={{ color: c.color, fontFamily: "Space Grotesk, sans-serif" }}
                 >
                   {c.name}
