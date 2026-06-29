@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, LogOut, ChevronDown, ShieldCheck } from "lucide-react";
+import { Menu, X, LogOut, ChevronDown, ShieldCheck, User as UserIcon } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -91,6 +91,15 @@ export function SiteHeader() {
   });
   const isAdmin = profileData?.isAdmin ?? false;
   const isEmployer = profileData?.isEmployer ?? false;
+  const displayName =
+    profileData?.profile?.name?.trim() ||
+    (user?.email ? user.email.split("@")[0] : "Account");
+  const initials = displayName
+    .split(/\s+/)
+    .map((p: string) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -178,9 +187,35 @@ export function SiteHeader() {
             </div>
           )}
           {user ? (
-            <button onClick={signOut} className="ml-2 inline-flex items-center gap-1 rounded-md border border-white/30 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
-              <LogOut className="size-4" /> Sign out
-            </button>
+            <div className="relative ml-2" onMouseEnter={() => setHover("Account")} onMouseLeave={() => setHover(null)}>
+              <button
+                className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/5 py-1 pl-1 pr-3 text-sm hover:bg-accent hover:text-accent-foreground transition"
+                aria-haspopup="menu"
+                aria-expanded={hover === "Account"}
+              >
+                <span className="inline-flex size-7 items-center justify-center rounded-full text-xs font-bold" style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}>
+                  {initials || <UserIcon className="size-4" />}
+                </span>
+                <span className="max-w-[140px] truncate font-medium">{displayName}</span>
+                <ChevronDown className="size-3.5 opacity-70" />
+              </button>
+              {hover === "Account" && (
+                <div className="absolute right-0 top-full pt-2 z-50">
+                  <div className="min-w-[240px] rounded-xl border border-border bg-popover p-2 shadow-2xl text-popover-foreground">
+                    <div className="px-3 py-2 border-b border-border mb-1">
+                      <div className="text-sm font-semibold truncate">{displayName}</div>
+                      {user.email && <div className="text-xs text-muted-foreground truncate">{user.email}</div>}
+                    </div>
+                    <Link to="/dashboard" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
+                      <UserIcon className="size-4" /> Profile
+                    </Link>
+                    <button onClick={signOut} className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-left hover:bg-accent hover:text-accent-foreground">
+                      <LogOut className="size-4" /> Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <Link to="/auth" className="ml-2 rounded-md px-3 py-1.5 text-sm font-semibold" style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}>
               Sign in
