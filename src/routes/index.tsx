@@ -136,26 +136,21 @@ function Landing() {
             <p className="mb-4 text-xs uppercase tracking-widest text-white/40">
               Trusted by innovators worldwide
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
               {[
-                { name: "Pathao", domain: "pathao.com" },
-                { name: "BrainStation 23", domain: "brainstation-23.com" },
-                { name: "bKash", domain: "bkash.com" },
-                { name: "Grameenphone", domain: "grameenphone.com" },
+                { name: "Pathao", color: "#E2136E", style: "italic font-extrabold" },
+                { name: "BrainStation 23", color: "#F58220", style: "font-bold" },
+                { name: "bKash", color: "#E2136E", style: "font-extrabold tracking-tight" },
+                { name: "Grameenphone", color: "#00A6E2", style: "font-bold" },
               ].map((c) => (
-                <img
-                  key={c.domain}
-                  src={`https://www.google.com/s2/favicons?domain=${c.domain}&sz=128`}
-                  alt=""
+                <span
+                  key={c.name}
                   aria-label={`${c.name} logo`}
-                  loading="lazy"
-                  onError={(e) => {
-                    const img = e.currentTarget;
-                    img.onerror = null;
-                    img.src = `https://icons.duckduckgo.com/ip3/${c.domain}.ico`;
-                  }}
-                  className="h-10 w-10 object-contain"
-                />
+                  className={`rounded-md bg-white px-4 py-2 text-base sm:text-lg ${c.style}`}
+                  style={{ color: c.color, fontFamily: "Space Grotesk, sans-serif" }}
+                >
+                  {c.name}
+                </span>
               ))}
             </div>
           </div>
