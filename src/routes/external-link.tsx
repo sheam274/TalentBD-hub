@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLink, ShieldCheck } from "lucide-react";
+import { Copy, ExternalLink, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
 const externalSites = {
@@ -38,20 +38,32 @@ function ExternalLinkPage() {
   const host = safeUrl ? new URL(safeUrl).hostname.replace(/^www\./, "") : null;
   const [status, setStatus] = useState<string | null>(null);
 
-  async function openExternalSite() {
+  async function copyExternalSite() {
     if (!safeUrl) return;
 
     try {
-      if (window.top && window.top !== window) {
-        window.top.location.href = safeUrl;
-        return;
-      }
-
-      window.location.href = safeUrl;
+      await navigator.clipboard.writeText(safeUrl);
+      setStatus("Link copied. Open a new browser tab and paste it there.");
     } catch {
+      setStatus(safeUrl);
+    }
+  }
+
+  async function openExternalSite() {
+    if (!safeUrl) return;
+
+    const isInsidePreviewFrame = window.self !== window.top;
+
+    if (isInsidePreviewFrame) {
+      await copyExternalSite();
+      return;
+    }
+
+    const newTab = window.open(safeUrl, "_blank", "noopener,noreferrer");
+    if (!newTab) {
       try {
         await navigator.clipboard.writeText(safeUrl);
-        setStatus("Link copied. Paste it into a new browser tab to open it.");
+        setStatus("Popup was blocked, so the link was copied. Paste it into a new browser tab.");
       } catch {
         setStatus(safeUrl);
       }
@@ -68,7 +80,7 @@ function ExternalLinkPage() {
         {safeUrl ? (
           <>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              You are leaving TalentBD for {externalSite?.label ?? host}. Opening it from this page prevents blocked iframe loading in the preview.
+              You are leaving TalentBD for {externalSite?.label ?? host}. In preview mode, external social sites are copied instead of loaded inside the frame.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <button
@@ -78,6 +90,14 @@ function ExternalLinkPage() {
               >
                 Open {host}
                 <ExternalLink className="size-4" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={copyExternalSite}
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-5 py-3 text-sm font-semibold text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                Copy link
+                <Copy className="size-4" aria-hidden="true" />
               </button>
               <a
                 href="/"
