@@ -80,7 +80,7 @@ function Jobs() {
     if (r === "remote" || r === "onsite" || r === "all") setRemote(r);
     const c = p.get("category"); if (c) setCategory(c);
     const t = p.get("type"); if (t) setType(t);
-    const s = p.get("search"); if (s) setSearch(s);
+    const s = p.get("search"); if (s) { setSearch(s); setDebouncedSearch(s); }
     const loc = p.get("location"); if (loc) setLocation(loc);
     const e = p.get("exp"); if (e) setExp(e);
   }, []);
