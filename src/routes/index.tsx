@@ -47,14 +47,14 @@ function Landing() {
       {/* Hero — Ink Ambient Glow (premium dark) */}
       <section
         className="relative w-full overflow-hidden px-6 py-24 md:py-32"
-        style={{ background: "var(--eduma-ink)" }}
+        style={{ background: "linear-gradient(160deg, #fffaf5 0%, #e0c3fc 55%, #ffb088 100%)" }}
       >
         {/* Dotted grid */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-25"
+          className="pointer-events-none absolute inset-0 opacity-20"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)",
+              "radial-gradient(rgba(40,20,60,0.18) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
           }}
         />
@@ -75,13 +75,13 @@ function Landing() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
             </span>
-            <span className="text-xs font-medium uppercase tracking-wider text-white/80">
+            <span className="text-xs font-medium uppercase tracking-wider text-[var(--eduma-ink)]/80">
               The Premium Talent Network
             </span>
           </div>
 
           {/* Headline */}
-          <h1 className="mb-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-6xl md:text-7xl">
+          <h1 className="mb-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-[var(--eduma-ink)] sm:text-6xl md:text-7xl">
             Build skills.
             <br />
             Earn credentials.
@@ -98,7 +98,7 @@ function Landing() {
           </h1>
 
           {/* Subhead */}
-          <p className="mb-10 max-w-2xl text-base leading-relaxed text-white/60 sm:text-xl">
+          <p className="mb-10 max-w-2xl text-base leading-relaxed text-[var(--eduma-ink)]/75 sm:text-xl">
             TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified
             certifications, a dual-style CV builder, an ATS parser, and a local + global jobs
             marketplace.
