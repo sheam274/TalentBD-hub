@@ -93,7 +93,7 @@ function CvBuilder() {
           <p className="text-sm text-muted-foreground">Real-time preview · ATS-friendly · Print to PDF</p>
         </div>
         <div className="flex items-center gap-2">
-          <select value={style} onChange={(e) => setStyle(e.target.value as any)} className="rounded-md border px-3 py-2 text-sm bg-white">
+          <select aria-label="CV template style" value={style} onChange={(e) => setStyle(e.target.value as any)} className="rounded-md border px-3 py-2 text-sm bg-white">
             <option value="standard">Standard (single column)</option>
             <option value="premium">Premium (two-column)</option>
           </select>
@@ -196,7 +196,7 @@ function CvBuilder() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{title}</h3>
+      <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{title}</h2>
       <div className="mt-2 space-y-2">{children}</div>
     </div>
   );
@@ -223,7 +223,7 @@ function Repeater<T extends { id: string }>({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{title}</h3>
+        <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{title}</h2>
         <button onClick={() => onChange([...items, create()])} className="inline-flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--color-primary)" }}>
           <Plus className="size-3.5" /> Add
         </button>
