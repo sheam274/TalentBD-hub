@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink, ShieldCheck } from "lucide-react";
+import { useState } from "react";
 
 const allowedHosts = new Set([
   "www.facebook.com",
@@ -43,6 +44,27 @@ function ExternalLinkPage() {
   const { url } = Route.useSearch();
   const safeUrl = getSafeUrl(url);
   const host = safeUrl ? new URL(safeUrl).hostname.replace(/^www\./, "") : null;
+  const [status, setStatus] = useState<string | null>(null);
+
+  async function openExternalSite() {
+    if (!safeUrl) return;
+
+    try {
+      if (window.top && window.top !== window) {
+        window.top.location.href = safeUrl;
+        return;
+      }
+
+      window.location.href = safeUrl;
+    } catch {
+      try {
+        await navigator.clipboard.writeText(safeUrl);
+        setStatus("Link copied. Paste it into a new browser tab to open it.");
+      } catch {
+        setStatus(safeUrl);
+      }
+    }
+  }
 
   return (
     <section className="min-h-[70vh] bg-background px-4 py-20 text-foreground">
@@ -57,15 +79,14 @@ function ExternalLinkPage() {
               You are leaving TalentBD for {host}. Opening it from this page prevents blocked iframe loading in the preview.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <a
-                href={safeUrl}
-                target="_blank"
-                rel="noopener noreferrer external"
+              <button
+                type="button"
+                onClick={openExternalSite}
                 className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 Open {host}
                 <ExternalLink className="size-4" aria-hidden="true" />
-              </a>
+              </button>
               <a
                 href="/"
                 className="inline-flex items-center rounded-md border border-border bg-card px-5 py-3 text-sm font-semibold text-card-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
@@ -73,6 +94,7 @@ function ExternalLinkPage() {
                 Back to TalentBD
               </a>
             </div>
+            {status && <p className="mt-4 rounded-md bg-muted px-4 py-3 text-sm text-muted-foreground">{status}</p>}
           </>
         ) : (
           <>
