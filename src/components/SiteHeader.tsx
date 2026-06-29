@@ -105,7 +105,6 @@ export function SiteHeader() {
             <BrandMark size={28} />
           </span>
           <span className="text-lg">TalentBD</span>
-          <span className="hidden sm:inline ml-1 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">Premium</span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
