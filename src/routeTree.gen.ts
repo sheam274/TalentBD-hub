@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VisualHarnessRouteImport } from './routes/visual-harness'
 import { Route as SalariesRouteImport } from './routes/salaries'
 import { Route as InterviewPrepRouteImport } from './routes/interview-prep'
+import { Route as ExternalLinkRouteImport } from './routes/external-link'
 import { Route as CareerAdviceRouteImport } from './routes/career-advice'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -68,6 +69,11 @@ const SalariesRoute = SalariesRouteImport.update({
 const InterviewPrepRoute = InterviewPrepRouteImport.update({
   id: '/interview-prep',
   path: '/interview-prep',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExternalLinkRoute = ExternalLinkRouteImport.update({
+  id: '/external-link',
+  path: '/external-link',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CareerAdviceRoute = CareerAdviceRouteImport.update({
@@ -310,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/career-advice': typeof CareerAdviceRoute
+  '/external-link': typeof ExternalLinkRoute
   '/interview-prep': typeof InterviewPrepRoute
   '/salaries': typeof SalariesRoute
   '/visual-harness': typeof VisualHarnessRoute
@@ -356,6 +363,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/career-advice': typeof CareerAdviceRoute
+  '/external-link': typeof ExternalLinkRoute
   '/interview-prep': typeof InterviewPrepRoute
   '/salaries': typeof SalariesRoute
   '/visual-harness': typeof VisualHarnessRoute
@@ -404,6 +412,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/career-advice': typeof CareerAdviceRoute
+  '/external-link': typeof ExternalLinkRoute
   '/interview-prep': typeof InterviewPrepRoute
   '/salaries': typeof SalariesRoute
   '/visual-harness': typeof VisualHarnessRoute
@@ -452,6 +461,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/career-advice'
+    | '/external-link'
     | '/interview-prep'
     | '/salaries'
     | '/visual-harness'
@@ -498,6 +508,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/career-advice'
+    | '/external-link'
     | '/interview-prep'
     | '/salaries'
     | '/visual-harness'
@@ -545,6 +556,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/career-advice'
+    | '/external-link'
     | '/interview-prep'
     | '/salaries'
     | '/visual-harness'
@@ -593,6 +605,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CareerAdviceRoute: typeof CareerAdviceRoute
+  ExternalLinkRoute: typeof ExternalLinkRoute
   InterviewPrepRoute: typeof InterviewPrepRoute
   SalariesRoute: typeof SalariesRoute
   VisualHarnessRoute: typeof VisualHarnessRoute
@@ -624,6 +637,13 @@ declare module '@tanstack/react-router' {
       path: '/interview-prep'
       fullPath: '/interview-prep'
       preLoaderRoute: typeof InterviewPrepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/external-link': {
+      id: '/external-link'
+      path: '/external-link'
+      fullPath: '/external-link'
+      preLoaderRoute: typeof ExternalLinkRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/career-advice': {
@@ -1068,6 +1088,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CareerAdviceRoute: CareerAdviceRoute,
+  ExternalLinkRoute: ExternalLinkRoute,
   InterviewPrepRoute: InterviewPrepRoute,
   SalariesRoute: SalariesRoute,
   VisualHarnessRoute: VisualHarnessRoute,
