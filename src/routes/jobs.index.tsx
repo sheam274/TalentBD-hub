@@ -52,10 +52,7 @@ function Jobs() {
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
-    return () => clearTimeout(t);
-  }, [search]);
+  // Search only runs when the user presses Enter or clicks the Search button.
   const [showSuggest, setShowSuggest] = useState(false);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
