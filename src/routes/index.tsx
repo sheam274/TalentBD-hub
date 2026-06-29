@@ -99,8 +99,9 @@ function Landing() {
 
           {/* Subhead */}
           <p className="mb-10 max-w-2xl text-base leading-relaxed text-white/60 sm:text-xl">
-            Connect with deeply vetted developers, designers, and tech leaders steering Bangladesh's
-            most ambitious teams — learn, apply, and grow on one premium platform.
+            TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified
+            certifications, a dual-style CV builder, an ATS parser, and a local + global jobs
+            marketplace.
           </p>
 
           {/* CTAs */}
