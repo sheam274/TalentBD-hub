@@ -141,6 +141,9 @@ function Landing() {
 
           {/* Trust */}
           <div className="mt-20 w-full max-w-3xl border-t border-[var(--eduma-ink)]/10 pt-8">
+            <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]/60">
+              Trusted by innovators worldwide
+            </p>
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-12">
               {PARTNER_LOGOS.map((logo) => (
                 <img
