@@ -12,27 +12,52 @@ const socialLinks = [
 ];
 
 const openExternalLink = (href: string) => {
-  // Break out of the preview iframe by clicking a real anchor on the
-  // top-most document we can reach. Browsers treat this as a true
-  // user-initiated navigation and open it in a new browser tab.
+  // 1) Try a real anchor click on the top-most reachable document so the
+  //    browser treats it as user-initiated and opens a new tab.
   let targetDoc: Document = document;
   try {
-    if (window.top && window.top.document) {
-      targetDoc = window.top.document;
-    }
+    if (window.top && window.top.document) targetDoc = window.top.document;
   } catch {
-    // Cross-origin top frame — fall back to current document.
     targetDoc = document;
   }
 
-  const a = targetDoc.createElement("a");
-  a.href = href;
-  a.target = "_blank";
-  a.rel = "noopener noreferrer";
-  a.style.display = "none";
-  targetDoc.body.appendChild(a);
-  a.click();
-  a.remove();
+  try {
+    const a = targetDoc.createElement("a");
+    a.href = href;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.style.display = "none";
+    targetDoc.body.appendChild(a);
+    a.click();
+    a.remove();
+    return;
+  } catch {
+    /* fall through */
+  }
+
+  // 2) Fallback: window.open in a new tab.
+  const opened = window.open(href, "_blank", "noopener,noreferrer");
+  if (opened) {
+    try { opened.opener = null; } catch { /* ignore */ }
+    return;
+  }
+
+  // 3) Popup blocked — ask the user, then navigate the top frame so the
+  //    destination still opens in a real browser context (not the iframe).
+  const proceed =
+    typeof window.confirm === "function"
+      ? window.confirm(`Your browser blocked opening a new tab.\n\nOpen ${href} now?`)
+      : true;
+  if (!proceed) return;
+  try {
+    if (window.top) {
+      window.top.location.href = href;
+      return;
+    }
+  } catch {
+    /* cross-origin top — fall through */
+  }
+  window.location.href = href;
 };
 
 const columns: Col[] = [
