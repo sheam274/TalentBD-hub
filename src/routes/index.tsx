@@ -46,7 +46,7 @@ function Landing() {
     <div className="page-enter bg-background">
       {/* Hero — Ink Ambient Glow (premium dark) */}
       <section
-        className="relative w-full overflow-hidden px-6 py-24 md:py-32"
+        className="relative w-full overflow-hidden px-5 py-16 sm:px-6 sm:py-20 md:py-28 lg:py-36"
         style={{ background: "linear-gradient(160deg, #fffaf5 0%, #e0c3fc 55%, #ffb088 100%)" }}
       >
         {/* Dotted grid */}
@@ -81,7 +81,7 @@ function Landing() {
           </div>
 
           {/* Headline */}
-          <h1 className="mb-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-[var(--eduma-ink)] sm:text-6xl md:text-7xl">
+          <h1 className="mb-6 text-[2rem] font-extrabold leading-[1.15] tracking-tight text-[var(--eduma-ink)] sm:text-5xl sm:leading-[1.1] md:text-6xl md:leading-[1.05] lg:text-7xl">
             Build skills.
             <br />
             Earn credentials.
@@ -98,7 +98,7 @@ function Landing() {
           </h1>
 
           {/* Subhead */}
-          <p className="mb-10 max-w-2xl text-base leading-relaxed text-[var(--eduma-ink)]/75 sm:text-xl">
+          <p className="mb-10 max-w-2xl text-base leading-[1.65] text-[var(--eduma-ink)]/75 sm:text-lg md:text-xl md:leading-[1.7]">
             TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified
             certifications, a dual-style CV builder, an ATS parser, and a local + global jobs
             marketplace.
