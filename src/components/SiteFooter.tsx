@@ -114,19 +114,6 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 grid gap-4 rounded-xl border border-white/10 bg-white/5 p-5 md:grid-cols-4 text-center">
-          {[
-            ["10K+", "Active learners"],
-            ["500+", "Live jobs"],
-            ["120+", "Hiring companies"],
-            ["80%", "Pass rate to certify"],
-          ].map(([n, l]) => (
-            <div key={l as string}>
-              <div className="text-2xl font-extrabold" style={{ color: "var(--eduma-red)" }}>{n}</div>
-              <div className="mt-1 text-xs text-white/50">{l}</div>
-            </div>
-          ))}
-        </div>
       </div>
 
       <div className="border-t border-white/10 px-4 py-5">
