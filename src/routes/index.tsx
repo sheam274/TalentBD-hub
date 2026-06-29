@@ -136,20 +136,29 @@ function Landing() {
             <p className="mb-4 text-xs uppercase tracking-widest text-white/40">
               Trusted by innovators worldwide
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               {[
                 { name: "Pathao", domain: "pathao.com" },
                 { name: "BrainStation 23", domain: "brainstation-23.com" },
                 { name: "bKash", domain: "bkash.com" },
                 { name: "Grameenphone", domain: "grameenphone.com" },
               ].map((c) => (
-                <img
+                <div
                   key={c.domain}
-                  src={`https://logo.clearbit.com/${c.domain}`}
-                  alt={`${c.name} logo`}
-                  loading="lazy"
-                  className="h-7 w-auto object-contain opacity-70 grayscale brightness-0 invert transition hover:opacity-100"
-                />
+                  className="flex h-12 items-center justify-center rounded-xl bg-white px-4 shadow-sm ring-1 ring-white/10"
+                >
+                  <img
+                    src={`https://logo.clearbit.com/${c.domain}`}
+                    alt={`${c.name} logo`}
+                    loading="lazy"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      img.onerror = null;
+                      img.src = `https://www.google.com/s2/favicons?domain=${c.domain}&sz=64`;
+                    }}
+                    className="h-7 w-auto max-w-[140px] object-contain"
+                  />
+                </div>
               ))}
             </div>
           </div>
