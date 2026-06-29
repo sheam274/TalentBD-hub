@@ -82,7 +82,9 @@ function Landing() {
 
           {/* Headline */}
           <h1 className="mb-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-6xl md:text-7xl">
-            Engineered for elite talent.
+            Build skills.
+            <br />
+            Earn credentials.
             <br />
             <span
               className="bg-clip-text text-transparent"
@@ -91,7 +93,7 @@ function Landing() {
                   "linear-gradient(to right, var(--eduma-red), var(--eduma-gold))",
               }}
             >
-              Built for scale.
+              Land the job.
             </span>
           </h1>
 
