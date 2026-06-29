@@ -55,7 +55,12 @@ function JobDetails() {
     enabled: !!user,
   });
 
-  if (jobQ.isLoading) return <p className="mx-auto max-w-4xl px-4 py-10 text-sm text-muted-foreground">Loading job…</p>;
+  if (jobQ.isLoading) return (
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      <h1 className="sr-only">Loading job details</h1>
+      <p className="text-sm text-muted-foreground">Loading job…</p>
+    </div>
+  );
   const j = jobQ.data;
   if (!j) return (
     <div className="mx-auto max-w-3xl px-4 py-16 text-center">
