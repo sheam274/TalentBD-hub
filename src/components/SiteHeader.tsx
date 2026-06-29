@@ -99,12 +99,12 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 w-full glass-header text-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6">
-        <Link to="/" className="flex items-center gap-2 font-bold tracking-tight group">
-          <span className="inline-flex size-9 items-center justify-center rounded-lg bg-white/10 p-1 ring-1 ring-white/20 transition group-hover:bg-white/20">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6">
+        <Link to="/" className="flex min-w-0 items-center gap-2 font-bold tracking-tight group shrink-0">
+          <span className="inline-flex size-8 sm:size-9 items-center justify-center rounded-lg bg-white/10 p-1 ring-1 ring-white/20 transition group-hover:bg-white/20 shrink-0">
             <BrandMark size={28} />
           </span>
-          <span className="text-lg">TalentBD</span>
+          <span className="text-base sm:text-lg truncate">TalentBD</span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
@@ -191,13 +191,18 @@ export function SiteHeader() {
           )}
         </nav>
 
-        <button className="lg:hidden" onClick={() => setOpen((v) => !v)} aria-label="Menu">
-          {open ? <X /> : <Menu />}
+        <button
+          className="lg:hidden inline-flex items-center justify-center rounded-md p-2 -mr-1 text-white hover:bg-white/10 transition"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+        >
+          {open ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
       </div>
 
       {open && (
-        <div className="lg:hidden border-t border-white/10 px-4 pb-4 glass-header max-h-[80vh] overflow-y-auto">
+        <div className="lg:hidden border-t border-white/10 px-3 sm:px-4 pb-4 glass-header max-h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain">
           <div className="flex flex-col gap-1 pt-2">
             <Link to="/" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">Home</Link>
             {baseNav.map((item) => (
@@ -213,6 +218,16 @@ export function SiteHeader() {
             {user ? (
               <>
                 <Link to="/dashboard" onClick={() => setOpen(false)} className="mt-2 rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">Dashboard</Link>
+                {isEmployer && (
+                  <div className="border-t border-white/10 pt-2 mt-1">
+                    <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60">Employer</div>
+                    {employerNav.children?.map((c) => (
+                      <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
+                        {c.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
                 {isAdmin && (
                   <div className="border-t border-white/10 pt-2 mt-1">
                     <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60 flex items-center gap-1"><ShieldCheck className="size-3" /> Admin</div>
