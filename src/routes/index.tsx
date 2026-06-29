@@ -71,7 +71,10 @@ function Landing() {
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
           {/* Badge */}
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-md">
-            <span className="size-2 rounded-full" style={{ background: "var(--eduma-gold)" }} />
+            <span className="relative flex size-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
+            </span>
             <span className="text-xs font-medium uppercase tracking-wider text-white/80">
               The Premium Talent Network
             </span>
