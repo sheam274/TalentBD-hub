@@ -7,7 +7,7 @@ import { listRemoteJobsExternal } from "@/lib/external-jobs.functions";
 import { useAuth } from "@/lib/auth-context";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { toast } from "sonner";
-import { Briefcase, MapPin, Clock, GraduationCap, Star, Globe, ExternalLink, Radio } from "lucide-react";
+import { Briefcase, MapPin, Clock, GraduationCap, Star, Globe, ExternalLink, Radio, Search as SearchIcon } from "lucide-react";
 
 export const Route = createFileRoute("/jobs/")({
   head: () => ({
@@ -56,6 +56,16 @@ function Jobs() {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
     return () => clearTimeout(t);
   }, [search]);
+  const [showSuggest, setShowSuggest] = useState(false);
+  const searchBoxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onDown = (e: MouseEvent) => {
+      if (!searchBoxRef.current?.contains(e.target as Node)) setShowSuggest(false);
+    };
+    window.addEventListener("mousedown", onDown);
+    return () => window.removeEventListener("mousedown", onDown);
+  }, []);
   const [category, setCategory] = useState<string>("");
   const [location, setLocation] = useState("");
   const [exp, setExp] = useState("");
@@ -326,7 +336,58 @@ function Jobs() {
 
       {/* Filters */}
       <div className="mt-4 glass rounded-xl p-3 sm:p-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, company, skill" aria-label="Search jobs" className="sm:col-span-2 min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60" />
+        <div ref={searchBoxRef} className="sm:col-span-2 relative min-w-0">
+          <div className="flex gap-2">
+            <input
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setShowSuggest(true); }}
+              onFocus={() => setShowSuggest(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") { e.preventDefault(); setDebouncedSearch(search.trim()); setShowSuggest(false); }
+                if (e.key === "Escape") setShowSuggest(false);
+              }}
+              placeholder="Search job title, e.g. network engineer"
+              aria-label="Search jobs"
+              className="flex-1 min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60"
+            />
+            <button
+              type="button"
+              onClick={() => { setDebouncedSearch(search.trim()); setShowSuggest(false); }}
+              className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold text-white whitespace-nowrap"
+              style={{ background: "var(--color-primary)" }}
+              aria-label="Run search"
+            >
+              <SearchIcon className="size-4" /> Search
+            </button>
+          </div>
+          {showSuggest && search.trim().length >= 1 && (() => {
+            const q = search.trim().toLowerCase();
+            const titles = Array.from(new Set([
+              ...all.map((j: any) => j.job_title as string),
+              ...((remoteQ.data ?? []) as any[]).map((j) => j.title as string),
+            ].filter(Boolean)))
+              .filter((t) => t.toLowerCase().includes(q))
+              .slice(0, 8);
+            if (titles.length === 0) return null;
+            return (
+              <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-white/40 bg-white/70 backdrop-blur-md shadow-lg">
+                {titles.map((t) => (
+                  <li key={t}>
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => { setSearch(t); setDebouncedSearch(t); setShowSuggest(false); }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-white/80"
+                    >
+                      <SearchIcon className="size-3.5 text-muted-foreground" />
+                      <span className="truncate">{t}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            );
+          })()}
+        </div>
         <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" aria-label="Filter by location" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60" />
         <select value={exp} onChange={(e) => setExp(e.target.value)} aria-label="Filter by experience level" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="">Any experience</option>
