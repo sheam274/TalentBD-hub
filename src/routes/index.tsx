@@ -145,14 +145,16 @@ function Landing() {
               ].map((c) => (
                 <img
                   key={c.domain}
-                  src={`https://logo.clearbit.com/${c.domain}`}
+                  src={`https://icons.duckduckgo.com/ip3/${c.domain}.ico`}
                   alt=""
                   aria-label={`${c.name} logo`}
                   loading="lazy"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    const img = e.currentTarget;
+                    img.onerror = null;
+                    img.src = `https://www.google.com/s2/favicons?domain=${c.domain}&sz=128`;
                   }}
-                  className="h-9 w-auto max-w-[160px] object-contain"
+                  className="h-10 w-10 object-contain"
                 />
               ))}
             </div>
