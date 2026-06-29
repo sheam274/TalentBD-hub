@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { MouseEvent } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { CtaButton } from "@/components/CtaButton";
 import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -45,12 +45,6 @@ const LEARNING_MODULES = [
 function Landing() {
   const jobsDisabled = false;
   const learnDisabled = false;
-  const blockIfDisabled = (disabled: boolean) => (e: MouseEvent<HTMLAnchorElement>) => {
-    if (disabled) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
   return (
     <div className="page-enter bg-background">
       {/* Hero — Ink Ambient Glow (premium dark) */}
@@ -118,32 +112,24 @@ function Landing() {
             aria-label="Primary hero actions"
             className="flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4 md:gap-5"
           >
-            <Link
+            <CtaButton
               to="/jobs"
+              variant="primary"
+              disabled={jobsDisabled}
               aria-label="Browse Live Jobs — view live engineering roles"
-              aria-disabled={jobsDisabled}
-              tabIndex={jobsDisabled ? -1 : undefined}
-              onClick={blockIfDisabled(jobsDisabled)}
-              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] px-6 py-3 text-center text-sm font-bold tracking-wide text-white shadow-lg outline-none transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--eduma-red-hover)] hover:shadow-xl active:translate-y-0 active:scale-[0.98] active:brightness-95 active:shadow-md focus-visible:ring-2 focus-visible:ring-[var(--eduma-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:shadow-none aria-disabled:saturate-50 sm:w-auto sm:gap-2.5 sm:px-7 sm:py-3.5 sm:text-[15px] md:px-9 md:py-4 md:text-base"
-              style={{
-                background: "var(--eduma-red-strong)",
-                boxShadow: "0 12px 28px -8px color-mix(in oklab, var(--eduma-red-strong) 55%, transparent)",
-              }}
             >
               <span>Browse Live Jobs</span>
               <ArrowRight aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />
-            </Link>
-            <Link
+            </CtaButton>
+            <CtaButton
               to="/learn"
+              variant="secondary"
+              disabled={learnDisabled}
               aria-label="Start Learning Free — open engineering modules"
-              aria-disabled={learnDisabled}
-              tabIndex={learnDisabled ? -1 : undefined}
-              onClick={blockIfDisabled(learnDisabled)}
-              className="group inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-[var(--eduma-ink)]/25 bg-white/50 px-6 py-3 text-center text-sm font-bold tracking-wide text-[var(--eduma-ink)] outline-none backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--eduma-ink)] hover:bg-white/80 hover:text-[var(--eduma-ink)] hover:shadow-lg active:translate-y-0 active:scale-[0.98] active:bg-white/70 active:shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--eduma-ink)] focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:shadow-none aria-disabled:saturate-50 sm:w-auto sm:gap-2.5 sm:px-7 sm:py-3.5 sm:text-[15px] md:px-9 md:py-4 md:text-base"
             >
               <span>Start Learning Free</span>
               <GraduationCap aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none" />
-            </Link>
+            </CtaButton>
           </nav>
 
           {/* Trust */}
