@@ -11,55 +11,6 @@ const socialLinks = [
   { Icon: Globe, href: "https://talentbd.com", label: "Website" },
 ];
 
-const openExternalLink = (href: string) => {
-  // 1) Try a real anchor click on the top-most reachable document so the
-  //    browser treats it as user-initiated and opens a new tab.
-  let targetDoc: Document = document;
-  try {
-    if (window.top && window.top.document) targetDoc = window.top.document;
-  } catch {
-    targetDoc = document;
-  }
-
-  try {
-    const a = targetDoc.createElement("a");
-    a.href = href;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.style.display = "none";
-    targetDoc.body.appendChild(a);
-    a.click();
-    a.remove();
-    return;
-  } catch {
-    /* fall through */
-  }
-
-  // 2) Fallback: window.open in a new tab.
-  const opened = window.open(href, "_blank", "noopener,noreferrer");
-  if (opened) {
-    try { opened.opener = null; } catch { /* ignore */ }
-    return;
-  }
-
-  // 3) Popup blocked — ask the user, then navigate the top frame so the
-  //    destination still opens in a real browser context (not the iframe).
-  const proceed =
-    typeof window.confirm === "function"
-      ? window.confirm(`Your browser blocked opening a new tab.\n\nOpen ${href} now?`)
-      : true;
-  if (!proceed) return;
-  try {
-    if (window.top) {
-      window.top.location.href = href;
-      return;
-    }
-  } catch {
-    /* cross-origin top — fall through */
-  }
-  window.location.href = href;
-};
-
 const columns: Col[] = [
   {
     title: "Jobs",
@@ -135,15 +86,16 @@ export function SiteFooter() {
             </p>
             <div className="mt-5 flex items-center gap-3">
               {socialLinks.map(({ Icon, href, label }) => (
-                <button
+                <a
                   key={label}
-                  type="button"
-                  aria-label={`TalentBD on ${label}`}
-                  onClick={() => openExternalLink(href)}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer external"
+                  aria-label={`TalentBD on ${label} (opens in a new tab)`}
                   className="inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-primary/15 hover:text-white hover:shadow-[0_6px_18px_-6px_rgba(254,82,82,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-eduma-ink active:translate-y-0"
                 >
                   <Icon className="size-4" aria-hidden="true" focusable="false" />
-                </button>
+                </a>
               ))}
             </div>
           </div>
