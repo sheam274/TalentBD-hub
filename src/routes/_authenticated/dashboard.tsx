@@ -115,7 +115,7 @@ function Dashboard() {
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-white/20 bg-white/10 p-4">
+    <div className="rounded-xl border border-white/30 bg-black/30 p-4">
       <div className="text-xs uppercase tracking-wide text-white">{label}</div>
       <div className="mt-1 text-2xl font-bold text-white">{value}</div>
     </div>
