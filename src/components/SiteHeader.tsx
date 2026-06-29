@@ -139,9 +139,6 @@ export function SiteHeader() {
           {user && (
             <Link to="/dashboard" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-accent hover:text-accent-foreground transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Dashboard</Link>
           )}
-          {user && (
-            <Link to="/my-applications" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-accent hover:text-accent-foreground transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Applications</Link>
-          )}
           {user && isEmployer && (
             <div className="relative" onMouseEnter={() => setHover("Employer")} onMouseLeave={() => setHover(null)}>
               <a href="/employer/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-accent hover:text-accent-foreground transition">
