@@ -27,7 +27,7 @@ function Dashboard() {
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
         <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
-          <div className="glass rounded-2xl p-6">
+          <div className="glass-dark rounded-2xl p-6">
             <p className="text-sm text-white">Welcome back</p>
             <h1 className="mt-1 text-3xl font-bold text-white">{p?.name ?? "Engineer"}</h1>
             <p className="mt-1 text-sm text-white">{p?.discipline ? `Discipline: ${p.discipline}` : "Set your discipline in CV Builder"}</p>

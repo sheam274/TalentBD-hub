@@ -25,7 +25,7 @@ function InterviewLanding() {
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
-          <div className="glass rounded-2xl p-8">
+          <div className="glass-dark rounded-2xl p-8">
             <p className="inline-flex items-center gap-1 rounded-full bg-black/25 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white"><Sparkles className="size-3.5" /> AI Interviewer</p>
             <h1 className="mt-3 text-4xl font-bold">Give an AI-graded interview</h1>
             <p className="mt-2 max-w-2xl text-white">Pick a role, choose a difficulty, and answer in text, voice, video, or MCQ. Our AI scores each answer, gives you per-question feedback, and issues a verifiable credential at 80%+.</p>
