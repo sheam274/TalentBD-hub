@@ -90,7 +90,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`TalentBD on ${label}`}
-                  className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition hover:border-primary/60 hover:text-white"
+                  className="inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-primary/15 hover:text-white hover:shadow-[0_6px_18px_-6px_rgba(254,82,82,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-eduma-ink active:translate-y-0"
                 >
                   <Icon className="size-4" aria-hidden="true" focusable="false" />
                 </a>
