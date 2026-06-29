@@ -2,6 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { CtaButton } from "@/components/CtaButton";
 import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
+import pathaoAsset from "@/assets/partners/pathao.png.asset.json";
+import brainstationAsset from "@/assets/partners/brainstation.jpg.asset.json";
+import bkashAsset from "@/assets/partners/bkash.png.asset.json";
+import grameenphoneAsset from "@/assets/partners/grameenphone.png.asset.json";
+
+const PARTNER_LOGOS = [
+  { name: "Pathao", url: pathaoAsset.url },
+  { name: "Brain Station 23", url: brainstationAsset.url },
+  { name: "bKash", url: bkashAsset.url },
+  { name: "Grameenphone", url: grameenphoneAsset.url },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
