@@ -109,7 +109,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
-          <Link to="/" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "var(--color-accent)", opacity: 1 } }} activeOptions={{ exact: true }}>Home</Link>
+          <Link to="/" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }} activeOptions={{ exact: true }}>Home</Link>
           {baseNav.map((item) => (
             <div key={item.label} className="relative" onMouseEnter={() => setHover(item.label)} onMouseLeave={() => setHover(null)}>
               <a
@@ -138,10 +138,10 @@ export function SiteHeader() {
             </div>
           ))}
           {user && (
-            <Link to="/dashboard" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "var(--color-accent)", opacity: 1 } }}>Dashboard</Link>
+            <Link to="/dashboard" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Dashboard</Link>
           )}
           {user && (
-            <Link to="/my-applications" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "var(--color-accent)", opacity: 1 } }}>Applications</Link>
+            <Link to="/my-applications" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Applications</Link>
           )}
           {user && isEmployer && (
             <div className="relative" onMouseEnter={() => setHover("Employer")} onMouseLeave={() => setHover(null)}>
