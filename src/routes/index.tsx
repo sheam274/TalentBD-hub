@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { CtaButton } from "@/components/CtaButton";
-import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
+import { ArrowRight, Code2, Bolt, HardHat, Landmark, Palette, Megaphone, GraduationCap } from "lucide-react";
 import pathaoAsset from "@/assets/partners/pathao.png.asset.json";
 import brainstationAsset from "@/assets/partners/brainstation.png.asset.json";
 import bkashAsset from "@/assets/partners/bkash.png.asset.json";
@@ -28,12 +28,12 @@ export const Route = createFileRoute("/")({
 });
 
 const DISCIPLINES = [
-  { name: "Computer Science", desc: "Web, mobile, data, networking and modern software engineering tracks.", icon: Cpu, href: "/learn#cse" },
-  { name: "Electrical & Electronic", desc: "Power systems, VLSI, embedded design and industrial automation.", icon: Zap, href: "/learn#eee" },
-  { name: "Civil Engineering", desc: "Structural, BIM/CAD and project management for the built world.", icon: Building2, href: "/learn#civil" },
-  { name: "Banking & Finance", desc: "Land roles across local banks, fintech and global remote finance.", icon: LineChart, href: "/jobs?category=Banking%2FFinance" },
-  { name: "Design & Creative", desc: "Product design, UI, motion and brand for digital products.", icon: GraduationCap, href: "/jobs?category=Design" },
-  { name: "Sales & Marketing", desc: "Growth, brand and revenue roles across SaaS and consumer.", icon: Briefcase, href: "/jobs?category=Marketing" },
+  { name: "Computer Science", desc: "Web, mobile, data, networking and modern software engineering tracks.", icon: Code2, href: "/learn#cse" },
+  { name: "Electrical & Electronic", desc: "Power systems, VLSI, embedded design and industrial automation.", icon: Bolt, href: "/learn#eee" },
+  { name: "Civil Engineering", desc: "Structural, BIM/CAD and project management for the built world.", icon: HardHat, href: "/learn#civil" },
+  { name: "Banking & Finance", desc: "Land roles across local banks, fintech and global remote finance.", icon: Landmark, href: "/jobs?category=Banking%2FFinance" },
+  { name: "Design & Creative", desc: "Product design, UI, motion and brand for digital products.", icon: Palette, href: "/jobs?category=Design" },
+  { name: "Sales & Marketing", desc: "Growth, brand and revenue roles across SaaS and consumer.", icon: Megaphone, href: "/jobs?category=Marketing" },
 ];
 
 const STATS = [
