@@ -1,4 +1,5 @@
-import logo from "@/assets/talentbd-logo.png";
+import logoAsset from "@/assets/talentbd-logo.png.asset.json";
+const logo = logoAsset.url;
 
 export function BrandMark({ size = 32, className = "" }: { size?: number; className?: string }) {
   return (
