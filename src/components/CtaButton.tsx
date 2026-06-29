@@ -52,7 +52,7 @@ export function CtaButton({
   }
 
   return (
-    <Link to={to} params={params} search={search} hash={hash} className={cls} style={mergedStyle} {...rest}>
+    <Link to={to} params={params} search={search} hash={hash} preload="intent" className={cls} style={mergedStyle} {...rest}>
       {children}
     </Link>
   );
