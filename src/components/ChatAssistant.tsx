@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { MessageCircle, X, Send, Sparkles, Loader2, Paperclip } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Paperclip } from "lucide-react";
 import { talentChat } from "@/lib/chat.functions";
+import { BrandMark } from "@/components/Brand";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -124,7 +125,7 @@ export function ChatAssistant() {
             className="flex items-center gap-2 px-4 py-3 text-white"
             style={{ background: "linear-gradient(135deg, var(--color-primary), oklch(0.45 0.18 250))" }}
           >
-            <Sparkles className="size-5" />
+            <BrandMark size={22} className="rounded-md bg-white/10 p-0.5" />
             <div className="flex-1">
               <div className="text-sm font-bold">TalentBD AI Coach</div>
               <div className="text-[11px] opacity-80">
