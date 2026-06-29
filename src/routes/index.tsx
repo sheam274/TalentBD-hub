@@ -3,7 +3,7 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { CtaButton } from "@/components/CtaButton";
 import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 import pathaoAsset from "@/assets/partners/pathao.png.asset.json";
-import brainstationAsset from "@/assets/partners/brainstation.jpg.asset.json";
+import brainstationAsset from "@/assets/partners/brainstation.png.asset.json";
 import bkashAsset from "@/assets/partners/bkash.png.asset.json";
 import grameenphoneAsset from "@/assets/partners/grameenphone.png.asset.json";
 
