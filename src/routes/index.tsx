@@ -151,7 +151,7 @@ function Landing() {
                   src={logo.url}
                   alt={`${logo.name} logo`}
                   loading="lazy"
-                  className="h-12 w-auto object-contain opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-14"
+                  className="h-12 w-auto object-contain opacity-90 transition duration-300 hover:opacity-100 hover:scale-105 sm:h-14"
                 />
               ))}
             </div>
