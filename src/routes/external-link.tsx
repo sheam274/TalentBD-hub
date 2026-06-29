@@ -68,7 +68,7 @@ function ExternalLinkPage() {
         {safeUrl ? (
           <>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              You are leaving TalentBD for {externalSite.label}. Opening it from this page prevents blocked iframe loading in the preview.
+              You are leaving TalentBD for {externalSite?.label ?? host}. Opening it from this page prevents blocked iframe loading in the preview.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <button
