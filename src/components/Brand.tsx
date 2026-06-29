@@ -8,7 +8,7 @@ export function BrandMark({ size = 32, className = "" }: { size?: number; classN
       alt="TalentBD"
       width={size}
       height={size}
-      className={`object-contain ${className}`}
+      className={`object-cover ${className}`}
       style={{ width: size, height: size }}
     />
   );
