@@ -168,22 +168,16 @@ function Jobs() {
     const loc = location.trim().toLowerCase();
     const matched = all.filter((j: any) => {
       if (tokens.length) {
-        const hay = [
-          j.job_title,
-          j.company,
-          j.category,
-          j.job_type,
-          j.experience_level,
-          j.location,
-          j.description,
+        // Strict: every search token must appear in the job TITLE (or tags/requirements).
+        // Company, description, location, category no longer trigger a match —
+        // searching "network engineer" only returns network-engineer roles.
+        const title = (j.job_title ?? "").toLowerCase();
+        const tagHay = [
           ...(Array.isArray(j.requirements) ? j.requirements : []),
           ...(Array.isArray(j.tags) ? j.tags : []),
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        // OR-match: any token hit surfaces the job — broader, related results.
-        if (!tokens.some((t) => hay.includes(t))) return false;
+        ].join(" ").toLowerCase();
+        const hit = (t: string) => title.includes(t) || tagHay.split(/\s+/).some((w) => stem(w).includes(t));
+        if (!tokens.every(hit)) return false;
       }
       if (category) {
         const jc = (j.category ?? "General").toLowerCase();
@@ -290,8 +284,10 @@ function Jobs() {
         if (!parts.some((p) => catHay.includes(p))) return false;
       }
       if (!tokens.length) return true;
-      const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
-      return tokens.some((tok) => hay.includes(tok));
+      // Strict: every token must appear in the live job title or tags.
+      const title = (j.title ?? "").toLowerCase();
+      const tagHay = (j.tags ?? []).join(" ").toLowerCase();
+      return tokens.every((tok) => title.includes(tok) || tagHay.includes(tok));
     });
   }, [remoteQ.data, debouncedSearch, category, location, exp, type, remote]);
 
