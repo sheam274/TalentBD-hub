@@ -19,7 +19,10 @@ export const Route = createFileRoute("/companies/$slug")({
     <div className="mx-auto max-w-3xl p-10 text-sm text-destructive">{error.message}</div>
   ),
   notFoundComponent: () => (
-    <div className="mx-auto max-w-3xl p-10 text-sm">Company not found. <Link to="/companies" className="underline">Back to companies</Link></div>
+    <div className="mx-auto max-w-3xl p-10">
+      <h1 className="text-2xl font-bold">Company not found</h1>
+      <p className="mt-2 text-sm">The company you’re looking for doesn’t exist. <Link to="/companies" className="underline">Back to companies</Link></p>
+    </div>
   ),
 });
 
