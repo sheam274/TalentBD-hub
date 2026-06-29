@@ -24,7 +24,7 @@ function Assessments() {
         {(mods.data ?? []).map((m: any) => (
           <Link key={m.id} to="/learn/$discipline/$topic" params={{ discipline: m.discipline, topic: m.section_slug }} className="lift rounded-xl border bg-white p-5">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{m.title}</h3>
+              <h2 className="font-semibold">{m.title}</h2>
               {earned.has(m.id) && <span className="rounded bg-muted px-2 py-0.5 text-xs">Certified</span>}
             </div>
             <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">{m.discipline}</p>
