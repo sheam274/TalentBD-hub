@@ -108,12 +108,12 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
-          <Link to="/" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/60 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }} activeOptions={{ exact: true }}>Home</Link>
+          <Link to="/" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-black/30 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }} activeOptions={{ exact: true }}>Home</Link>
           {baseNav.map((item) => (
             <div key={item.label} className="relative" onMouseEnter={() => setHover(item.label)} onMouseLeave={() => setHover(null)}>
               <a
                 href={item.to}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/60 transition"
+                className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-black/30 transition"
               >
                 {item.label}
                 {item.children && <ChevronDown className="size-3.5 opacity-70" />}
@@ -125,7 +125,7 @@ export function SiteHeader() {
                       <a
                         key={c.to + c.label}
                         href={c.to}
-                        className="block rounded-lg px-3 py-2 text-sm hover:bg-white/60"
+                        className="block rounded-lg px-3 py-2 text-sm hover:bg-black/30"
                       >
                         <div className="font-semibold">{c.label}</div>
                         {c.desc && <div className="text-xs text-muted-foreground">{c.desc}</div>}
@@ -137,21 +137,21 @@ export function SiteHeader() {
             </div>
           ))}
           {user && (
-            <Link to="/dashboard" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/60 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Dashboard</Link>
+            <Link to="/dashboard" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-black/30 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Dashboard</Link>
           )}
           {user && (
-            <Link to="/my-applications" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/60 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Applications</Link>
+            <Link to="/my-applications" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-black/30 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Applications</Link>
           )}
           {user && isEmployer && (
             <div className="relative" onMouseEnter={() => setHover("Employer")} onMouseLeave={() => setHover(null)}>
-              <a href="/employer/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/60 transition">
+              <a href="/employer/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-black/30 transition">
                 Employer <ChevronDown className="size-3.5 opacity-70" />
               </a>
               {hover === "Employer" && (
                 <div className="absolute left-0 top-full pt-2 z-50">
                   <div className="glass min-w-[260px] rounded-xl border border-white/10 p-2 shadow-2xl text-foreground">
                     {employerNav.children?.map((c) => (
-                      <a key={c.to + c.label} href={c.to} className="block rounded-lg px-3 py-2 text-sm hover:bg-white/60">
+                      <a key={c.to + c.label} href={c.to} className="block rounded-lg px-3 py-2 text-sm hover:bg-black/30">
                         <div className="font-semibold">{c.label}</div>
                         {c.desc && <div className="text-xs text-muted-foreground">{c.desc}</div>}
                       </a>
@@ -163,14 +163,14 @@ export function SiteHeader() {
           )}
           {user && isAdmin && (
             <div className="relative" onMouseEnter={() => setHover("Admin")} onMouseLeave={() => setHover(null)}>
-              <a href="/admin/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/60 transition">
+              <a href="/admin/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-black/30 transition">
                 <ShieldCheck className="size-3.5" /> Admin <ChevronDown className="size-3.5 opacity-70" />
               </a>
               {hover === "Admin" && (
                 <div className="absolute left-0 top-full pt-2 z-50">
                   <div className="glass min-w-[260px] rounded-xl border border-white/10 p-2 shadow-2xl text-foreground">
                     {adminNav.children?.map((c) => (
-                      <a key={c.to + c.label} href={c.to} className="block rounded-lg px-3 py-2 text-sm hover:bg-white/60">
+                      <a key={c.to + c.label} href={c.to} className="block rounded-lg px-3 py-2 text-sm hover:bg-black/30">
                         <div className="font-semibold">{c.label}</div>
                         {c.desc && <div className="text-xs text-muted-foreground">{c.desc}</div>}
                       </a>
@@ -181,7 +181,7 @@ export function SiteHeader() {
             </div>
           )}
           {user ? (
-            <button onClick={signOut} className="ml-2 inline-flex items-center gap-1 rounded-md border border-white/30 px-3 py-1.5 text-sm hover:bg-white/60">
+            <button onClick={signOut} className="ml-2 inline-flex items-center gap-1 rounded-md border border-white/30 px-3 py-1.5 text-sm hover:bg-black/30">
               <LogOut className="size-4" /> Sign out
             </button>
           ) : (
@@ -199,12 +199,12 @@ export function SiteHeader() {
       {open && (
         <div className="lg:hidden border-t border-white/10 px-4 pb-4 glass-header max-h-[80vh] overflow-y-auto">
           <div className="flex flex-col gap-1 pt-2">
-            <Link to="/" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-white/60">Home</Link>
+            <Link to="/" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-black/30">Home</Link>
             {baseNav.map((item) => (
               <div key={item.label} className="border-t border-white/10 pt-2 mt-1">
                 <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60">{item.label}</div>
                 {(item.children ?? [{ to: item.to, label: item.label }]).map((c) => (
-                  <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-white/60">
+                  <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-black/30">
                     {c.label}
                   </a>
                 ))}
@@ -212,18 +212,18 @@ export function SiteHeader() {
             ))}
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setOpen(false)} className="mt-2 rounded-md px-3 py-2 text-sm hover:bg-white/60">Dashboard</Link>
+                <Link to="/dashboard" onClick={() => setOpen(false)} className="mt-2 rounded-md px-3 py-2 text-sm hover:bg-black/30">Dashboard</Link>
                 {isAdmin && (
                   <div className="border-t border-white/10 pt-2 mt-1">
                     <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60 flex items-center gap-1"><ShieldCheck className="size-3" /> Admin</div>
                     {adminNav.children?.map((c) => (
-                      <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-white/60">
+                      <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-black/30">
                         {c.label}
                       </a>
                     ))}
                   </div>
                 )}
-                <Link to="/my-applications" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-white/60">My applications</Link>
+                <Link to="/my-applications" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-black/30">My applications</Link>
                 <button onClick={signOut} className="mt-2 rounded-md border border-white/30 px-3 py-2 text-left text-sm">Sign out</button>
               </>
             ) : (
