@@ -120,7 +120,7 @@ export function SiteHeader() {
               </a>
               {item.children && hover === item.label && (
                 <div className="absolute left-0 top-full pt-2 z-50">
-                  <div className="glass min-w-[260px] rounded-xl border border-white/10 p-2 shadow-2xl text-foreground">
+                  <div className="min-w-[260px] rounded-xl border border-border bg-popover p-2 shadow-2xl text-popover-foreground">
                     {item.children.map((c) => (
                       <a
                         key={c.to + c.label}
@@ -149,7 +149,7 @@ export function SiteHeader() {
               </a>
               {hover === "Employer" && (
                 <div className="absolute left-0 top-full pt-2 z-50">
-                  <div className="glass min-w-[260px] rounded-xl border border-white/10 p-2 shadow-2xl text-foreground">
+                  <div className="min-w-[260px] rounded-xl border border-border bg-popover p-2 shadow-2xl text-popover-foreground">
                     {employerNav.children?.map((c) => (
                       <a key={c.to + c.label} href={c.to} className="block rounded-lg px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
                         <div className="font-semibold">{c.label}</div>
@@ -168,7 +168,7 @@ export function SiteHeader() {
               </a>
               {hover === "Admin" && (
                 <div className="absolute left-0 top-full pt-2 z-50">
-                  <div className="glass min-w-[260px] rounded-xl border border-white/10 p-2 shadow-2xl text-foreground">
+                  <div className="min-w-[260px] rounded-xl border border-border bg-popover p-2 shadow-2xl text-popover-foreground">
                     {adminNav.children?.map((c) => (
                       <a key={c.to + c.label} href={c.to} className="block rounded-lg px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
                         <div className="font-semibold">{c.label}</div>
