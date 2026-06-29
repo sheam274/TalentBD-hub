@@ -136,11 +136,21 @@ function Landing() {
             <p className="mb-4 text-xs uppercase tracking-widest text-white/40">
               Trusted by innovators worldwide
             </p>
-            <div className="flex items-center justify-center gap-8 text-sm font-bold tracking-wider text-white/50">
-              <span>PATHAO</span>
-              <span>BRAINSTATION</span>
-              <span>BKASH</span>
-              <span>GRAMEENPHONE</span>
+            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+              {[
+                { name: "Pathao", domain: "pathao.com" },
+                { name: "BrainStation 23", domain: "brainstation-23.com" },
+                { name: "bKash", domain: "bkash.com" },
+                { name: "Grameenphone", domain: "grameenphone.com" },
+              ].map((c) => (
+                <img
+                  key={c.domain}
+                  src={`https://logo.clearbit.com/${c.domain}`}
+                  alt={`${c.name} logo`}
+                  loading="lazy"
+                  className="h-7 w-auto object-contain opacity-70 grayscale brightness-0 invert transition hover:opacity-100"
+                />
+              ))}
             </div>
           </div>
         </div>
