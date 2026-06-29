@@ -295,23 +295,23 @@ function Landing() {
                   <a
                     key={m.title}
                     href={m.href}
-                    className="group relative flex flex-1 cursor-pointer flex-col justify-end overflow-hidden rounded-2xl p-6"
+                    className="group relative flex cursor-pointer flex-col gap-3 overflow-hidden rounded-2xl p-6 min-h-[140px]"
                     style={{ background: m.bg }}
                   >
                     <div
                       className="absolute inset-0 opacity-80"
                       style={{ background: "linear-gradient(to top, var(--eduma-ink), transparent)" }}
                     />
-                    <div
-                      className="absolute left-6 top-6 rounded-xl border p-2.5 text-[10px] font-bold uppercase tracking-tighter text-white backdrop-blur-md"
-                      style={{ background: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.1)" }}
-                    >
-                      {m.tag}
+                    <div className="relative z-10 flex items-start justify-between gap-3">
+                      <h4 className="text-xl font-bold text-white">{m.title}</h4>
+                      <span
+                        className="shrink-0 rounded-xl border px-2.5 py-1 text-[10px] font-bold uppercase tracking-tighter text-white backdrop-blur-md"
+                        style={{ background: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.2)" }}
+                      >
+                        {m.tag}
+                      </span>
                     </div>
-                    <div className="relative z-10">
-                      <h4 className="mb-1 text-xl font-bold text-white">{m.title}</h4>
-                      <p className="text-sm text-white/70">{m.desc}</p>
-                    </div>
+                    <p className="relative z-10 text-sm text-white/80">{m.desc}</p>
                     <div
                       className="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
                       style={{ background: "var(--eduma-red)" }}
