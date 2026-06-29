@@ -129,25 +129,16 @@ function Landing() {
           </nav>
 
           {/* Trust */}
-          <div className="mt-20 w-full max-w-xl border-t border-white/5 pt-8">
-            <p className="mb-4 text-xs uppercase tracking-widest text-white/40">
-              Trusted by innovators worldwide
-            </p>
-            <div className="flex flex-nowrap items-center justify-center gap-x-4 sm:gap-x-6 overflow-x-auto whitespace-nowrap">
-              {[
-                { name: "Pathao", color: "#E2136E", style: "italic font-extrabold" },
-                { name: "BrainStation 23", color: "#F58220", style: "font-bold" },
-                { name: "bKash", color: "#E2136E", style: "font-extrabold tracking-tight" },
-                { name: "Grameenphone", color: "#00A6E2", style: "font-bold" },
-              ].map((c) => (
-                <span
-                  key={c.name}
-                  aria-label={`${c.name} logo`}
-                  className={`shrink-0 rounded-md bg-white px-3 py-1.5 text-sm sm:text-base ${c.style}`}
-                  style={{ color: c.color, fontFamily: "Space Grotesk, sans-serif" }}
-                >
-                  {c.name}
-                </span>
+          <div className="mt-20 w-full max-w-3xl border-t border-[var(--eduma-ink)]/10 pt-8">
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-12">
+              {PARTNER_LOGOS.map((logo) => (
+                <img
+                  key={logo.name}
+                  src={logo.url}
+                  alt={`${logo.name} logo`}
+                  loading="lazy"
+                  className="h-12 w-auto object-contain opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-14"
+                />
               ))}
             </div>
           </div>
