@@ -3,7 +3,7 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { CtaButton } from "@/components/CtaButton";
 import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 import pathaoAsset from "@/assets/partners/pathao.png.asset.json";
-import brainstationAsset from "@/assets/partners/brainstation.jpg.asset.json";
+import brainstationAsset from "@/assets/partners/brainstation.png.asset.json";
 import bkashAsset from "@/assets/partners/bkash.png.asset.json";
 import grameenphoneAsset from "@/assets/partners/grameenphone.png.asset.json";
 
@@ -151,7 +151,7 @@ function Landing() {
                   src={logo.url}
                   alt={`${logo.name} logo`}
                   loading="lazy"
-                  className="h-12 w-auto object-contain opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-14"
+                  className="h-12 w-auto object-contain opacity-90 transition duration-300 hover:opacity-100 hover:scale-105 sm:h-14"
                 />
               ))}
             </div>
