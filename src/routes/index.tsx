@@ -36,7 +36,7 @@ const FEATURED_JOBS = [
   { initial: "G", color: "var(--eduma-navy)",  title: "Product Designer",         meta: "Grameenphone • Hybrid", tag: "Contract" },
 ];
 
-const FEATURED_MODULES = [
+const LEARNING_MODULES = [
   { title: "Full-Stack Web Development", desc: "Master React, Node and modern deployment workflows.", bg: "var(--eduma-ink)", href: "/learn#cse" },
   { title: "Power Systems Essentials",   desc: "From transmission to smart grids, taught by industry leads.", bg: "var(--eduma-red)", href: "/learn#eee" },
 ];
@@ -289,9 +289,9 @@ function Landing() {
                 </div>
               </div>
 
-              {/* Right — module list (same content as before) */}
+              {/* Right — module list */}
               <div className="flex flex-col justify-center gap-4 p-6 md:p-8">
-                {FEATURED_MODULES.map((m) => (
+                {LEARNING_MODULES.map((m) => (
                   <a
                     key={m.title}
                     href={m.href}
