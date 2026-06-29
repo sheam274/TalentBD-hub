@@ -145,13 +145,12 @@ function Landing() {
               ].map((c) => (
                 <img
                   key={c.domain}
-                  src={`https://cdn.brandfetch.io/${c.domain}/w/256/h/64?c=1idV-0vQJ4xX5Yk5pVH`}
-                  alt={`${c.name} logo`}
+                  src={`https://logo.clearbit.com/${c.domain}`}
+                  alt=""
+                  aria-label={`${c.name} logo`}
                   loading="lazy"
                   onError={(e) => {
-                    const img = e.currentTarget;
-                    img.onerror = null;
-                    img.src = `https://logo.clearbit.com/${c.domain}`;
+                    e.currentTarget.style.display = "none";
                   }}
                   className="h-9 w-auto max-w-[160px] object-contain"
                 />
