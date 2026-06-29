@@ -318,11 +318,10 @@ function Landing() {
         {/* Final CTA */}
         <ScrollReveal>
           <section
-            className="relative overflow-hidden rounded-[2.5rem] p-10 text-center text-white shadow-xl md:p-16"
-            style={{ background: "linear-gradient(135deg, var(--eduma-ink), var(--eduma-navy))" }}
+            className="relative overflow-hidden rounded-[2.5rem] border border-border bg-white p-10 text-center shadow-xl md:p-16"
           >
-            <h2 className="mb-3 text-3xl font-bold md:text-4xl">Ready to grow your career?</h2>
-            <p className="mb-7 text-white/75">Join thousands of Bangladeshi engineers learning, certifying and getting hired on TalentBD.</p>
+            <h2 className="mb-3 text-3xl font-bold md:text-4xl" style={{ color: "var(--eduma-ink)" }}>Ready to grow your career?</h2>
+            <p className="mb-7 text-muted-foreground">Join thousands of Bangladeshi engineers learning, certifying and getting hired on TalentBD.</p>
             <a
               href="/auth"
               className="inline-flex items-center gap-2 rounded-xl px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[var(--eduma-navy)]"
