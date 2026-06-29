@@ -78,17 +78,17 @@ export function SiteFooter() {
             </p>
             <div className="mt-5 flex items-center gap-3">
               {[
-                { Icon: Facebook, href: "https://facebook.com", label: "Facebook" },
-                { Icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-                { Icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-                { Icon: Youtube, href: "https://youtube.com", label: "YouTube" },
-                { Icon: Globe, href: "https://w3schools.com", label: "Website" },
+                { Icon: Facebook, href: "https://www.facebook.com/talentbd", label: "Facebook" },
+                { Icon: Linkedin, href: "https://www.linkedin.com/company/talentbd", label: "LinkedIn" },
+                { Icon: Twitter, href: "https://twitter.com/talentbd", label: "Twitter" },
+                { Icon: Youtube, href: "https://www.youtube.com/@talentbd", label: "YouTube" },
+                { Icon: Globe, href: "https://talentbd.com", label: "Website" },
               ].map(({ Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   aria-label={`TalentBD on ${label}`}
                   className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition hover:border-primary/60 hover:text-white"
                 >
