@@ -99,7 +99,7 @@ function Dashboard() {
         </div>
         {isAdmin && (
           <div className="mt-6 rounded-xl border bg-white p-4">
-            <h3 className="font-semibold">Admin tools</h3>
+            <h2 className="font-semibold">Admin tools</h2>
             <div className="mt-2 flex flex-wrap gap-2 text-sm">
               <Link to="/admin/dashboard" className="rounded-md border px-3 py-1.5">Admin dashboard</Link>
               <Link to="/admin/modules" className="rounded-md border px-3 py-1.5">Modules</Link>
@@ -131,7 +131,7 @@ function QuickAction({ to, label }: { to: string; label: string }) {
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border bg-white p-5">
-      <h3 className="font-semibold">{title}</h3>
+      <h2 className="font-semibold">{title}</h2>
       <div className="mt-3">{children}</div>
     </div>
   );

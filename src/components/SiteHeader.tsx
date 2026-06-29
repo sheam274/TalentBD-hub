@@ -105,16 +105,16 @@ export function SiteHeader() {
             <BrandMark size={28} />
           </span>
           <span className="text-lg">TalentBD</span>
-          <span className="hidden sm:inline ml-1 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/90">Premium</span>
+          <span className="hidden sm:inline ml-1 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">Premium</span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
-          <Link to="/" className="rounded-md px-3 py-1.5 text-sm font-medium opacity-90 hover:opacity-100 hover:bg-white/10 transition" activeProps={{ style: { color: "var(--color-accent)", opacity: 1 } }} activeOptions={{ exact: true }}>Home</Link>
+          <Link to="/" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }} activeOptions={{ exact: true }}>Home</Link>
           {baseNav.map((item) => (
             <div key={item.label} className="relative" onMouseEnter={() => setHover(item.label)} onMouseLeave={() => setHover(null)}>
               <a
                 href={item.to}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium opacity-90 hover:opacity-100 hover:bg-white/10 transition"
+                className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition"
               >
                 {item.label}
                 {item.children && <ChevronDown className="size-3.5 opacity-70" />}
@@ -138,14 +138,14 @@ export function SiteHeader() {
             </div>
           ))}
           {user && (
-            <Link to="/dashboard" className="rounded-md px-3 py-1.5 text-sm font-medium opacity-90 hover:opacity-100 hover:bg-white/10 transition" activeProps={{ style: { color: "var(--color-accent)", opacity: 1 } }}>Dashboard</Link>
+            <Link to="/dashboard" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Dashboard</Link>
           )}
           {user && (
-            <Link to="/my-applications" className="rounded-md px-3 py-1.5 text-sm font-medium opacity-90 hover:opacity-100 hover:bg-white/10 transition" activeProps={{ style: { color: "var(--color-accent)", opacity: 1 } }}>Applications</Link>
+            <Link to="/my-applications" className="rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition" activeProps={{ style: { color: "#fff", textDecoration: "underline", textDecorationColor: "var(--color-accent)", textDecorationThickness: "3px", textUnderlineOffset: "6px" } }}>Applications</Link>
           )}
           {user && isEmployer && (
             <div className="relative" onMouseEnter={() => setHover("Employer")} onMouseLeave={() => setHover(null)}>
-              <a href="/employer/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium opacity-90 hover:opacity-100 hover:bg-white/10 transition">
+              <a href="/employer/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition">
                 Employer <ChevronDown className="size-3.5 opacity-70" />
               </a>
               {hover === "Employer" && (
@@ -164,7 +164,7 @@ export function SiteHeader() {
           )}
           {user && isAdmin && (
             <div className="relative" onMouseEnter={() => setHover("Admin")} onMouseLeave={() => setHover(null)}>
-              <a href="/admin/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium opacity-90 hover:opacity-100 hover:bg-white/10 transition">
+              <a href="/admin/dashboard" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition">
                 <ShieldCheck className="size-3.5" /> Admin <ChevronDown className="size-3.5 opacity-70" />
               </a>
               {hover === "Admin" && (
