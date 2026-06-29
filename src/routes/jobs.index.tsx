@@ -446,37 +446,37 @@ function Jobs() {
               <button
                 type="button"
                 onClick={() => openExternalJob(j.url)}
-                className="lift glass rounded-xl p-5 h-full flex flex-col text-left"
+                className="lift glass rounded-xl p-4 sm:p-5 h-full w-full min-w-0 flex flex-col text-left overflow-hidden"
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 min-w-0">
                   {j.company_logo ? (
-                    <img src={j.company_logo} alt={j.company} className="size-10 rounded-md object-contain bg-white" />
+                    <img src={j.company_logo} alt={j.company} className="size-10 shrink-0 rounded-md object-contain bg-white" />
                   ) : (
-                    <div className="size-10 rounded-md grid place-items-center bg-white/70 font-bold text-sm" style={{ color: "var(--color-primary)" }}>
+                    <div className="size-10 shrink-0 rounded-md grid place-items-center bg-white/70 font-bold text-sm" style={{ color: "var(--color-primary)" }}>
                       {j.company?.[0] ?? "?"}
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold leading-tight line-clamp-2">{j.title}</h3>
+                    <h3 className="font-semibold leading-tight line-clamp-2 break-words">{j.title}</h3>
                     <p className="text-xs text-muted-foreground truncate">{j.company}</p>
                   </div>
                   <ExternalLink className="size-4 shrink-0 text-muted-foreground" />
                 </div>
-                <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                  {j.category && <span>{j.category}</span>}
-                  {j.job_type && <span>· {j.job_type}</span>}
-                  <span>· {j.is_remote ? "🌍" : "📍"} {j.location}</span>
+                <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground min-w-0">
+                  {j.category && <span className="truncate max-w-full">{j.category}</span>}
+                  {j.job_type && <span className="truncate max-w-full">· {j.job_type}</span>}
+                  <span className="inline-flex items-center gap-1 min-w-0 max-w-full"><span className="shrink-0">·</span><span className="truncate">{j.is_remote ? "🌍" : "📍"} {j.location}</span></span>
                   {!j.is_remote && <span className="rounded badge-warning px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
-                  {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
+                  {j.source && <span className="rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
                 </div>
                 {j.tags?.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1">
+                  <div className="mt-3 flex flex-wrap gap-1 min-w-0">
                     {j.tags.slice(0, 4).map((t: string) => (
-                      <span key={t} className="rounded border bg-white/60 px-2 py-0.5 text-[11px]">{t}</span>
+                      <span key={t} className="rounded border bg-white/60 px-2 py-0.5 text-[11px] truncate max-w-full">{t}</span>
                     ))}
                   </div>
                 )}
-                {j.salary && <p className="mt-3 text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
+                {j.salary && <p className="mt-3 text-sm font-medium break-words" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
               </button>
             </ScrollReveal>
             ));
@@ -641,41 +641,41 @@ function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => v
     <button
       type="button"
       onClick={() => onOpen(j.url)}
-      className="lift glass rounded-xl p-5 h-full flex flex-col text-left"
+      className="lift glass rounded-xl p-4 sm:p-5 h-full w-full min-w-0 flex flex-col text-left overflow-hidden"
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-3 min-w-0">
         {j.company_logo ? (
-          <img src={j.company_logo} alt={j.company} className="size-10 rounded-md object-contain bg-white" />
+          <img src={j.company_logo} alt={j.company} className="size-10 shrink-0 rounded-md object-contain bg-white" />
         ) : (
-          <div className="size-10 rounded-md grid place-items-center bg-white/70 font-bold text-sm" style={{ color: "var(--color-primary)" }}>
+          <div className="size-10 shrink-0 rounded-md grid place-items-center bg-white/70 font-bold text-sm" style={{ color: "var(--color-primary)" }}>
             {j.company?.[0] ?? "?"}
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold leading-tight line-clamp-2">{j.title}</h3>
+          <h3 className="font-semibold leading-tight line-clamp-2 break-words">{j.title}</h3>
           <p className="text-xs text-muted-foreground truncate">{j.company}</p>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
+        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
           <Radio className="size-3 animate-pulse" /> Live
         </span>
       </div>
-      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-        {j.category && <span>{j.category}</span>}
-        {j.job_type && <span>· {j.job_type}</span>}
-        <span>· {j.is_remote ? "🌍" : "📍"} {j.location}</span>
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground min-w-0">
+        {j.category && <span className="truncate max-w-full">{j.category}</span>}
+        {j.job_type && <span className="truncate max-w-full">· {j.job_type}</span>}
+        <span className="inline-flex items-center gap-1 min-w-0 max-w-full"><span className="shrink-0">·</span><span className="truncate">{j.is_remote ? "🌍" : "📍"} {j.location}</span></span>
         {!j.is_remote && <span className="rounded badge-warning px-1.5 py-0.5 text-[10px] font-semibold">On-site</span>}
-        {j.source && <span className="ml-auto rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
+        {j.source && <span className="rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase">{j.source}</span>}
       </div>
       {j.tags?.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1">
+        <div className="mt-3 flex flex-wrap gap-1 min-w-0">
           {j.tags.slice(0, 4).map((t: string) => (
-            <span key={t} className="rounded border bg-white/60 px-2 py-0.5 text-[11px]">{t}</span>
+            <span key={t} className="rounded border bg-white/60 px-2 py-0.5 text-[11px] truncate max-w-full">{t}</span>
           ))}
         </div>
       )}
-      <div className="mt-auto pt-3 flex items-center justify-between">
-        {j.salary && <p className="text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
-        <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold" style={{ color: "var(--color-primary)" }}>
+      <div className="mt-auto pt-3 flex flex-wrap items-center justify-between gap-2">
+        {j.salary && <p className="text-sm font-medium break-words min-w-0" style={{ color: "var(--color-primary)" }}>{j.salary}</p>}
+        <span className="ml-auto inline-flex items-center gap-1 text-xs font-semibold whitespace-nowrap" style={{ color: "var(--color-primary)" }}>
           View & Apply <ExternalLink className="size-3" />
         </span>
       </div>
