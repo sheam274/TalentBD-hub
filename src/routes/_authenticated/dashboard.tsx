@@ -27,10 +27,10 @@ function Dashboard() {
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
         <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
-          <div className="glass rounded-2xl p-6">
-            <p className="text-sm text-white/80">Welcome back</p>
+          <div className="glass-dark rounded-2xl p-6">
+            <p className="text-sm text-white">Welcome back</p>
             <h1 className="mt-1 text-3xl font-bold text-white">{p?.name ?? "Engineer"}</h1>
-            <p className="mt-1 text-sm text-white/80">{p?.discipline ? `Discipline: ${p.discipline}` : "Set your discipline in CV Builder"}</p>
+            <p className="mt-1 text-sm text-white">{p?.discipline ? `Discipline: ${p.discipline}` : "Set your discipline in CV Builder"}</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-4">
               <Metric label="Credentials" value={creds.data?.length ?? 0} />
               <Metric label="Skills" value={p?.skills?.length ?? 0} />
@@ -115,8 +115,8 @@ function Dashboard() {
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-white/20 bg-white/10 p-4">
-      <div className="text-xs uppercase tracking-wide text-white/80">{label}</div>
+    <div className="rounded-xl border border-white/30 bg-black/30 p-4">
+      <div className="text-xs uppercase tracking-wide text-white">{label}</div>
       <div className="mt-1 text-2xl font-bold text-white">{value}</div>
     </div>
   );

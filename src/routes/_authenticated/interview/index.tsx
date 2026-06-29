@@ -25,13 +25,13 @@ function InterviewLanding() {
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
-          <div className="glass rounded-2xl p-8">
-            <p className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider"><Sparkles className="size-3.5" /> AI Interviewer</p>
+          <div className="glass-dark rounded-2xl p-8">
+            <p className="inline-flex items-center gap-1 rounded-full bg-black/25 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white"><Sparkles className="size-3.5" /> AI Interviewer</p>
             <h1 className="mt-3 text-4xl font-bold">Give an AI-graded interview</h1>
-            <p className="mt-2 max-w-2xl text-white/85">Pick a role, choose a difficulty, and answer in text, voice, video, or MCQ. Our AI scores each answer, gives you per-question feedback, and issues a verifiable credential at 80%+.</p>
+            <p className="mt-2 max-w-2xl text-white">Pick a role, choose a difficulty, and answer in text, voice, video, or MCQ. Our AI scores each answer, gives you per-question feedback, and issues a verifiable credential at 80%+.</p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link to="/interview/setup" className="rounded-md px-5 py-2.5 font-semibold" style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}>Start a new interview</Link>
-              <Link to="/interview/history" className="rounded-md border border-white/30 px-5 py-2.5 font-semibold hover:bg-white/10">View history</Link>
+              <Link to="/interview/history" className="rounded-md border-2 border-white px-5 py-2.5 font-semibold text-white hover:bg-white/10">View history</Link>
             </div>
           </div>
         </div>
