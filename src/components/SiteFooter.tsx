@@ -12,11 +12,27 @@ const socialLinks = [
 ];
 
 const openExternalLink = (href: string) => {
-  const opened = window.open(href, "_blank");
-
-  if (opened) {
-    opened.opener = null;
+  // Break out of the preview iframe by clicking a real anchor on the
+  // top-most document we can reach. Browsers treat this as a true
+  // user-initiated navigation and open it in a new browser tab.
+  let targetDoc: Document = document;
+  try {
+    if (window.top && window.top.document) {
+      targetDoc = window.top.document;
+    }
+  } catch {
+    // Cross-origin top frame — fall back to current document.
+    targetDoc = document;
   }
+
+  const a = targetDoc.createElement("a");
+  a.href = href;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+  a.style.display = "none";
+  targetDoc.body.appendChild(a);
+  a.click();
+  a.remove();
 };
 
 const columns: Col[] = [
