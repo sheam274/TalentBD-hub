@@ -25,11 +25,11 @@ function LearnIndex() {
   }, {});
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 page-enter">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
       <div className="flex items-end justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-4xl font-extrabold">Learning <span className="text-gradient">tracks</span></h1>
-          <p className="mt-1 text-muted-foreground">Pick a discipline, watch the lessons, and earn a verified credential.</p>
+        <div className="min-w-0">
+          <h1 className="text-3xl sm:text-4xl font-extrabold">Learning <span className="text-gradient">tracks</span></h1>
+          <p className="mt-1 text-sm sm:text-base text-muted-foreground">Pick a discipline, watch the lessons, and earn a verified credential.</p>
         </div>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1"><PlayCircle className="size-4" /> Video</span>

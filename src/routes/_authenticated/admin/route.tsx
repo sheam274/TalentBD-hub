@@ -26,8 +26,8 @@ function AdminLayout() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 page-enter">
-      <nav className="mb-6 flex flex-wrap gap-2 border-b pb-3 text-sm">
+    <div className="mx-auto max-w-7xl px-4 py-4 sm:py-6 md:px-6 page-enter">
+      <nav className="mb-6 -mx-1 flex flex-wrap gap-2 border-b pb-3 text-xs sm:text-sm overflow-x-auto">
         <Link to="/admin/dashboard" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Overview</Link>
         <Link to="/admin/users" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Job seekers</Link>
         <Link to="/admin/employers" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Employers</Link>

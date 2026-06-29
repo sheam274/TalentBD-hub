@@ -54,13 +54,13 @@ function SessionPage() {
   }
 
   return (
-    <div className="page-enter mx-auto max-w-3xl px-4 py-8 md:px-6">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
+    <div className="page-enter mx-auto max-w-3xl px-4 py-6 sm:py-8 md:px-6">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="min-w-0">
           <div className="text-xs uppercase tracking-wider text-muted-foreground">{session.role} · {session.difficulty} · {session.mode}</div>
-          <h1 className="text-2xl font-bold">Question {idx + 1} of {total}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Question {idx + 1} of {total}</h1>
         </div>
-        <div className="text-sm text-muted-foreground">{answered}/{total} answered</div>
+        <div className="text-sm text-muted-foreground shrink-0">{answered}/{total} answered</div>
       </div>
 
       <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -68,8 +68,8 @@ function SessionPage() {
       </div>
 
       {!q ? <div className="mt-6 text-muted-foreground">No question.</div> : (
-        <div className="mt-6 rounded-2xl border bg-white p-6 shadow-sm">
-          <p className="text-lg font-medium">{q.prompt}</p>
+        <div className="mt-6 rounded-2xl border bg-white p-4 sm:p-6 shadow-sm">
+          <p className="text-base sm:text-lg font-medium break-words">{q.prompt}</p>
           {q.expected_topic && <p className="mt-1 text-xs text-muted-foreground">Topic: {q.expected_topic}</p>}
 
           {q.question_type === "mcq" && Array.isArray(q.choices) ? (

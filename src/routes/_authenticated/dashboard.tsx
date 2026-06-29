@@ -26,12 +26,12 @@ function Dashboard() {
   return (
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
-        <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
-          <div className="glass-dark rounded-2xl p-6">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:px-6">
+          <div className="glass-dark rounded-2xl p-4 sm:p-6">
             <p className="text-sm text-white">Welcome back</p>
-            <h1 className="mt-1 text-3xl font-bold text-white">{p?.name ?? "Engineer"}</h1>
+            <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-white break-words">{p?.name ?? "Engineer"}</h1>
             <p className="mt-1 text-sm text-white">{p?.discipline ? `Discipline: ${p.discipline}` : "Set your discipline in CV Builder"}</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-4">
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <Metric label="Credentials" value={creds.data?.length ?? 0} />
               <Metric label="Skills" value={p?.skills?.length ?? 0} />
               <Metric label="Applications" value={apps.data?.length ?? 0} />
@@ -41,8 +41,8 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="crossover grid gap-3 rounded-2xl border bg-white p-4 shadow-sm md:grid-cols-4">
+      <section className="mx-auto max-w-7xl px-4 md:px-6 mt-4">
+        <div className="crossover grid grid-cols-2 gap-3 rounded-2xl border bg-white p-4 shadow-sm md:grid-cols-4">
           <QuickAction to="/learn" label="Start learning" />
           <QuickAction to="/assessments" label="Take assessment" />
           <QuickAction to="/cv-builder" label="Build CV" />
@@ -50,7 +50,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6">
         <div className="grid gap-6 lg:grid-cols-2">
           <Card title="Recent credentials">
             {creds.data?.length ? (
