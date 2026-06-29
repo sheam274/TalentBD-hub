@@ -7,7 +7,7 @@ import { listRemoteJobsExternal } from "@/lib/external-jobs.functions";
 import { useAuth } from "@/lib/auth-context";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { toast } from "sonner";
-import { Briefcase, MapPin, Clock, GraduationCap, Star, Globe, ExternalLink, Radio } from "lucide-react";
+import { Briefcase, MapPin, Clock, GraduationCap, Star, Globe, ExternalLink, Radio, Search as SearchIcon } from "lucide-react";
 
 export const Route = createFileRoute("/jobs/")({
   head: () => ({
@@ -56,6 +56,16 @@ function Jobs() {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 350);
     return () => clearTimeout(t);
   }, [search]);
+  const [showSuggest, setShowSuggest] = useState(false);
+  const searchBoxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onDown = (e: MouseEvent) => {
+      if (!searchBoxRef.current?.contains(e.target as Node)) setShowSuggest(false);
+    };
+    window.addEventListener("mousedown", onDown);
+    return () => window.removeEventListener("mousedown", onDown);
+  }, []);
   const [category, setCategory] = useState<string>("");
   const [location, setLocation] = useState("");
   const [exp, setExp] = useState("");
@@ -326,7 +336,27 @@ function Jobs() {
 
       {/* Filters */}
       <div className="mt-4 glass rounded-xl p-3 sm:p-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, company, skill" aria-label="Search jobs" className="sm:col-span-2 min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60" />
+        <SearchField
+          ref={searchBoxRef}
+          value={search}
+          onChange={setSearch}
+          onSubmit={() => { setDebouncedSearch(search.trim()); setShowSuggest(false); }}
+          suggestions={
+            search.trim().length >= 1
+              ? Array.from(
+                  new Set([
+                    ...all.map((j: any) => j.job_title as string),
+                    ...(remoteQ.data ?? []).map((j: any) => j.title as string),
+                  ].filter(Boolean)),
+                )
+                  .filter((t) => t.toLowerCase().includes(search.trim().toLowerCase()))
+                  .slice(0, 8)
+              : []
+          }
+          open={showSuggest}
+          setOpen={setShowSuggest}
+          onPick={(t) => { setSearch(t); setDebouncedSearch(t); setShowSuggest(false); }}
+        />
         <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Location" aria-label="Filter by location" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60" />
         <select value={exp} onChange={(e) => setExp(e.target.value)} aria-label="Filter by experience level" className="min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60">
           <option value="">Any experience</option>
