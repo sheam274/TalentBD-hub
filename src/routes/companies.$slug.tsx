@@ -28,7 +28,12 @@ function CompanyDetail() {
   const fn = useServerFn(getCompanyBySlug);
   const q = useQuery({ queryKey: ["company", slug], queryFn: () => fn({ data: { slug } }) });
 
-  if (q.isLoading) return <div className="mx-auto max-w-5xl p-10 text-sm text-muted-foreground">Loading…</div>;
+  if (q.isLoading) return (
+    <div className="mx-auto max-w-5xl p-10">
+      <h1 className="sr-only">Loading company profile</h1>
+      <span className="text-sm text-muted-foreground">Loading…</span>
+    </div>
+  );
   if (!q.data) throw notFound();
   const { company, jobs } = q.data;
 
