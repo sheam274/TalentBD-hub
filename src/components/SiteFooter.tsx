@@ -12,15 +12,11 @@ const socialLinks = [
 ];
 
 const openExternalLink = (href: string) => {
-  const opened = window.open("about:blank", "_blank", "noopener,noreferrer");
+  const opened = window.open(href, "_blank");
 
   if (opened) {
     opened.opener = null;
-    opened.location.href = href;
-    return;
   }
-
-  window.location.assign(href);
 };
 
 const columns: Col[] = [
