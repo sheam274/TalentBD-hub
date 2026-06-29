@@ -17,7 +17,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { AnimatedBackdrop } from "@/components/AnimatedBackdrop";
 import { ChatAssistant } from "@/components/ChatAssistant";
 import { supabase } from "@/integrations/supabase/client";
-import logoUrl from "@/assets/talentbd-logo.png";
+import logoAsset from "@/assets/talentbd-logo.png.asset.json";
+const logoUrl = logoAsset.url;
 import { Toaster } from "sonner";
 
 function NotFoundComponent() {
