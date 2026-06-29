@@ -237,7 +237,7 @@ function Jobs() {
   const totalAll = all.length + liveAll.length;
 
   const hasFilters = !!(search || category || location || exp || type || remote !== "all");
-  const clearFilters = () => { setSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
+  const clearFilters = () => { setSearch(""); setDebouncedSearch(""); setCategory(""); setLocation(""); setExp(""); setType(""); setRemote("all"); };
 
   const openExternalJob = (url?: string | null) => {
     if (typeof window === "undefined") return;
