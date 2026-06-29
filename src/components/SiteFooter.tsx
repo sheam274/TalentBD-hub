@@ -4,15 +4,15 @@ import { Facebook, Linkedin, Twitter, Youtube, Globe } from "lucide-react";
 type Col = { title: string; links: { label: string; href: string }[] };
 
 const socialLinks = [
-  { Icon: Facebook, href: "https://www.facebook.com/talentbd", label: "Facebook" },
-  { Icon: Linkedin, href: "https://www.linkedin.com/company/talentbd", label: "LinkedIn" },
-  { Icon: Twitter, href: "https://twitter.com/talentbd", label: "Twitter" },
-  { Icon: Youtube, href: "https://www.youtube.com/@talentbd", label: "YouTube" },
-  { Icon: Globe, href: "https://talentbd.com", label: "Website" },
+  { Icon: Facebook, site: "facebook", label: "Facebook" },
+  { Icon: Linkedin, site: "linkedin", label: "LinkedIn" },
+  { Icon: Twitter, site: "twitter", label: "Twitter" },
+  { Icon: Youtube, site: "youtube", label: "YouTube" },
+  { Icon: Globe, site: "website", label: "Website" },
 ];
 
-function externalLinkHref(url: string) {
-  return `/external-link?url=${encodeURIComponent(url)}`;
+function externalLinkHref(site: string) {
+  return `/external-link?site=${encodeURIComponent(site)}`;
 }
 
 const columns: Col[] = [
@@ -89,10 +89,10 @@ export function SiteFooter() {
               Bangladesh's premium learn-and-earn platform. Build skills, earn verified credentials, and land local or global remote jobs.
             </p>
             <div className="mt-5 flex items-center gap-3">
-              {socialLinks.map(({ Icon, href, label }) => (
+              {socialLinks.map(({ Icon, site, label }) => (
                 <a
                   key={label}
-                  href={externalLinkHref(href)}
+                  href={externalLinkHref(site)}
                   aria-label={`Open TalentBD on ${label}`}
                   className="inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:bg-primary/15 hover:text-white hover:shadow-[0_6px_18px_-6px_rgba(254,82,82,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-eduma-ink active:translate-y-0"
                 >

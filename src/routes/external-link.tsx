@@ -2,34 +2,25 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
-const allowedHosts = new Set([
-  "www.facebook.com",
-  "facebook.com",
-  "www.linkedin.com",
-  "linkedin.com",
-  "twitter.com",
-  "x.com",
-  "www.youtube.com",
-  "youtube.com",
-  "talentbd.com",
-  "www.talentbd.com",
-]);
+const externalSites = {
+  facebook: { label: "Facebook", url: "https://www.facebook.com/talentbd" },
+  linkedin: { label: "LinkedIn", url: "https://www.linkedin.com/company/talentbd" },
+  twitter: { label: "Twitter", url: "https://twitter.com/talentbd" },
+  youtube: { label: "YouTube", url: "https://www.youtube.com/@talentbd" },
+  website: { label: "TalentBD website", url: "https://talentbd.com" },
+} as const;
 
-function getSafeUrl(rawUrl: unknown) {
-  if (typeof rawUrl !== "string") return null;
-  try {
-    const url = new URL(rawUrl);
-    if (url.protocol !== "https:") return null;
-    if (!allowedHosts.has(url.hostname.toLowerCase())) return null;
-    return url.toString();
-  } catch {
-    return null;
-  }
+type ExternalSiteKey = keyof typeof externalSites;
+
+function getExternalSite(site: unknown) {
+  if (typeof site !== "string") return null;
+  if (!Object.prototype.hasOwnProperty.call(externalSites, site)) return null;
+  return externalSites[site as ExternalSiteKey];
 }
 
 export const Route = createFileRoute("/external-link")({
   validateSearch: (search) => ({
-    url: typeof search.url === "string" ? search.url : "",
+    site: typeof search.site === "string" ? search.site : "",
   }),
   head: () => ({
     meta: [
@@ -41,8 +32,9 @@ export const Route = createFileRoute("/external-link")({
 });
 
 function ExternalLinkPage() {
-  const { url } = Route.useSearch();
-  const safeUrl = getSafeUrl(url);
+  const { site } = Route.useSearch();
+  const externalSite = getExternalSite(site);
+  const safeUrl = externalSite?.url ?? null;
   const host = safeUrl ? new URL(safeUrl).hostname.replace(/^www\./, "") : null;
   const [status, setStatus] = useState<string | null>(null);
 
@@ -76,7 +68,7 @@ function ExternalLinkPage() {
         {safeUrl ? (
           <>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              You are leaving TalentBD for {host}. Opening it from this page prevents blocked iframe loading in the preview.
+              You are leaving TalentBD for {externalSite.label}. Opening it from this page prevents blocked iframe loading in the preview.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <button
