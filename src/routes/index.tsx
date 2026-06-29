@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { MouseEvent } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { ArrowRight, Cpu, Zap, Building2, Briefcase, GraduationCap, LineChart } from "lucide-react";
 
@@ -44,7 +45,7 @@ const LEARNING_MODULES = [
 function Landing() {
   const jobsDisabled = false;
   const learnDisabled = false;
-  const blockIfDisabled = (disabled: boolean) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const blockIfDisabled = (disabled: boolean) => (e: MouseEvent<HTMLAnchorElement>) => {
     if (disabled) {
       e.preventDefault();
       e.stopPropagation();
