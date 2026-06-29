@@ -302,15 +302,7 @@ function Landing() {
                       className="absolute inset-0 opacity-80"
                       style={{ background: "linear-gradient(to top, var(--eduma-ink), transparent)" }}
                     />
-                    <div className="relative z-10 flex items-start justify-between gap-3">
-                      <h4 className="text-xl font-bold text-white">{m.title}</h4>
-                      <span
-                        className="shrink-0 rounded-xl border px-2.5 py-1 text-[10px] font-bold uppercase tracking-tighter text-white backdrop-blur-md"
-                        style={{ background: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.2)" }}
-                      >
-                        {m.tag}
-                      </span>
-                    </div>
+                    <h4 className="relative z-10 text-xl font-bold text-white">{m.title}</h4>
                     <p className="relative z-10 text-sm text-white/80">{m.desc}</p>
                     <div
                       className="absolute bottom-0 left-0 h-1 w-full origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
