@@ -15,8 +15,8 @@ SHOTS.mkdir(exist_ok=True)
 
 ROUTES = [
     ("candidate", "/dashboard"),
-    ("employer",  "/employer"),
-    ("admin",     "/admin"),
+    ("employer",  "/employer/dashboard"),
+    ("admin",     "/admin/dashboard"),
 ]
 
 async def run():
