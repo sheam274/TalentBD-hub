@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyProfile } from "@/lib/profile.functions";
 import { listMyCredentials } from "@/lib/assessments.functions";
 import { listJobsPublic, listMyApplications } from "@/lib/jobs.functions";
+import { getMyCv } from "@/lib/cv.functions";
+import { FileText, User, Pencil, Eye, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — Learn & Earn" }] }),
@@ -15,13 +17,16 @@ function Dashboard() {
   const credsFn = useServerFn(listMyCredentials);
   const jobsFn = useServerFn(listJobsPublic);
   const appsFn = useServerFn(listMyApplications);
+  const cvFn = useServerFn(getMyCv);
   const profile = useQuery({ queryKey: ["me"], queryFn: () => profileFn() });
   const creds = useQuery({ queryKey: ["my-creds"], queryFn: () => credsFn() });
   const jobs = useQuery({ queryKey: ["jobs"], queryFn: () => jobsFn() });
   const apps = useQuery({ queryKey: ["my-apps"], queryFn: () => appsFn() });
+  const cv = useQuery({ queryKey: ["my-cv"], queryFn: () => cvFn() });
 
   const p = profile.data?.profile;
   const isAdmin = profile.data?.isAdmin;
+  const hasCv = !!cv.data;
 
   return (
     <div className="page-enter">
@@ -51,6 +56,67 @@ function Dashboard() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6">
+        {/* Profile & CV */}
+        <div className="mb-6 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-xl border bg-white p-5">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="inline-flex items-center gap-2 font-semibold">
+                <User className="size-4" /> My profile
+              </h2>
+              <Link to="/cv-builder" className="inline-flex items-center gap-1 text-sm underline" style={{ color: "var(--color-primary)" }}>
+                <Pencil className="size-3.5" /> Edit
+              </Link>
+            </div>
+            <dl className="mt-3 space-y-1.5 text-sm">
+              <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Name</dt><dd className="font-medium break-words">{p?.name ?? "—"}</dd></div>
+              <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Discipline</dt><dd className="break-words">{p?.discipline ?? "—"}</dd></div>
+              <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Skills</dt>
+                <dd className="flex flex-wrap gap-1">
+                  {(p?.skills?.length ?? 0) > 0
+                    ? p!.skills!.map((s: string) => <span key={s} className="rounded-full border px-2 py-0.5 text-xs">{s}</span>)
+                    : <span className="text-muted-foreground">—</span>}
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-3 text-xs text-muted-foreground">Your profile is auto-shared with every job application.</p>
+          </div>
+
+          <div className="rounded-xl border bg-white p-5">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="inline-flex items-center gap-2 font-semibold">
+                <FileText className="size-4" /> My CV
+              </h2>
+              {hasCv && (
+                <span className="rounded-full badge-success px-2 py-0.5 text-[11px] font-semibold">Ready</span>
+              )}
+            </div>
+            {hasCv ? (
+              <>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Style: <span className="font-medium text-foreground">{cv.data?.selected_style ?? "standard"}</span>
+                  {cv.data?.updated_at && <> · Updated {new Date(cv.data.updated_at).toLocaleDateString()}</>}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link to="/cv-builder" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>
+                    <Eye className="size-4" /> View / Edit CV
+                  </Link>
+                  <Link to="/cv-parser" className="inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm">Upload / parse resume</Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-sm text-muted-foreground">You haven't created a CV yet. Build one so it can be auto-submitted with your job applications.</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link to="/cv-builder" className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>
+                    <Plus className="size-4" /> Create CV
+                  </Link>
+                  <Link to="/cv-parser" className="inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-sm">Upload existing</Link>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-2">
           <Card title="Recent credentials">
             {creds.data?.length ? (
