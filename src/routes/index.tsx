@@ -150,7 +150,7 @@ function Landing() {
             </div>
 
             {/* Right — borderless video, blended into hero */}
-            <div className="relative min-h-[280px] sm:min-h-[360px] lg:min-h-[480px]">
+            <div className="relative mx-auto w-full max-w-[640px] aspect-[4/3] sm:aspect-video lg:aspect-[5/4] lg:max-w-none lg:h-full">
               <video
                 src={heroVideoAsset.url}
                 autoPlay
