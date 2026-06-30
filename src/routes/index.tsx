@@ -177,14 +177,16 @@ function Landing() {
             {/* Right — borderless video, blended into hero */}
             <div className="relative mx-auto w-full max-w-[640px] aspect-[4/3] sm:aspect-video lg:aspect-[5/4] lg:max-w-none lg:h-full">
               <video
-                src={heroVideoAsset.url}
+                ref={heroVideoRef}
+                {...(heroVideoSrc ? { src: heroVideoSrc } : {})}
                 autoPlay
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="none"
                 aria-label="Bangladeshi professionals learning and working"
-                className="absolute inset-0 size-full object-cover [object-position:50%_35%] sm:[object-position:50%_45%] lg:[object-position:50%_50%]"
+                className={`absolute inset-0 size-full object-cover [object-position:50%_35%] sm:[object-position:50%_45%] lg:[object-position:50%_50%] transition-opacity duration-500 ${heroVideoReady ? "opacity-100" : "opacity-0"}`}
+                onCanPlay={() => setHeroVideoReady(true)}
                 onLoadedMetadata={(e) => {
                   const v = e.currentTarget;
                   v.playbackRate = 1;
@@ -205,6 +207,21 @@ function Landing() {
                     "radial-gradient(ellipse at center, #000 40%, rgba(0,0,0,0.6) 70%, transparent 100%)",
                 }}
               />
+              {/* Loading skeleton — shown until video can play */}
+              {!heroVideoReady && (
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 animate-pulse"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(254,82,82,0.18), rgba(255,182,6,0.18) 60%, rgba(17,17,39,0.10))",
+                    WebkitMaskImage:
+                      "radial-gradient(ellipse at center, #000 40%, rgba(0,0,0,0.6) 70%, transparent 100%)",
+                    maskImage:
+                      "radial-gradient(ellipse at center, #000 40%, rgba(0,0,0,0.6) 70%, transparent 100%)",
+                  }}
+                />
+              )}
               {/* Warm glow that bleeds into the hero background */}
               <div
                 className="pointer-events-none absolute -inset-10 -z-10 blur-3xl"
