@@ -50,7 +50,7 @@ export function CompanyLogo({
         <img
           key={current}
           src={current}
-          alt={name}
+          alt={`Logo for ${name}`}
           loading="lazy"
           referrerPolicy="no-referrer"
           onError={() => setIdx((i) => i + 1)}

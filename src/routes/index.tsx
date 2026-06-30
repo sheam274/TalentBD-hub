@@ -250,7 +250,7 @@ function Landing() {
                 <img
                   key={logo.name}
                   src={logo.url}
-                  alt={`${logo.name} logo`}
+                  alt={`${logo.name} — trusted TalentBD hiring partner`}
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
