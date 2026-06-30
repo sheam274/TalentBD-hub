@@ -23,5 +23,19 @@ export function youtubeEmbed(url?: string | null): string | null {
 
 export function youtubeThumb(url?: string | null): string | null {
   const id = youtubeId(url);
-  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
+  // mqdefault is generated for every public YouTube video; hqdefault/maxres can 404.
+  return id ? `https://i.ytimg.com/vi/${id}/mqdefault.jpg` : null;
+}
+
+/** Ordered list of thumbnail URLs from highest to most-reliable quality. */
+export function youtubeThumbs(url?: string | null): string[] {
+  const id = youtubeId(url);
+  if (!id) return [];
+  return [
+    `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`,
+    `https://i.ytimg.com/vi/${id}/sddefault.jpg`,
+    `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    `https://i.ytimg.com/vi/${id}/mqdefault.jpg`,
+    `https://i.ytimg.com/vi/${id}/0.jpg`,
+  ];
 }
