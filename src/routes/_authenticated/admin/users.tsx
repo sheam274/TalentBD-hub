@@ -130,7 +130,11 @@ function AdminUsers() {
                       <td className="p-2 text-xs text-muted-foreground">{a.id.slice(0, 8)}…</td>
                       <td className="p-2 text-right">
                         <button
-                          onClick={() => setRole.mutate({ userId: a.id, grant: false })}
+                          onClick={() => {
+                            if (window.confirm(`Revoke admin from ${a.email ?? a.name ?? a.id}? They will lose all admin privileges.`)) {
+                              setRole.mutate({ userId: a.id, grant: false });
+                            }
+                          }}
                           className="rounded-md border px-2 py-1 text-xs"
                         >
                           Revoke admin
@@ -228,7 +232,14 @@ function AdminUsers() {
                     </div>
                   </td>
                   <td className="p-3">
-                    <button onClick={() => setRole.mutate({ userId: p.id, grant: !isAdmin(p.id) })} className="rounded-md border px-2 py-1 text-xs">
+                    <button
+                      onClick={() => {
+                        const revoking = isAdmin(p.id);
+                        if (revoking && !window.confirm(`Revoke admin from ${p.name ?? p.id}? They will lose all admin privileges.`)) return;
+                        setRole.mutate({ userId: p.id, grant: !revoking });
+                      }}
+                      className="rounded-md border px-2 py-1 text-xs"
+                    >
                       {isAdmin(p.id) ? "Revoke admin" : "Grant admin"}
                     </button>
                     <button onClick={() => setCredForm({ userId: p.id, name: "", score: "100" })} className="ml-2 rounded-md border px-2 py-1 text-xs">Add credential</button>
