@@ -313,6 +313,7 @@ function ApplyPage() {
             e.preventDefault();
             confirmActionRef.current?.focus();
           }}
+          onCloseAutoFocus={restoreFocus(confirmOpenerRef)}
           onEscapeKeyDown={(e) => { if (apply.isPending) e.preventDefault(); }}
         >
           <AlertDialogHeader>
@@ -376,6 +377,7 @@ function ApplyPage() {
             e.preventDefault();
             successActionRef.current?.focus();
           }}
+          onCloseAutoFocus={restoreFocus(successOpenerRef)}
         >
           <AlertDialogHeader>
             <AlertDialogTitle className="inline-flex items-center gap-2">
