@@ -308,6 +308,38 @@ function ApplyPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={successOpen} onOpenChange={setSuccessOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="inline-flex items-center gap-2">
+              <CheckCircle2 className="size-5 text-success" /> Application submitted
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Your application for <span className="font-medium">{j.job_title}</span> at{" "}
+              <span className="font-medium">{j.company}</span> has been sent.
+              {successMethod === "external" && externalUrl
+                ? " We'll also open the employer's site so you can finish on their portal."
+                : " Track its status anytime from your dashboard."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                if (successMethod === "external" && externalUrl) {
+                  window.open(externalUrl, "_blank", "noopener,noreferrer");
+                }
+                setSuccessOpen(false);
+                navigate({ to: "/jobs/$jobId/applied", params: { jobId } });
+              }}
+              style={{ background: "var(--color-primary)" }}
+            >
+              View confirmation
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
