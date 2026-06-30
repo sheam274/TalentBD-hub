@@ -86,6 +86,17 @@ function ApplyPage() {
   const hydrated = useRef(false);
   const confirmActionRef = useRef<HTMLButtonElement>(null);
   const successActionRef = useRef<HTMLButtonElement>(null);
+  const confirmOpenerRef = useRef<HTMLElement | null>(null);
+  const successOpenerRef = useRef<HTMLElement | null>(null);
+
+  const restoreFocus = (ref: React.MutableRefObject<HTMLElement | null>) => (e: Event) => {
+    const el = ref.current;
+    if (el && document.contains(el)) {
+      e.preventDefault();
+      el.focus();
+    }
+    ref.current = null;
+  };
 
   // Load draft once on mount
   useEffect(() => {
@@ -137,6 +148,7 @@ function ApplyPage() {
       trackAnalytics("job_apply_success_dialog_opened", baseDetail);
       setConfirmOpen(false);
       setSuccessMethod(vars.method);
+      successOpenerRef.current = confirmOpenerRef.current;
       setSuccessOpen(true);
     },
     onError: (e: any) => toast.error(e.message),
@@ -159,7 +171,7 @@ function ApplyPage() {
   const alreadyApplied = !!appQ.data;
   const externalUrl: string | null = (j as any).external_url ?? (j as any).apply_url ?? null;
 
-  const submit = (chosen: "internal" | "external") => {
+  const submit = (chosen: "internal" | "external", opener?: HTMLElement | null) => {
     setError(null);
     const parsed =
       chosen === "internal"
@@ -172,6 +184,7 @@ function ApplyPage() {
       return;
     }
     setPendingMethod(chosen);
+    confirmOpenerRef.current = opener ?? null;
     setConfirmOpen(true);
   };
 
