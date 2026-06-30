@@ -57,6 +57,69 @@ export const adminSetRole = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const adminPromoteByEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({
+      email: z.string().trim().toLowerCase().email(),
+      role: z.enum(["admin", "employer", "student"]).default("admin"),
+      grant: z.boolean().default(true),
+    }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Find user by email via Auth Admin API
+    let target: { id: string; email?: string } | null = null;
+    for (let page = 1; page <= 20 && !target; page++) {
+      const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+      if (error) throw new Error(error.message);
+      const found = list.users.find((u) => (u.email ?? "").toLowerCase() === data.email);
+      if (found) target = { id: found.id, email: found.email ?? undefined };
+      if (list.users.length < 200) break;
+    }
+    if (!target) throw new Error(`No user found with email ${data.email}`);
+    if (data.grant) {
+      const { error } = await supabaseAdmin
+        .from("user_roles")
+        .insert({ user_id: target.id, role: data.role });
+      if (error && !error.message.toLowerCase().includes("duplicate")) throw new Error(error.message);
+    } else {
+      const { error } = await supabaseAdmin
+        .from("user_roles")
+        .delete()
+        .eq("user_id", target.id)
+        .eq("role", data.role);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true, userId: target.id, email: target.email };
+  });
+
+export const adminListAdmins = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: roles } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id")
+      .eq("role", "admin");
+    const ids = (roles ?? []).map((r: any) => r.user_id);
+    if (!ids.length) return [];
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, name, discipline, created_at")
+      .in("id", ids);
+    // Enrich with email via Auth Admin API
+    const byId = new Map<string, string | undefined>();
+    for (let page = 1; page <= 20; page++) {
+      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+      list.users.forEach((u) => { if (ids.includes(u.id)) byId.set(u.id, u.email ?? undefined); });
+      if (list.users.length < 200) break;
+    }
+    return (profiles ?? []).map((p: any) => ({ ...p, email: byId.get(p.id) ?? null }));
+  });
+
 export const adminAdjustCredential = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
