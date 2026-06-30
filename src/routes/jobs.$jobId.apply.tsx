@@ -18,6 +18,18 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+function trackAnalytics(event: string, detail: Record<string, unknown>) {
+  try {
+    if (typeof window === "undefined") return;
+    const payload = { event, ...detail, timestamp: new Date().toISOString() };
+    (window as any).dataLayer = (window as any).dataLayer || [];
+    (window as any).dataLayer.push(payload);
+    window.dispatchEvent(new CustomEvent(`analytics:${event}`, { detail: payload }));
+  } catch {
+    /* analytics must never break the flow */
+  }
+}
+
 const MIN_COVER = 20;
 const MAX_COVER = 2000;
 
@@ -111,28 +123,16 @@ function ApplyPage() {
       }
       qc.invalidateQueries({ queryKey: ["my-app", jobId] });
       qc.invalidateQueries({ queryKey: ["my-apps"] });
-      // Analytics: emit a job_apply_success event for GA/GTM and any listeners.
-      try {
-        if (typeof window !== "undefined") {
-          const job = jobQ.data;
-          const payload = {
-            event: "job_apply_success",
-            jobId,
-            jobTitle: job?.job_title,
-            company: job?.company,
-            method: vars.method,
-            isRemote: !!job?.is_remote,
-            timestamp: new Date().toISOString(),
-          };
-          // GTM/GA4 dataLayer
-          (window as any).dataLayer = (window as any).dataLayer || [];
-          (window as any).dataLayer.push(payload);
-          // Generic listener bus
-          window.dispatchEvent(new CustomEvent("analytics:job_apply_success", { detail: payload }));
-        }
-      } catch {
-        /* analytics must never break the flow */
-      }
+      const job = jobQ.data;
+      const baseDetail = {
+        jobId,
+        jobTitle: job?.job_title,
+        company: job?.company,
+        method: vars.method,
+        isRemote: !!job?.is_remote,
+      };
+      trackAnalytics("job_apply_success", baseDetail);
+      trackAnalytics("job_apply_success_dialog_opened", baseDetail);
       setConfirmOpen(false);
       setSuccessMethod(vars.method);
       setSuccessOpen(true);
@@ -331,7 +331,21 @@ function ApplyPage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={successOpen} onOpenChange={setSuccessOpen}>
+      <AlertDialog
+        open={successOpen}
+        onOpenChange={(open) => {
+          if (!open && successOpen) {
+            trackAnalytics("job_apply_success_dialog_closed", {
+              jobId,
+              jobTitle: j.job_title,
+              company: j.company,
+              method: successMethod,
+              reason: "dismissed",
+            });
+          }
+          setSuccessOpen(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="inline-flex items-center gap-2">
@@ -349,6 +363,20 @@ function ApplyPage() {
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
+                trackAnalytics("job_apply_view_confirmation_clicked", {
+                  jobId,
+                  jobTitle: j.job_title,
+                  company: j.company,
+                  method: successMethod,
+                  hasExternalUrl: !!externalUrl,
+                });
+                trackAnalytics("job_apply_success_dialog_closed", {
+                  jobId,
+                  jobTitle: j.job_title,
+                  company: j.company,
+                  method: successMethod,
+                  reason: "view_confirmation",
+                });
                 if (successMethod === "external" && externalUrl) {
                   window.open(externalUrl, "_blank", "noopener,noreferrer");
                 }
