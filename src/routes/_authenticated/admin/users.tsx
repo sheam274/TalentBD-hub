@@ -244,7 +244,7 @@ function AdminUsers() {
                       onClick={() => {
                         const revoking = isAdmin(p.id);
                         if (revoking) {
-                          const email = (data?.emails ?? []).find((e: any) => e.id === p.id)?.email ?? null;
+                          const email = (admins.data ?? []).find((a: any) => a.id === p.id)?.email ?? null;
                           setRevokeInput("");
                           setRevokeTarget({ id: p.id, email, name: p.name ?? null });
                           return;
