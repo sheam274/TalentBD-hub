@@ -278,7 +278,7 @@ function ApplyPage() {
                 <div className="mt-4 flex justify-end gap-2">
                   <Link to="/jobs/$jobId" params={{ jobId }} className="rounded-md border px-4 py-2 text-sm">Cancel</Link>
                   <button
-                    onClick={() => submit("internal")}
+                    onClick={(e) => submit("internal", e.currentTarget)}
                     disabled={apply.isPending || coverLen < MIN_COVER || coverTooLong}
                     className="rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
                     style={{ background: "var(--color-primary)" }}
@@ -291,7 +291,7 @@ function ApplyPage() {
               <div className="mt-5 flex justify-end gap-2">
                 <Link to="/jobs/$jobId" params={{ jobId }} className="rounded-md border px-4 py-2 text-sm">Cancel</Link>
                 <button
-                  onClick={() => submit("external")}
+                  onClick={(e) => submit("external", e.currentTarget)}
                   disabled={apply.isPending || !externalUrl}
                   className="rounded-md px-4 py-2 text-sm font-semibold text-white inline-flex items-center gap-1 disabled:opacity-50"
                   style={{ background: "var(--color-primary)" }}
