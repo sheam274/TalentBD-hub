@@ -239,7 +239,7 @@ export function SiteHeader() {
             <Link to="/" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">Home</Link>
             {baseNav.map((item) => (
               <div key={item.label} className="border-t border-white/10 pt-2 mt-1">
-                <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60">{item.label}</div>
+                <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/85">{item.label}</div>
                 {(item.children ?? [{ to: item.to, label: item.label }]).map((c) => (
                   <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
                     {c.label}
@@ -252,7 +252,7 @@ export function SiteHeader() {
                 <Link to="/dashboard" onClick={() => setOpen(false)} className="mt-2 rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">Dashboard</Link>
                 {isEmployer && (
                   <div className="border-t border-white/10 pt-2 mt-1">
-                    <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60">Employer</div>
+                    <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/85">Employer</div>
                     {employerNav.children?.map((c) => (
                       <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
                         {c.label}
@@ -262,7 +262,7 @@ export function SiteHeader() {
                 )}
                 {isAdmin && (
                   <div className="border-t border-white/10 pt-2 mt-1">
-                    <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60 flex items-center gap-1"><ShieldCheck className="size-3" /> Admin</div>
+                    <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/85 flex items-center gap-1"><ShieldCheck className="size-3" /> Admin</div>
                     {adminNav.children?.map((c) => (
                       <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
                         {c.label}

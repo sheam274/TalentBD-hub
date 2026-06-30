@@ -85,7 +85,7 @@ export function SiteFooter() {
                 style={{ color: "var(--eduma-red)" }}
               >Premium</span>
             </a>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/55">
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">
               Bangladesh's premium learn-and-earn platform. Build skills, earn verified credentials, and land local or global remote jobs.
             </p>
             <div className="mt-5 flex items-center gap-3">
@@ -121,7 +121,7 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-white/10 px-4 py-5">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs text-white/50 md:flex-row md:px-6">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-xs text-white/75 md:flex-row md:px-6">
           <p>© {new Date().getFullYear()} TalentBD. Built in Bangladesh.</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <a href="/" className="transition-colors hover:text-white">Privacy</a>
