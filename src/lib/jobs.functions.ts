@@ -150,7 +150,20 @@ export const applyToJob = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const method = data.method ?? "internal";
     const prefix = method === "external" ? "[Applied on company site] " : "";
-    const note = `${prefix}${data.coverNote ?? ""}`.trim() || null;
+    // Snapshot the applicant's profile + latest CV so the employer receives
+    // it together with the application (auto-submitted with every apply).
+    const [{ data: profile }, { data: cv }] = await Promise.all([
+      context.supabase.from("profiles").select("name, discipline, skills").eq("id", context.userId).maybeSingle(),
+      context.supabase.from("cv_records").select("selected_style, builder_payload, updated_at").eq("user_id", context.userId).maybeSingle(),
+    ]);
+    const snapshot = {
+      profile: profile ?? null,
+      cv: cv ?? null,
+      submitted_at: new Date().toISOString(),
+    };
+    const body = (data.coverNote ?? "").trim();
+    const note =
+      `${prefix}${body}\n\n---APPLICANT_SNAPSHOT---\n${JSON.stringify(snapshot)}`.trim() || null;
     const { error } = await context.supabase
       .from("job_applications")
       .insert({ job_id: data.jobId, user_id: context.userId, cover_note: note });
