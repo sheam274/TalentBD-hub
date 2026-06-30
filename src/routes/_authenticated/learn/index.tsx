@@ -32,6 +32,12 @@ function LearnIndex() {
     (acc[m.discipline] ||= []).push(m);
     return acc;
   }, {});
+  const DISCIPLINE_ORDER = ["cse", "eee", "civil"];
+  const orderedGroups = Object.entries(grouped).sort(([a], [b]) => {
+    const ia = DISCIPLINE_ORDER.indexOf(disciplineKey(a));
+    const ib = DISCIPLINE_ORDER.indexOf(disciplineKey(b));
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
@@ -50,7 +56,7 @@ function LearnIndex() {
       {q.isLoading && <div className="mt-10 text-center text-muted-foreground">Loading tracks…</div>}
 
       <div className="mt-10 space-y-14">
-        {Object.entries(grouped).map(([disc, list]) => {
+        {orderedGroups.map(([disc, list]) => {
           const meta = disciplineMeta[disciplineKey(disc)] ?? { label: disc, thumb: "thumb-cse", icon: "📚", blurb: "" };
           return (
             <section key={disc}>
