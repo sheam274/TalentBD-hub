@@ -278,17 +278,31 @@ function ApplyPage() {
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
+          {apply.isError && (
+            <div
+              role="alert"
+              className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
+            >
+              <p className="font-medium">Couldn't submit your application</p>
+              <p className="mt-1 text-xs opacity-90">
+                {(apply.error as Error)?.message ?? "Something went wrong. Please try again."}
+              </p>
+            </div>
+          )}
           <AlertDialogFooter>
             <AlertDialogCancel disabled={apply.isPending}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               disabled={apply.isPending || !pendingMethod}
               onClick={(e) => {
                 e.preventDefault();
-                if (pendingMethod) apply.mutate({ method: pendingMethod });
+                if (pendingMethod) {
+                  apply.reset();
+                  apply.mutate({ method: pendingMethod });
+                }
               }}
               style={{ background: "var(--color-primary)" }}
             >
-              {apply.isPending ? "Submitting…" : "Confirm & apply"}
+              {apply.isPending ? "Submitting…" : apply.isError ? "Try again" : "Confirm & apply"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
