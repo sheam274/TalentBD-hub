@@ -5,6 +5,7 @@ import { useState } from "react";
 import { getModulePublic } from "@/lib/learning.functions";
 import { submitQuiz } from "@/lib/assessments.functions";
 import { youtubeEmbed, youtubeThumb } from "@/lib/youtube";
+import { YouTubeThumb } from "@/components/YouTubeThumb";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/learn/$discipline/$topic")({
@@ -47,20 +48,41 @@ function Topic() {
       {m.video_url && (() => {
         const embed = youtubeEmbed(m.video_url);
         const thumb = youtubeThumb(m.video_url);
+        if (embed) {
+          return (
+            <div
+              className="mt-6 aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl bg-cover bg-center"
+              style={thumb ? { backgroundImage: `url(${thumb})` } : undefined}
+            >
+              <iframe
+                src={embed}
+                title={m.title}
+                className="h-full w-full"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          );
+        }
+        // Non-YouTube source — render a clickable thumbnail link instead of an
+        // iframe (most video hosts block embedding).
         return (
-          <div
-            className="mt-6 aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl bg-cover bg-center"
-            style={thumb ? { backgroundImage: `url(${thumb})` } : undefined}
+          <a
+            href={m.video_url}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-6 relative block aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl group"
           >
-            <iframe
-              src={embed ?? m.video_url}
-              title={m.title}
-              className="h-full w-full"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
+            <YouTubeThumb
+              url={m.video_url}
+              alt={`${m.title} preview`}
+              className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
             />
-          </div>
+            <div className="absolute inset-0 grid place-items-center bg-black/30 text-white text-sm font-semibold">
+              ▶ Open video
+            </div>
+          </a>
         );
       })()}
 
