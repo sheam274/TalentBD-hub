@@ -203,6 +203,9 @@ function Landing() {
                   src={logo.url}
                   alt={`${logo.name} logo`}
                   loading="lazy"
+                  decoding="async"
+                  width={160}
+                  height={56}
                   className="h-12 w-auto object-contain opacity-90 transition duration-300 hover:opacity-100 hover:scale-105 sm:h-14"
                 />
               ))}
