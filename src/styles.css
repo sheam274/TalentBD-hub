@@ -88,7 +88,7 @@
      Locked tokens: #FE5252 (signature coral red CTA),
      #FFB606 (gold rating/highlight), #111127 (deep ink navy),
      #F5F5F7 (cool whitespace), #FFFFFF (card surface). */
-  --background: #f5f5f7;                 /* off-white canvas */
+  --background: #fbf7fb;                 /* soft pastel canvas (pink-tinted off-white) */
   --surface: #ffffff;                     /* white cards */
   --foreground: #4b4b63;                  /* slate body text */
   --ink: #111127;                         /* deep ink headings */
@@ -109,8 +109,8 @@
   --muted-foreground: #4b5563;            /* gray-600, ~7.6:1 on white */
   --destructive: #d92d20;
   --destructive-foreground: #ffffff;
-  --border: #e6e7ee;
-  --input: #e6e7ee;
+  --border: #ece6f1;
+  --input: #ece6f1;
   --ring: #c81e1e;
   /* Eduma signature palette (full set) */
   --eduma-red: #fe5252;
@@ -128,8 +128,8 @@
   --eduma-green: #28a745;
   --eduma-orange: #ff7d4d;
   --eduma-purple: #7e3ff2;
-  --eduma-canvas: #f5f5f7;
-  --eduma-line: #e6e7ee;
+  --eduma-canvas: #fbf7fb;
+  --eduma-line: #ece6f1;
   /* Semantic status tokens (used by .badge-* utilities) */
   /* Darkened success (#1a7a33) — 4.74:1 on #e3f6e8 for AA normal text */
   --success: #1a7a33;
@@ -158,6 +158,20 @@
     text-rendering: optimizeLegibility;
     position: relative;
     overflow-x: hidden;
+  }
+  /* Soft Pastel Glow — fixed ambient backdrop layered behind all content */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 12% 0%, rgba(252, 231, 243, 0.85), transparent 70%),
+      radial-gradient(55% 45% at 100% 10%, rgba(253, 186, 116, 0.55), transparent 70%),
+      radial-gradient(70% 60% at 85% 100%, rgba(221, 214, 254, 0.7), transparent 70%),
+      radial-gradient(50% 40% at 0% 100%, rgba(254, 240, 250, 0.6), transparent 70%),
+      var(--color-background);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
@@ -202,6 +216,22 @@
 
   .lift { transition: transform 0.3s cubic-bezier(.2,.7,.2,1), box-shadow 0.3s ease; }
   .lift:hover { transform: translateY(-6px); box-shadow: 0 18px 36px -16px rgba(15,23,60,0.25); }
+
+  /* Soft pastel glow card surface — premium airy depth */
+  .glow-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.78));
+    border: 1px solid rgba(221, 214, 254, 0.6);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.9) inset,
+      0 20px 50px -24px rgba(168, 85, 247, 0.18),
+      0 8px 24px -12px rgba(251, 113, 133, 0.12);
+    backdrop-filter: blur(10px) saturate(140%);
+  }
+  .glow-ring {
+    box-shadow:
+      0 0 0 1px rgba(221, 214, 254, 0.7),
+      0 30px 60px -28px rgba(253, 186, 116, 0.45);
+  }
 
   @keyframes page-slide-in {
     from { opacity: 0; transform: translateY(8px); }
