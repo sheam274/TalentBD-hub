@@ -68,6 +68,23 @@ function AdminUsers() {
   const rolesOf = (uid: string) =>
     (data?.roles ?? []).filter((r: any) => r.user_id === uid).map((r: any) => r.role as string);
 
+  const emailMap = useMemo(() => {
+    const m = new Map<string, string>();
+    (admins.data ?? []).forEach((a: any) => { if (a?.id && a?.email) m.set(a.id, a.email); });
+    return m;
+  }, [admins.data]);
+  const nameMap = useMemo(() => {
+    const m = new Map<string, string>();
+    (data?.profiles ?? []).forEach((p: any) => { if (p?.id && p?.name) m.set(p.id, p.name); });
+    (admins.data ?? []).forEach((a: any) => { if (a?.id && a?.name && !m.has(a.id)) m.set(a.id, a.name); });
+    return m;
+  }, [data, admins.data]);
+  const openRevoke = (uid: string) => {
+    setRevokeInput("");
+    setRevokeTarget({ id: uid, email: emailMap.get(uid) ?? null, name: nameMap.get(uid) ?? null });
+    if (!emailMap.has(uid)) qc.invalidateQueries({ queryKey: ["admin-admins"] });
+  };
+
   const disciplines = useMemo(() => {
     const set = new Set<string>();
     (data?.profiles ?? []).forEach((p: any) => p.discipline && set.add(p.discipline));
@@ -142,7 +159,7 @@ function AdminUsers() {
                       <td className="p-2 text-xs text-muted-foreground">{a.id.slice(0, 8)}…</td>
                       <td className="p-2 text-right">
                         <button
-                          onClick={() => { setRevokeInput(""); setRevokeTarget({ id: a.id, email: a.email ?? null, name: a.name ?? null }); }}
+                          onClick={() => openRevoke(a.id)}
                           className="rounded-md border px-2 py-1 text-xs"
                         >
                           Revoke admin
@@ -243,12 +260,7 @@ function AdminUsers() {
                     <button
                       onClick={() => {
                         const revoking = isAdmin(p.id);
-                        if (revoking) {
-                          const email = (admins.data ?? []).find((a: any) => a.id === p.id)?.email ?? null;
-                          setRevokeInput("");
-                          setRevokeTarget({ id: p.id, email, name: p.name ?? null });
-                          return;
-                        }
+                        if (revoking) { openRevoke(p.id); return; }
                         setRole.mutate({ userId: p.id, grant: true });
                       }}
                       className="rounded-md border px-2 py-1 text-xs"
