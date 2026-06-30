@@ -24,7 +24,8 @@ export const getModulePublic = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!mod) return null;
-    const { data: quizzes } = await publicClient
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: quizzes } = await supabaseAdmin
       .from("skill_quizzes")
       .select("id, question, choices")
       .eq("module_id", mod.id);

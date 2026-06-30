@@ -46,7 +46,7 @@ export const submitQuiz = createServerFn({ method: "POST" })
     const score = Math.round((correct / total) * 100);
     let credentialId: string | null = null;
     if (score >= 80) {
-      const { data: cred, error: cErr } = await supabase
+      const { data: cred, error: cErr } = await supabaseAdmin
         .from("user_credentials")
         .insert({
           user_id: userId,
