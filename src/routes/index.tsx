@@ -57,6 +57,30 @@ const LEARNING_MODULES = [
 ];
 
 function Landing() {
+  const heroVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [heroVideoSrc, setHeroVideoSrc] = useState<string | null>(null);
+  const [heroVideoReady, setHeroVideoReady] = useState(false);
+
+  useEffect(() => {
+    const el = heroVideoRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setHeroVideoSrc(heroVideoAsset.url);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setHeroVideoSrc(heroVideoAsset.url);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div className="page-enter bg-background">
       {/* Hero — Ink Ambient Glow (premium dark) */}
