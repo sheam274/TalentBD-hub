@@ -363,12 +363,15 @@ function ApplyPage() {
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
+                const targetUrl = `/jobs/${jobId}/applied`;
                 trackAnalytics("job_apply_view_confirmation_clicked", {
                   jobId,
                   jobTitle: j.job_title,
                   company: j.company,
                   method: successMethod,
                   hasExternalUrl: !!externalUrl,
+                  targetUrl,
+                  externalUrl: successMethod === "external" ? externalUrl : null,
                 });
                 trackAnalytics("job_apply_success_dialog_closed", {
                   jobId,
@@ -381,7 +384,28 @@ function ApplyPage() {
                   window.open(externalUrl, "_blank", "noopener,noreferrer");
                 }
                 setSuccessOpen(false);
-                navigate({ to: "/jobs/$jobId/applied", params: { jobId } });
+                navigate({ to: "/jobs/$jobId/applied", params: { jobId } })
+                  .then(() => {
+                    trackAnalytics("job_apply_confirmation_page_opened", {
+                      jobId,
+                      jobTitle: j.job_title,
+                      company: j.company,
+                      method: successMethod,
+                      targetUrl,
+                      navigationSuccess: true,
+                    });
+                  })
+                  .catch((err: unknown) => {
+                    trackAnalytics("job_apply_confirmation_page_opened", {
+                      jobId,
+                      jobTitle: j.job_title,
+                      company: j.company,
+                      method: successMethod,
+                      targetUrl,
+                      navigationSuccess: false,
+                      error: err instanceof Error ? err.message : String(err),
+                    });
+                  });
               }}
               style={{ background: "var(--color-primary)" }}
             >
