@@ -159,7 +159,7 @@ function Landing() {
                 playsInline
                 preload="metadata"
                 aria-label="Bangladeshi professionals learning and working"
-                className="absolute inset-0 size-full object-cover object-center [object-position:50%_40%]"
+                className="absolute inset-0 size-full object-cover [object-position:50%_35%] sm:[object-position:50%_45%] lg:[object-position:50%_50%]"
                 onLoadedMetadata={(e) => {
                   const v = e.currentTarget;
                   v.playbackRate = 1;
