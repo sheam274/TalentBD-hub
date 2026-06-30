@@ -84,6 +84,8 @@ function ApplyPage() {
   const [successMethod, setSuccessMethod] = useState<"internal" | "external" | null>(null);
   const [pendingMethod, setPendingMethod] = useState<"internal" | "external" | null>(null);
   const hydrated = useRef(false);
+  const confirmActionRef = useRef<HTMLButtonElement>(null);
+  const successActionRef = useRef<HTMLButtonElement>(null);
 
   // Load draft once on mount
   useEffect(() => {
@@ -289,8 +291,17 @@ function ApplyPage() {
         )}
       </div>
 
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent>
+      <AlertDialog
+        open={confirmOpen}
+        onOpenChange={(o) => { if (!apply.isPending) setConfirmOpen(o); }}
+      >
+        <AlertDialogContent
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            confirmActionRef.current?.focus();
+          }}
+          onEscapeKeyDown={(e) => { if (apply.isPending) e.preventDefault(); }}
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm your application</AlertDialogTitle>
             <AlertDialogDescription>
@@ -315,6 +326,7 @@ function ApplyPage() {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={apply.isPending}>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              ref={confirmActionRef}
               disabled={apply.isPending || !pendingMethod}
               onClick={(e) => {
                 e.preventDefault();
@@ -346,7 +358,12 @@ function ApplyPage() {
           setSuccessOpen(open);
         }}
       >
-        <AlertDialogContent>
+        <AlertDialogContent
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            successActionRef.current?.focus();
+          }}
+        >
           <AlertDialogHeader>
             <AlertDialogTitle className="inline-flex items-center gap-2">
               <CheckCircle2 className="size-5 text-success" /> Application submitted
@@ -361,6 +378,7 @@ function ApplyPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction
+              ref={successActionRef}
               onClick={(e) => {
                 e.preventDefault();
                 const targetUrl = `/jobs/${jobId}/applied`;

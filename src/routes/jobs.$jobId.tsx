@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getJobPublic, getMyApplicationForJob, applyToJob } from "@/lib/jobs.functions";
 import { useAuth } from "@/lib/auth-context";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -46,6 +46,8 @@ function statusColor(s: string) {
 function JobDetails() {
   const { jobId } = Route.useParams();
   const { user } = useAuth();
+  const confirmActionRef = useRef<HTMLButtonElement>(null);
+  const successActionRef = useRef<HTMLAnchorElement>(null);
 
   const getJobFn = useServerFn(getJobPublic);
   const getAppFn = useServerFn(getMyApplicationForJob);
@@ -206,7 +208,13 @@ function JobDetails() {
       </div>
 
       <AlertDialog open={confirmOpen} onOpenChange={(o) => { if (!applyM.isPending) setConfirmOpen(o); }}>
-        <AlertDialogContent>
+        <AlertDialogContent
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            confirmActionRef.current?.focus();
+          }}
+          onEscapeKeyDown={(e) => { if (applyM.isPending) e.preventDefault(); }}
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>Apply to {j.job_title}?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -221,6 +229,7 @@ function JobDetails() {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={applyM.isPending}>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              ref={confirmActionRef}
               onClick={(e) => { e.preventDefault(); applyM.mutate(); }}
               disabled={applyM.isPending}
             >
@@ -231,7 +240,12 @@ function JobDetails() {
       </AlertDialog>
 
       <AlertDialog open={successOpen} onOpenChange={setSuccessOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent
+          onOpenAutoFocus={(e) => {
+            e.preventDefault();
+            successActionRef.current?.focus();
+          }}
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>Application submitted 🎉</AlertDialogTitle>
             <AlertDialogDescription>
@@ -241,7 +255,7 @@ function JobDetails() {
           <AlertDialogFooter>
             <AlertDialogCancel>Close</AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link to="/my-applications">View my applications</Link>
+              <Link ref={successActionRef} to="/my-applications">View my applications</Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
