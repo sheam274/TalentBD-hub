@@ -31,6 +31,7 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as AuthenticatedLearnIndexRouteImport } from './routes/_authenticated/learn/index'
 import { Route as AuthenticatedInterviewIndexRouteImport } from './routes/_authenticated/interview/index'
 import { Route as JobsJobIdApplyRouteImport } from './routes/jobs.$jobId.apply'
+import { Route as JobsJobIdAppliedRouteImport } from './routes/jobs.$jobId.applied'
 import { Route as AuthenticatedMyApplicationsAppIdRouteImport } from './routes/_authenticated/my-applications.$appId'
 import { Route as AuthenticatedInterviewSetupRouteImport } from './routes/_authenticated/interview/setup'
 import { Route as AuthenticatedInterviewHistoryRouteImport } from './routes/_authenticated/interview/history'
@@ -167,6 +168,11 @@ const AuthenticatedInterviewIndexRoute =
 const JobsJobIdApplyRoute = JobsJobIdApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
+  getParentRoute: () => JobsJobIdRoute,
+} as any)
+const JobsJobIdAppliedRoute = JobsJobIdAppliedRouteImport.update({
+  id: '/applied',
+  path: '/applied',
   getParentRoute: () => JobsJobIdRoute,
 } as any)
 const AuthenticatedMyApplicationsAppIdRoute =
@@ -350,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/interview/setup': typeof AuthenticatedInterviewSetupRoute
   '/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
+  '/jobs/$jobId/applied': typeof JobsJobIdAppliedRoute
   '/jobs/$jobId/apply': typeof JobsJobIdApplyRoute
   '/interview/': typeof AuthenticatedInterviewIndexRoute
   '/learn/': typeof AuthenticatedLearnIndexRoute
@@ -397,6 +404,7 @@ export interface FileRoutesByTo {
   '/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/interview/setup': typeof AuthenticatedInterviewSetupRoute
   '/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
+  '/jobs/$jobId/applied': typeof JobsJobIdAppliedRoute
   '/jobs/$jobId/apply': typeof JobsJobIdApplyRoute
   '/interview': typeof AuthenticatedInterviewIndexRoute
   '/learn': typeof AuthenticatedLearnIndexRoute
@@ -446,6 +454,7 @@ export interface FileRoutesById {
   '/_authenticated/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/_authenticated/interview/setup': typeof AuthenticatedInterviewSetupRoute
   '/_authenticated/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
+  '/jobs/$jobId/applied': typeof JobsJobIdAppliedRoute
   '/jobs/$jobId/apply': typeof JobsJobIdApplyRoute
   '/_authenticated/interview/': typeof AuthenticatedInterviewIndexRoute
   '/_authenticated/learn/': typeof AuthenticatedLearnIndexRoute
@@ -495,6 +504,7 @@ export interface FileRouteTypes {
     | '/interview/history'
     | '/interview/setup'
     | '/my-applications/$appId'
+    | '/jobs/$jobId/applied'
     | '/jobs/$jobId/apply'
     | '/interview/'
     | '/learn/'
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/interview/history'
     | '/interview/setup'
     | '/my-applications/$appId'
+    | '/jobs/$jobId/applied'
     | '/jobs/$jobId/apply'
     | '/interview'
     | '/learn'
@@ -590,6 +601,7 @@ export interface FileRouteTypes {
     | '/_authenticated/interview/history'
     | '/_authenticated/interview/setup'
     | '/_authenticated/my-applications/$appId'
+    | '/jobs/$jobId/applied'
     | '/jobs/$jobId/apply'
     | '/_authenticated/interview/'
     | '/_authenticated/learn/'
@@ -770,6 +782,13 @@ declare module '@tanstack/react-router' {
       path: '/apply'
       fullPath: '/jobs/$jobId/apply'
       preLoaderRoute: typeof JobsJobIdApplyRouteImport
+      parentRoute: typeof JobsJobIdRoute
+    }
+    '/jobs/$jobId/applied': {
+      id: '/jobs/$jobId/applied'
+      path: '/applied'
+      fullPath: '/jobs/$jobId/applied'
+      preLoaderRoute: typeof JobsJobIdAppliedRouteImport
       parentRoute: typeof JobsJobIdRoute
     }
     '/_authenticated/my-applications/$appId': {
@@ -1072,10 +1091,12 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface JobsJobIdRouteChildren {
+  JobsJobIdAppliedRoute: typeof JobsJobIdAppliedRoute
   JobsJobIdApplyRoute: typeof JobsJobIdApplyRoute
 }
 
 const JobsJobIdRouteChildren: JobsJobIdRouteChildren = {
+  JobsJobIdAppliedRoute: JobsJobIdAppliedRoute,
   JobsJobIdApplyRoute: JobsJobIdApplyRoute,
 }
 

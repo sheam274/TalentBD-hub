@@ -100,7 +100,7 @@ function ApplyPage() {
       if (vars.method === "external" && externalUrl) {
         window.open(externalUrl, "_blank", "noopener,noreferrer");
       }
-      navigate({ to: "/my-applications" });
+      navigate({ to: "/jobs/$jobId/applied", params: { jobId } });
     },
     onError: (e: any) => toast.error(e.message),
   });
