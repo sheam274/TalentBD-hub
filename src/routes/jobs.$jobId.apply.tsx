@@ -7,6 +7,16 @@ import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { ArrowLeft, Building2, MapPin, Briefcase, ExternalLink, FileText, CheckCircle2 } from "lucide-react";
 import { z } from "zod";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const MIN_COVER = 20;
 const MAX_COVER = 2000;
@@ -57,6 +67,8 @@ function ApplyPage() {
   const [cover, setCover] = useState("");
   const [method, setMethod] = useState<"internal" | "external">("internal");
   const [error, setError] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingMethod, setPendingMethod] = useState<"internal" | "external" | null>(null);
   const hydrated = useRef(false);
 
   // Load draft once on mount
@@ -134,7 +146,8 @@ function ApplyPage() {
       toast.error(msg);
       return;
     }
-    apply.mutate({ method: chosen });
+    setPendingMethod(chosen);
+    setConfirmOpen(true);
   };
 
   const coverLen = cover.trim().length;
@@ -252,6 +265,34 @@ function ApplyPage() {
           </>
         )}
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm your application</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingMethod === "external" ? (
+                <>You'll be redirected to <span className="font-medium">{j.company}</span>'s site to finish applying for <span className="font-medium">{j.job_title}</span>. We'll record this application in your dashboard.</>
+              ) : (
+                <>Submit your application for <span className="font-medium">{j.job_title}</span> at <span className="font-medium">{j.company}</span>? Your profile and latest CV will be sent with your cover note.</>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={apply.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={apply.isPending || !pendingMethod}
+              onClick={(e) => {
+                e.preventDefault();
+                if (pendingMethod) apply.mutate({ method: pendingMethod });
+              }}
+              style={{ background: "var(--color-primary)" }}
+            >
+              {apply.isPending ? "Submitting…" : "Confirm & apply"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
