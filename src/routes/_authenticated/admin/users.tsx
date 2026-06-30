@@ -22,6 +22,7 @@ function AdminUsers() {
   const [promoteEmail, setPromoteEmail] = useState("");
   const [credForm, setCredForm] = useState<{ userId: string; name: string; score: string }>({ userId: "", name: "", score: "100" });
   const [search, setSearch] = useState("");
+  const [adminSearch, setAdminSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "student" | "employer">("all");
   const [disciplineFilter, setDisciplineFilter] = useState("all");
 
@@ -82,29 +83,66 @@ function AdminUsers() {
       <p className="text-sm text-muted-foreground">Profiles, roles, and earned credentials.</p>
 
       <div className="mt-5 rounded-xl border bg-card p-4">
-        <h2 className="font-semibold">Current admins</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="font-semibold">Current admins</h2>
+          <span className="text-xs text-muted-foreground">
+            {admins.isFetching ? "Refreshing…" : `${admins.data?.length ?? 0} total`}
+          </span>
+          <div className="ml-auto flex gap-2">
+            <input
+              value={adminSearch}
+              onChange={(e) => setAdminSearch(e.target.value)}
+              placeholder="Search admins by name or email…"
+              className="w-64 rounded-md border px-3 py-1.5 text-sm"
+            />
+            <button
+              onClick={() => {
+                qc.invalidateQueries({ queryKey: ["admin-admins"] });
+                qc.invalidateQueries({ queryKey: ["admin-users"] });
+              }}
+              className="rounded-md border px-3 py-1.5 text-sm"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
         {admins.isLoading ? (
-          <p className="mt-2 text-sm text-muted-foreground">Loading…</p>
-        ) : (admins.data?.length ?? 0) === 0 ? (
-          <p className="mt-2 text-sm text-muted-foreground">No admins yet.</p>
-        ) : (
-          <ul className="mt-2 divide-y text-sm">
-            {admins.data!.map((a: any) => (
-              <li key={a.id} className="flex items-center justify-between py-2">
-                <div>
-                  <div className="font-medium">{a.name ?? "—"}</div>
-                  <div className="text-xs text-muted-foreground">{a.email ?? a.id}</div>
-                </div>
-                <button
-                  onClick={() => setRole.mutate({ userId: a.id, grant: false })}
-                  className="rounded-md border px-2 py-1 text-xs"
-                >
-                  Revoke admin
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+          <p className="mt-3 text-sm text-muted-foreground">Loading…</p>
+        ) : (() => {
+          const s = adminSearch.trim().toLowerCase();
+          const rows = (admins.data ?? []).filter((a: any) =>
+            !s || (a.name ?? "").toLowerCase().includes(s) || (a.email ?? "").toLowerCase().includes(s) || a.id.includes(s),
+          );
+          if (rows.length === 0) {
+            return <p className="mt-3 text-sm text-muted-foreground">{s ? "No admins match your search." : "No admins yet."}</p>;
+          }
+          return (
+            <div className="mt-3 overflow-x-auto rounded-lg border">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-muted text-xs uppercase">
+                  <tr><th className="p-2">Name</th><th className="p-2">Email</th><th className="p-2">User ID</th><th className="p-2 text-right">Actions</th></tr>
+                </thead>
+                <tbody>
+                  {rows.map((a: any) => (
+                    <tr key={a.id} className="border-t">
+                      <td className="p-2 font-medium">{a.name ?? "—"}</td>
+                      <td className="p-2">{a.email ?? "—"}</td>
+                      <td className="p-2 text-xs text-muted-foreground">{a.id.slice(0, 8)}…</td>
+                      <td className="p-2 text-right">
+                        <button
+                          onClick={() => setRole.mutate({ userId: a.id, grant: false })}
+                          className="rounded-md border px-2 py-1 text-xs"
+                        >
+                          Revoke admin
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        })()}
 
         <form
           className="mt-4 flex flex-wrap gap-2"
