@@ -7,6 +7,7 @@ import brainstationAsset from "@/assets/partners/brainstation.png.asset.json";
 import bkashAsset from "@/assets/partners/bkash.png.asset.json";
 import grameenphoneAsset from "@/assets/partners/grameenphone.png.asset.json";
 import learningVideoAsset from "@/assets/learning-modules.mp4.asset.json";
+import heroVideoAsset from "@/assets/hero-talent.mp4.asset.json";
 
 const PARTNER_LOGOS = [
   { name: "Pathao", url: pathaoAsset.url },
@@ -81,67 +82,94 @@ function Landing() {
           style={{ background: "color-mix(in oklab, var(--eduma-gold) 100%, transparent)", opacity: 0.14 }}
         />
 
-        <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center text-center">
-          {/* Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-md">
-            <span className="relative flex size-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
-            </span>
-            <span className="text-xs font-medium uppercase tracking-wider text-[var(--eduma-ink)]/80">
-              The Premium Talent Network
-            </span>
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+            {/* Left card — text + CTAs */}
+            <div className="flex flex-col rounded-3xl border border-white/40 bg-white/55 p-7 backdrop-blur-xl shadow-xl sm:p-10 md:p-12 text-center lg:text-left">
+              <div className="mb-6 inline-flex items-center gap-2 self-center rounded-full border border-white/30 bg-white/40 px-4 py-2 backdrop-blur-md lg:self-start">
+                <span className="relative flex size-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
+                </span>
+                <span className="text-xs font-medium uppercase tracking-wider text-[var(--eduma-ink)]/80">
+                  The Premium Talent Network
+                </span>
+              </div>
+
+              <h1 className="mb-5 text-[2rem] font-extrabold leading-[1.15] tracking-tight text-[var(--eduma-ink)] sm:text-5xl sm:leading-[1.1] md:text-6xl md:leading-[1.05]">
+                Build skills.
+                <br />
+                Earn credentials.
+                <br />
+                <span
+                  className="bg-clip-text text-transparent"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(to right, var(--eduma-red), var(--eduma-gold))",
+                  }}
+                >
+                  Land the job.
+                </span>
+              </h1>
+
+              <p className="mb-8 max-w-xl text-base leading-[1.65] text-[var(--eduma-ink)]/75 sm:text-lg md:leading-[1.7] mx-auto lg:mx-0">
+                TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified
+                certifications, a dual-style CV builder, an ATS parser, and a local + global jobs
+                marketplace.
+              </p>
+
+              <nav
+                aria-label="Primary hero actions"
+                className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-4 justify-center lg:justify-start"
+              >
+                <CtaButton
+                  to="/jobs"
+                  variant="primary"
+                  aria-label="Browse Live Jobs — view live engineering roles"
+                >
+                  <span>Browse Live Jobs</span>
+                  <ArrowRight aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />
+                </CtaButton>
+                <CtaButton
+                  to="/learn"
+                  variant="secondary"
+                  aria-label="Start Learning Free — open engineering modules"
+                >
+                  <span>Start Learning Free</span>
+                  <GraduationCap aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none" />
+                </CtaButton>
+              </nav>
+            </div>
+
+            {/* Right card — video */}
+            <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-white/40 shadow-xl backdrop-blur-xl min-h-[280px] sm:min-h-[360px] lg:min-h-[480px]">
+              <video
+                src={heroVideoAsset.url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-label="Bangladeshi professionals learning and working"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{ background: "linear-gradient(to top, rgba(11,16,32,0.55), rgba(11,16,32,0.05) 55%, transparent)" }}
+              />
+              <div className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-3 p-5 sm:p-6">
+                <div className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md ring-1 ring-white/30">
+                  <GraduationCap className="size-5 text-white" />
+                </div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-white drop-shadow sm:text-xs">
+                  Real people · Real careers · Real Bangladesh
+                </p>
+              </div>
+            </div>
           </div>
 
-          {/* Headline */}
-          <h1 className="mb-6 text-[2rem] font-extrabold leading-[1.15] tracking-tight text-[var(--eduma-ink)] sm:text-5xl sm:leading-[1.1] md:text-6xl md:leading-[1.05] lg:text-7xl">
-            Build skills.
-            <br />
-            Earn credentials.
-            <br />
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, var(--eduma-red), var(--eduma-gold))",
-              }}
-            >
-              Land the job.
-            </span>
-          </h1>
-
-          {/* Subhead */}
-          <p className="mb-10 max-w-2xl text-base leading-[1.65] text-[var(--eduma-ink)]/75 sm:text-lg md:text-xl md:leading-[1.7]">
-            TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified
-            certifications, a dual-style CV builder, an ATS parser, and a local + global jobs
-            marketplace.
-          </p>
-
-          {/* CTAs */}
-          <nav
-            aria-label="Primary hero actions"
-            className="flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4 md:gap-5"
-          >
-            <CtaButton
-              to="/jobs"
-              variant="primary"
-              aria-label="Browse Live Jobs — view live engineering roles"
-            >
-              <span>Browse Live Jobs</span>
-              <ArrowRight aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none" />
-            </CtaButton>
-            <CtaButton
-              to="/learn"
-              variant="secondary"
-              aria-label="Start Learning Free — open engineering modules"
-            >
-              <span>Start Learning Free</span>
-              <GraduationCap aria-hidden="true" focusable="false" className="h-4 w-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none" />
-            </CtaButton>
-          </nav>
-
           {/* Trust */}
-          <div className="mt-20 w-full max-w-3xl border-t border-[var(--eduma-ink)]/10 pt-8">
+          <div className="mt-16 w-full border-t border-[var(--eduma-ink)]/10 pt-8 text-center">
             <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]/60">
               Trusted by innovators worldwide
             </p>
