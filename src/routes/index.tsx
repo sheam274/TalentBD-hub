@@ -152,19 +152,13 @@ function Landing() {
                 preload="metadata"
                 aria-label="Bangladeshi professionals learning and working"
                 className="absolute inset-0 size-full object-cover"
+                style={{
+                  WebkitMaskImage:
+                    "radial-gradient(ellipse at center, #000 55%, transparent 100%)",
+                  maskImage:
+                    "radial-gradient(ellipse at center, #000 55%, transparent 100%)",
+                }}
               />
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{ background: "linear-gradient(to top, rgba(11,16,32,0.55), rgba(11,16,32,0.05) 55%, transparent)" }}
-              />
-              <div className="absolute inset-x-0 bottom-0 z-10 flex items-center gap-3 p-5 sm:p-6">
-                <div className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md ring-1 ring-white/30">
-                  <GraduationCap className="size-5 text-white" />
-                </div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-white drop-shadow sm:text-xs">
-                  Real people · Real careers · Real Bangladesh
-                </p>
-              </div>
             </div>
           </div>
 
