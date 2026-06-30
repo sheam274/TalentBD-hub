@@ -114,13 +114,14 @@ function ApplyPage() {
       // Analytics: emit a job_apply_success event for GA/GTM and any listeners.
       try {
         if (typeof window !== "undefined") {
+          const job = jobQ.data;
           const payload = {
             event: "job_apply_success",
             jobId,
-            jobTitle: j.job_title,
-            company: j.company,
+            jobTitle: job?.job_title,
+            company: job?.company,
             method: vars.method,
-            isRemote: !!j.is_remote,
+            isRemote: !!job?.is_remote,
             timestamp: new Date().toISOString(),
           };
           // GTM/GA4 dataLayer
