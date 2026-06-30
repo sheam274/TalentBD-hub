@@ -159,7 +159,7 @@ function AdminUsers() {
                       <td className="p-2 text-xs text-muted-foreground">{a.id.slice(0, 8)}…</td>
                       <td className="p-2 text-right">
                         <button
-                          onClick={() => { setRevokeInput(""); setRevokeTarget({ id: a.id, email: a.email ?? null, name: a.name ?? null }); }}
+                          onClick={() => openRevoke(a.id)}
                           className="rounded-md border px-2 py-1 text-xs"
                         >
                           Revoke admin
@@ -260,12 +260,7 @@ function AdminUsers() {
                     <button
                       onClick={() => {
                         const revoking = isAdmin(p.id);
-                        if (revoking) {
-                          const email = (admins.data ?? []).find((a: any) => a.id === p.id)?.email ?? null;
-                          setRevokeInput("");
-                          setRevokeTarget({ id: p.id, email, name: p.name ?? null });
-                          return;
-                        }
+                        if (revoking) { openRevoke(p.id); return; }
                         setRole.mutate({ userId: p.id, grant: true });
                       }}
                       className="rounded-md border px-2 py-1 text-xs"
