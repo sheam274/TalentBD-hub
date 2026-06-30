@@ -50,14 +50,19 @@ function JobDetails() {
   const successActionRef = useRef<HTMLAnchorElement>(null);
   const confirmOpenerRef = useRef<HTMLElement | null>(null);
   const successOpenerRef = useRef<HTMLElement | null>(null);
+  const skipRestoreRef = useRef(false);
 
   const restoreFocus = (ref: React.MutableRefObject<HTMLElement | null>) => (e: Event) => {
     const el = ref.current;
+    ref.current = null;
+    if (skipRestoreRef.current) {
+      skipRestoreRef.current = false;
+      return;
+    }
     if (el && document.contains(el)) {
       e.preventDefault();
       el.focus();
     }
-    ref.current = null;
   };
 
   const getJobFn = useServerFn(getJobPublic);
@@ -273,7 +278,11 @@ function JobDetails() {
           <AlertDialogFooter>
             <AlertDialogCancel>Close</AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link ref={successActionRef} to="/my-applications">View my applications</Link>
+              <Link
+                ref={successActionRef}
+                to="/my-applications"
+                onClick={() => { skipRestoreRef.current = true; }}
+              >View my applications</Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
