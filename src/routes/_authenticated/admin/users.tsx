@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { adminListUsers, adminSetRole, adminAdjustCredential } from "@/lib/admin.functions";
+import { adminListUsers, adminSetRole, adminAdjustCredential, adminPromoteByEmail, adminListAdmins } from "@/lib/admin.functions";
 import { toast } from "sonner";
 import { useMemo, useState } from "react";
 
@@ -14,8 +14,12 @@ function AdminUsers() {
   const listFn = useServerFn(adminListUsers);
   const roleFn = useServerFn(adminSetRole);
   const credFn = useServerFn(adminAdjustCredential);
+  const promoteFn = useServerFn(adminPromoteByEmail);
+  const adminsFn = useServerFn(adminListAdmins);
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["admin-users"], queryFn: () => listFn() });
+  const admins = useQuery({ queryKey: ["admin-admins"], queryFn: () => adminsFn() });
+  const [promoteEmail, setPromoteEmail] = useState("");
   const [credForm, setCredForm] = useState<{ userId: string; name: string; score: string }>({ userId: "", name: "", score: "100" });
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "student" | "employer">("all");
@@ -23,7 +27,21 @@ function AdminUsers() {
 
   const setRole = useMutation({
     mutationFn: (v: { userId: string; grant: boolean }) => roleFn({ data: { userId: v.userId, role: "admin", grant: v.grant } }),
-    onSuccess: () => { toast.success("Role updated"); qc.invalidateQueries({ queryKey: ["admin-users"] }); },
+    onSuccess: () => {
+      toast.success("Role updated");
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      qc.invalidateQueries({ queryKey: ["admin-admins"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+  const promote = useMutation({
+    mutationFn: (email: string) => promoteFn({ data: { email, role: "admin", grant: true } }),
+    onSuccess: (r: any) => {
+      toast.success(`Granted admin to ${r.email ?? r.userId}`);
+      setPromoteEmail("");
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      qc.invalidateQueries({ queryKey: ["admin-admins"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
   const addCred = useMutation({
@@ -62,6 +80,54 @@ function AdminUsers() {
     <div>
       <h1 className="text-2xl font-bold">Users</h1>
       <p className="text-sm text-muted-foreground">Profiles, roles, and earned credentials.</p>
+
+      <div className="mt-5 rounded-xl border bg-card p-4">
+        <h2 className="font-semibold">Current admins</h2>
+        {admins.isLoading ? (
+          <p className="mt-2 text-sm text-muted-foreground">Loading…</p>
+        ) : (admins.data?.length ?? 0) === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">No admins yet.</p>
+        ) : (
+          <ul className="mt-2 divide-y text-sm">
+            {admins.data!.map((a: any) => (
+              <li key={a.id} className="flex items-center justify-between py-2">
+                <div>
+                  <div className="font-medium">{a.name ?? "—"}</div>
+                  <div className="text-xs text-muted-foreground">{a.email ?? a.id}</div>
+                </div>
+                <button
+                  onClick={() => setRole.mutate({ userId: a.id, grant: false })}
+                  className="rounded-md border px-2 py-1 text-xs"
+                >
+                  Revoke admin
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <form
+          className="mt-4 flex flex-wrap gap-2"
+          onSubmit={(e) => { e.preventDefault(); if (promoteEmail) promote.mutate(promoteEmail); }}
+        >
+          <input
+            type="email"
+            required
+            placeholder="user@example.com"
+            value={promoteEmail}
+            onChange={(e) => setPromoteEmail(e.target.value)}
+            className="w-72 rounded-md border px-3 py-1.5 text-sm"
+          />
+          <button
+            type="submit"
+            disabled={promote.isPending}
+            className="rounded-md px-3 py-1.5 text-sm font-semibold"
+            style={{ background: "var(--color-primary)", color: "var(--color-primary-foreground)" }}
+          >
+            {promote.isPending ? "Promoting…" : "Promote to admin"}
+          </button>
+        </form>
+      </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
