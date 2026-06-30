@@ -6,7 +6,7 @@ import { z } from "zod";
 export const listModulesPublic = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await publicClient
     .from("learning_modules")
-    .select("id, discipline, section_slug, title, description")
+    .select("id, discipline, section_slug, title, description, video_url")
     .order("discipline")
     .order("title");
   if (error) throw new Error(error.message);
