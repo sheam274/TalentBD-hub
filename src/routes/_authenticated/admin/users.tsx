@@ -278,6 +278,56 @@ function AdminUsers() {
           </div>
         </div>
       )}
+
+      <AlertDialog open={!!revokeTarget} onOpenChange={(o) => { if (!o) { setRevokeTarget(null); setRevokeInput(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke admin privileges?</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-sm">
+                <div>
+                  You are about to revoke admin access from{" "}
+                  <span className="font-semibold">{revokeTarget?.name ?? "this user"}</span>
+                  {revokeTarget?.email && <> (<span className="font-mono">{revokeTarget.email}</span>)</>}.
+                </div>
+                <div>
+                  They will immediately lose access to the admin dashboard, user management,
+                  database tools, and all admin-only data. This action takes effect right away
+                  but can be reversed by re-granting the admin role.
+                </div>
+                {revokeTarget?.email ? (
+                  <div>
+                    Type <span className="font-mono font-semibold">{revokeTarget.email}</span> to confirm:
+                    <input
+                      autoFocus
+                      value={revokeInput}
+                      onChange={(e) => setRevokeInput(e.target.value)}
+                      className="mt-2 w-full rounded-md border px-3 py-2 text-sm"
+                      placeholder={revokeTarget.email}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-muted-foreground">No email on file — confirm by clicking Revoke.</div>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={!!revokeTarget?.email && revokeInput.trim().toLowerCase() !== revokeTarget.email.toLowerCase()}
+              onClick={() => {
+                if (revokeTarget) setRole.mutate({ userId: revokeTarget.id, grant: false });
+                setRevokeTarget(null);
+                setRevokeInput("");
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Revoke admin
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
