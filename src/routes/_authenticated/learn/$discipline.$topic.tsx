@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { getModulePublic } from "@/lib/learning.functions";
 import { submitQuiz } from "@/lib/assessments.functions";
+import { youtubeEmbed, youtubeThumb } from "@/lib/youtube";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/learn/$discipline/$topic")({
@@ -43,17 +44,25 @@ function Topic() {
       <h1 className="mt-2 text-2xl sm:text-3xl font-bold break-words">{m.title}</h1>
       <p className="mt-1 text-muted-foreground text-sm sm:text-base">{m.description}</p>
 
-      {m.video_url && (
-        <div className="mt-6 aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl">
-          <iframe
-            src={m.video_url}
-            title={m.title}
-            className="h-full w-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-      )}
+      {m.video_url && (() => {
+        const embed = youtubeEmbed(m.video_url);
+        const thumb = youtubeThumb(m.video_url);
+        return (
+          <div
+            className="mt-6 aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl bg-cover bg-center"
+            style={thumb ? { backgroundImage: `url(${thumb})` } : undefined}
+          >
+            <iframe
+              src={embed ?? m.video_url}
+              title={m.title}
+              className="h-full w-full"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        );
+      })()}
 
       <div className="mt-6 rounded-xl border bg-white overflow-hidden">
         <button onClick={() => setDocOpen((v) => !v)} className="flex w-full items-center justify-between p-4 text-left font-semibold">
