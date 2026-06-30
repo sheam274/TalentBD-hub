@@ -113,7 +113,7 @@ function Landing() {
                   className="bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(254,82,82,0.25)]"
                   style={{
                     backgroundImage:
-                      "linear-gradient(100deg, var(--eduma-red) 0%, #ff7a3d 55%, var(--eduma-gold) 100%)",
+                      "linear-gradient(100deg, var(--eduma-red-strong) 0%, #b8350f 55%, #8a5a00 100%)",
                   }}
                 >
                   Land the job.
@@ -193,7 +193,7 @@ function Landing() {
 
           {/* Trust */}
           <div className="mt-16 w-full border-t border-[var(--eduma-ink)]/10 pt-8 text-center">
-            <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]/70">
+            <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-12">
