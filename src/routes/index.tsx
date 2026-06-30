@@ -149,8 +149,8 @@ function Landing() {
               </nav>
             </div>
 
-            {/* Right card — video */}
-            <div className="relative overflow-hidden rounded-[2rem] min-h-[280px] sm:min-h-[360px] lg:min-h-[480px] ring-1 ring-[var(--eduma-ink)]/5 shadow-[0_30px_80px_-30px_rgba(254,82,82,0.35)]">
+            {/* Right — borderless video, blended into hero */}
+            <div className="relative min-h-[280px] sm:min-h-[360px] lg:min-h-[480px]">
               <video
                 src={heroVideoAsset.url}
                 autoPlay
@@ -175,12 +175,19 @@ function Landing() {
                 }}
                 style={{
                   WebkitMaskImage:
-                    "radial-gradient(ellipse at center, #000 55%, transparent 100%)",
+                    "radial-gradient(ellipse at center, #000 40%, rgba(0,0,0,0.6) 70%, transparent 100%)",
                   maskImage:
-                    "radial-gradient(ellipse at center, #000 55%, transparent 100%)",
+                    "radial-gradient(ellipse at center, #000 40%, rgba(0,0,0,0.6) 70%, transparent 100%)",
                 }}
               />
-              {/* Subtle warm tint to harmonize with hero palette */}
+              {/* Warm glow that bleeds into the hero background */}
+              <div
+                className="pointer-events-none absolute -inset-10 -z-10 blur-3xl"
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 50%, rgba(254,82,82,0.25), transparent 60%)",
+                }}
+              />
               <div
                 className="pointer-events-none absolute inset-0"
                 style={{
