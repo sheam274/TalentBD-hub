@@ -68,6 +68,8 @@ function ApplyPage() {
   const [method, setMethod] = useState<"internal" | "external">("internal");
   const [error, setError] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [successMethod, setSuccessMethod] = useState<"internal" | "external" | null>(null);
   const [pendingMethod, setPendingMethod] = useState<"internal" | "external" | null>(null);
   const hydrated = useRef(false);
 
@@ -109,10 +111,9 @@ function ApplyPage() {
       }
       qc.invalidateQueries({ queryKey: ["my-app", jobId] });
       qc.invalidateQueries({ queryKey: ["my-apps"] });
-      if (vars.method === "external" && externalUrl) {
-        window.open(externalUrl, "_blank", "noopener,noreferrer");
-      }
-      navigate({ to: "/jobs/$jobId/applied", params: { jobId } });
+      setConfirmOpen(false);
+      setSuccessMethod(vars.method);
+      setSuccessOpen(true);
     },
     onError: (e: any) => toast.error(e.message),
   });
