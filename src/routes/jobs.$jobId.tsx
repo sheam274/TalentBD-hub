@@ -48,6 +48,17 @@ function JobDetails() {
   const { user } = useAuth();
   const confirmActionRef = useRef<HTMLButtonElement>(null);
   const successActionRef = useRef<HTMLAnchorElement>(null);
+  const confirmOpenerRef = useRef<HTMLElement | null>(null);
+  const successOpenerRef = useRef<HTMLElement | null>(null);
+
+  const restoreFocus = (ref: React.MutableRefObject<HTMLElement | null>) => (e: Event) => {
+    const el = ref.current;
+    if (el && document.contains(el)) {
+      e.preventDefault();
+      el.focus();
+    }
+    ref.current = null;
+  };
 
   const getJobFn = useServerFn(getJobPublic);
   const getAppFn = useServerFn(getMyApplicationForJob);
@@ -192,7 +203,11 @@ function JobDetails() {
           {!alreadyApplied && user && (
             <button
               type="button"
-              onClick={() => { setErrorMsg(null); setConfirmOpen(true); }}
+              onClick={(e) => {
+                confirmOpenerRef.current = e.currentTarget;
+                setErrorMsg(null);
+                setConfirmOpen(true);
+              }}
               className="block w-full rounded-md px-4 py-3 text-center text-sm font-semibold text-white shadow"
               style={{ background: "var(--color-primary)" }}
             >
@@ -213,6 +228,7 @@ function JobDetails() {
             e.preventDefault();
             confirmActionRef.current?.focus();
           }}
+          onCloseAutoFocus={restoreFocus(confirmOpenerRef)}
           onEscapeKeyDown={(e) => { if (applyM.isPending) e.preventDefault(); }}
         >
           <AlertDialogHeader>
@@ -245,6 +261,7 @@ function JobDetails() {
             e.preventDefault();
             successActionRef.current?.focus();
           }}
+          onCloseAutoFocus={restoreFocus(successOpenerRef)}
         >
           <AlertDialogHeader>
             <AlertDialogTitle>Application submitted 🎉</AlertDialogTitle>
