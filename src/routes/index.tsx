@@ -85,8 +85,8 @@ function Landing() {
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
             {/* Left card — text + CTAs */}
-            <div className="flex flex-col rounded-3xl border border-white/40 bg-white/55 p-7 backdrop-blur-xl shadow-xl sm:p-10 md:p-12 text-center lg:text-left">
-              <div className="mb-6 inline-flex items-center gap-2 self-center rounded-full border border-white/30 bg-white/40 px-4 py-2 backdrop-blur-md lg:self-start">
+            <div className="flex flex-col rounded-3xl p-7 sm:p-10 md:p-12 text-center lg:text-left">
+              <div className="mb-6 inline-flex items-center gap-2 self-center rounded-full bg-white/30 px-4 py-2 lg:self-start">
                 <span className="relative flex size-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
@@ -142,7 +142,7 @@ function Landing() {
             </div>
 
             {/* Right card — video */}
-            <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-white/40 shadow-xl backdrop-blur-xl min-h-[280px] sm:min-h-[360px] lg:min-h-[480px]">
+            <div className="relative overflow-hidden rounded-3xl min-h-[280px] sm:min-h-[360px] lg:min-h-[480px]">
               <video
                 src={heroVideoAsset.url}
                 autoPlay
