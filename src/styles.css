@@ -159,6 +159,20 @@
     position: relative;
     overflow-x: hidden;
   }
+  /* Soft Pastel Glow — fixed ambient backdrop layered behind all content */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 12% 0%, rgba(252, 231, 243, 0.85), transparent 70%),
+      radial-gradient(55% 45% at 100% 10%, rgba(253, 186, 116, 0.55), transparent 70%),
+      radial-gradient(70% 60% at 85% 100%, rgba(221, 214, 254, 0.7), transparent 70%),
+      radial-gradient(50% 40% at 0% 100%, rgba(254, 240, 250, 0.6), transparent 70%),
+      var(--color-background);
+  }
   h1, h2, h3, h4, h5, h6 {
     font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
     color: var(--color-ink);
