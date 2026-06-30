@@ -1,0 +1,17 @@
+# TalentBD
+
+> TalentBD is Bangladesh's premium talent network — a job marketplace, AI-powered interview coach, learning modules, and CV builder for engineers and professionals.
+
+## Pages
+
+- [Home](/): Overview of TalentBD, featured live jobs, and learning tracks.
+- [Jobs](/jobs): Live job marketplace aggregating roles from Remotive, Arbeitnow, RemoteOK, The Muse, and Jobicy plus local listings.
+- [Companies](/companies): Verified employers hiring on TalentBD.
+- [Career advice](/career-advice): Playbooks for CVs, interviews, salary negotiation, remote work, and networking in Bangladesh.
+- [NGO jobs in Bangladesh](/career-advice/ngo-jobs): Guide to landing NGO and development-sector roles.
+- [Interview prep](/interview-prep): AI-powered mock interviews and feedback.
+- [Salaries](/salaries): Salary insights for engineering and tech roles in Bangladesh.
+
+## Optional
+
+- [Sign in](/auth): Authentication for candidates and employers.
