@@ -421,6 +421,7 @@ function ApplyPage() {
                 if (successMethod === "external" && externalUrl) {
                   window.open(externalUrl, "_blank", "noopener,noreferrer");
                 }
+                skipRestoreRef.current = true;
                 setSuccessOpen(false);
                 navigate({ to: "/jobs/$jobId/applied", params: { jobId } })
                   .then(() => {
