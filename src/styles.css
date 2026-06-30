@@ -88,7 +88,7 @@
      Locked tokens: #FE5252 (signature coral red CTA),
      #FFB606 (gold rating/highlight), #111127 (deep ink navy),
      #F5F5F7 (cool whitespace), #FFFFFF (card surface). */
-  --background: #f5f5f7;                 /* off-white canvas */
+  --background: #fbf7fb;                 /* soft pastel canvas (pink-tinted off-white) */
   --surface: #ffffff;                     /* white cards */
   --foreground: #4b4b63;                  /* slate body text */
   --ink: #111127;                         /* deep ink headings */
@@ -109,8 +109,8 @@
   --muted-foreground: #4b5563;            /* gray-600, ~7.6:1 on white */
   --destructive: #d92d20;
   --destructive-foreground: #ffffff;
-  --border: #e6e7ee;
-  --input: #e6e7ee;
+  --border: #ece6f1;
+  --input: #ece6f1;
   --ring: #c81e1e;
   /* Eduma signature palette (full set) */
   --eduma-red: #fe5252;
@@ -128,8 +128,8 @@
   --eduma-green: #28a745;
   --eduma-orange: #ff7d4d;
   --eduma-purple: #7e3ff2;
-  --eduma-canvas: #f5f5f7;
-  --eduma-line: #e6e7ee;
+  --eduma-canvas: #fbf7fb;
+  --eduma-line: #ece6f1;
   /* Semantic status tokens (used by .badge-* utilities) */
   /* Darkened success (#1a7a33) — 4.74:1 on #e3f6e8 for AA normal text */
   --success: #1a7a33;
