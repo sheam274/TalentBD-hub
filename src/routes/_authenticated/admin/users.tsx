@@ -68,6 +68,23 @@ function AdminUsers() {
   const rolesOf = (uid: string) =>
     (data?.roles ?? []).filter((r: any) => r.user_id === uid).map((r: any) => r.role as string);
 
+  const emailMap = useMemo(() => {
+    const m = new Map<string, string>();
+    (admins.data ?? []).forEach((a: any) => { if (a?.id && a?.email) m.set(a.id, a.email); });
+    return m;
+  }, [admins.data]);
+  const nameMap = useMemo(() => {
+    const m = new Map<string, string>();
+    (data?.profiles ?? []).forEach((p: any) => { if (p?.id && p?.name) m.set(p.id, p.name); });
+    (admins.data ?? []).forEach((a: any) => { if (a?.id && a?.name && !m.has(a.id)) m.set(a.id, a.name); });
+    return m;
+  }, [data, admins.data]);
+  const openRevoke = (uid: string) => {
+    setRevokeInput("");
+    setRevokeTarget({ id: uid, email: emailMap.get(uid) ?? null, name: nameMap.get(uid) ?? null });
+    if (!emailMap.has(uid)) qc.invalidateQueries({ queryKey: ["admin-admins"] });
+  };
+
   const disciplines = useMemo(() => {
     const set = new Set<string>();
     (data?.profiles ?? []).forEach((p: any) => p.discipline && set.add(p.discipline));
