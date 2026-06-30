@@ -152,6 +152,19 @@ function Landing() {
                 preload="metadata"
                 aria-label="Bangladeshi professionals learning and working"
                 className="absolute inset-0 size-full object-cover"
+                onLoadedMetadata={(e) => {
+                  const v = e.currentTarget;
+                  v.playbackRate = 1;
+                  // Skip the last frame to avoid the freeze-frame pause before loop restart
+                  const trim = 0.15;
+                  const onTime = () => {
+                    if (v.duration && v.currentTime >= v.duration - trim) {
+                      v.currentTime = 0.05;
+                      v.play().catch(() => {});
+                    }
+                  };
+                  v.addEventListener("timeupdate", onTime);
+                }}
                 style={{
                   WebkitMaskImage:
                     "radial-gradient(ellipse at center, #000 55%, transparent 100%)",
