@@ -61,58 +61,66 @@ function Landing() {
       {/* Hero — Ink Ambient Glow (premium dark) */}
       <section
         className="relative w-full overflow-hidden px-5 py-16 sm:px-6 sm:py-20 md:py-28 lg:py-36"
-        style={{ background: "linear-gradient(160deg, #fffaf5 0%, #e0c3fc 55%, #ffb088 100%)" }}
+        style={{
+          background:
+            "radial-gradient(1200px 600px at 12% 0%, rgba(255,182,6,0.22), transparent 60%)," +
+            "radial-gradient(1000px 700px at 90% 20%, rgba(254,82,82,0.20), transparent 60%)," +
+            "radial-gradient(900px 800px at 50% 110%, rgba(17,17,39,0.10), transparent 65%)," +
+            "linear-gradient(160deg, #fff7ee 0%, #ffe9d6 45%, #ffd3c4 100%)",
+        }}
       >
         {/* Dotted grid */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-20"
+          className="pointer-events-none absolute inset-0 opacity-25"
           style={{
             backgroundImage:
-              "radial-gradient(rgba(40,20,60,0.18) 1px, transparent 1px)",
+              "radial-gradient(rgba(17,17,39,0.18) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
+            maskImage: "radial-gradient(ellipse at center, #000 40%, transparent 85%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, #000 40%, transparent 85%)",
           }}
         />
         {/* Ambient orbs */}
         <div
-          className="pointer-events-none absolute left-1/2 top-1/4 size-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]"
-          style={{ background: "color-mix(in oklab, var(--eduma-red) 100%, transparent)", opacity: 0.18 }}
+          className="pointer-events-none absolute -left-24 top-10 size-[520px] rounded-full blur-[130px]"
+          style={{ background: "var(--eduma-red)", opacity: 0.22 }}
         />
         <div
-          className="pointer-events-none absolute bottom-1/4 left-1/3 size-[400px] rounded-full blur-[130px]"
-          style={{ background: "color-mix(in oklab, var(--eduma-gold) 100%, transparent)", opacity: 0.14 }}
+          className="pointer-events-none absolute -right-24 bottom-0 size-[460px] rounded-full blur-[140px]"
+          style={{ background: "var(--eduma-gold)", opacity: 0.28 }}
         />
 
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
             {/* Left card — text + CTAs */}
             <div className="flex flex-col rounded-3xl p-7 sm:p-10 md:p-12 text-center lg:text-left">
-              <div className="mb-6 inline-flex items-center gap-2 self-center rounded-full bg-white/30 px-4 py-2 lg:self-start">
+              <div className="mb-6 inline-flex items-center gap-2 self-center rounded-full border border-[var(--eduma-ink)]/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur lg:self-start">
                 <span className="relative flex size-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
                 </span>
-                <span className="text-xs font-medium uppercase tracking-wider text-[var(--eduma-ink)]/80">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--eduma-ink)]">
                   The Premium Talent Network
                 </span>
               </div>
 
-              <h1 className="mb-5 text-[2rem] font-extrabold leading-[1.15] tracking-tight text-[var(--eduma-ink)] sm:text-5xl sm:leading-[1.1] md:text-6xl md:leading-[1.05]">
+              <h1 className="mb-5 text-[2.15rem] font-extrabold leading-[1.1] tracking-tight text-[var(--eduma-ink)] sm:text-5xl sm:leading-[1.05] md:text-6xl md:leading-[1.02] lg:text-[4.25rem]">
                 Build skills.
                 <br />
                 Earn credentials.
                 <br />
                 <span
-                  className="bg-clip-text text-transparent"
+                  className="bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(254,82,82,0.25)]"
                   style={{
                     backgroundImage:
-                      "linear-gradient(to right, var(--eduma-red), var(--eduma-gold))",
+                      "linear-gradient(100deg, var(--eduma-red) 0%, #ff7a3d 55%, var(--eduma-gold) 100%)",
                   }}
                 >
                   Land the job.
                 </span>
               </h1>
 
-              <p className="mb-8 max-w-xl text-base leading-[1.65] text-[var(--eduma-ink)]/75 sm:text-lg md:leading-[1.7] mx-auto lg:mx-0">
+              <p className="mb-8 max-w-xl text-base leading-[1.65] text-[var(--eduma-ink)]/85 sm:text-lg md:leading-[1.7] mx-auto lg:mx-0">
                 TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified
                 certifications, a dual-style CV builder, an ATS parser, and a local + global jobs
                 marketplace.
@@ -142,7 +150,7 @@ function Landing() {
             </div>
 
             {/* Right card — video */}
-            <div className="relative overflow-hidden rounded-3xl min-h-[280px] sm:min-h-[360px] lg:min-h-[480px]">
+            <div className="relative overflow-hidden rounded-[2rem] min-h-[280px] sm:min-h-[360px] lg:min-h-[480px] ring-1 ring-[var(--eduma-ink)]/5 shadow-[0_30px_80px_-30px_rgba(254,82,82,0.35)]">
               <video
                 src={heroVideoAsset.url}
                 autoPlay
@@ -172,12 +180,20 @@ function Landing() {
                     "radial-gradient(ellipse at center, #000 55%, transparent 100%)",
                 }}
               />
+              {/* Subtle warm tint to harmonize with hero palette */}
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(254,82,82,0.10), transparent 40%, rgba(255,182,6,0.12))",
+                }}
+              />
             </div>
           </div>
 
           {/* Trust */}
           <div className="mt-16 w-full border-t border-[var(--eduma-ink)]/10 pt-8 text-center">
-            <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]/60">
+            <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]/70">
               Trusted by innovators worldwide
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-12">
