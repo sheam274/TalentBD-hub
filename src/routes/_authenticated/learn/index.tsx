@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listModulesPublic } from "@/lib/learning.functions";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { youtubeThumb } from "@/lib/youtube";
 import { BookOpen, PlayCircle, Award } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/learn/")({
@@ -64,14 +65,28 @@ function LearnIndex() {
                       params={{ discipline: m.discipline, topic: m.section_slug }}
                       className="lift glass group rounded-xl overflow-hidden flex flex-col h-full"
                     >
-                      <div className={`${meta.thumb} thumb-grid relative h-32`}>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <PlayCircle className="size-12 text-white/90 transition group-hover:scale-110" />
-                        </div>
-                        <span className="absolute top-2 right-2 rounded-full bg-black/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-                          {meta.icon} {disc}
-                        </span>
-                      </div>
+                      {(() => {
+                        const thumb = youtubeThumb(m.video_url);
+                        return (
+                          <div className={`${meta.thumb} thumb-grid relative h-36 overflow-hidden`}>
+                            {thumb && (
+                              <img
+                                src={thumb}
+                                alt={`${m.title} thumbnail`}
+                                loading="lazy"
+                                className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                              />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <PlayCircle className="size-14 text-white drop-shadow-lg transition group-hover:scale-110" />
+                            </div>
+                            <span className="absolute top-2 right-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
+                              {meta.icon} {disc}
+                            </span>
+                          </div>
+                        );
+                      })()}
                       <div className="p-5 flex-1 flex flex-col">
                         <h3 className="font-semibold leading-tight">{m.title}</h3>
                         <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{m.description}</p>
