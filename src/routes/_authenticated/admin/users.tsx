@@ -4,6 +4,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { adminListUsers, adminSetRole, adminAdjustCredential, adminPromoteByEmail, adminListAdmins } from "@/lib/admin.functions";
 import { toast } from "sonner";
 import { useMemo, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({ meta: [{ title: "Admin — Users" }] }),
@@ -25,6 +35,8 @@ function AdminUsers() {
   const [adminSearch, setAdminSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "student" | "employer">("all");
   const [disciplineFilter, setDisciplineFilter] = useState("all");
+  const [revokeTarget, setRevokeTarget] = useState<{ id: string; email: string | null; name: string | null } | null>(null);
+  const [revokeInput, setRevokeInput] = useState("");
 
   const setRole = useMutation({
     mutationFn: (v: { userId: string; grant: boolean }) => roleFn({ data: { userId: v.userId, role: "admin", grant: v.grant } }),
@@ -130,11 +142,7 @@ function AdminUsers() {
                       <td className="p-2 text-xs text-muted-foreground">{a.id.slice(0, 8)}…</td>
                       <td className="p-2 text-right">
                         <button
-                          onClick={() => {
-                            if (window.confirm(`Revoke admin from ${a.email ?? a.name ?? a.id}? They will lose all admin privileges.`)) {
-                              setRole.mutate({ userId: a.id, grant: false });
-                            }
-                          }}
+                          onClick={() => { setRevokeInput(""); setRevokeTarget({ id: a.id, email: a.email ?? null, name: a.name ?? null }); }}
                           className="rounded-md border px-2 py-1 text-xs"
                         >
                           Revoke admin
@@ -235,8 +243,13 @@ function AdminUsers() {
                     <button
                       onClick={() => {
                         const revoking = isAdmin(p.id);
-                        if (revoking && !window.confirm(`Revoke admin from ${p.name ?? p.id}? They will lose all admin privileges.`)) return;
-                        setRole.mutate({ userId: p.id, grant: !revoking });
+                        if (revoking) {
+                          const email = (admins.data ?? []).find((a: any) => a.id === p.id)?.email ?? null;
+                          setRevokeInput("");
+                          setRevokeTarget({ id: p.id, email, name: p.name ?? null });
+                          return;
+                        }
+                        setRole.mutate({ userId: p.id, grant: true });
                       }}
                       className="rounded-md border px-2 py-1 text-xs"
                     >
@@ -265,6 +278,56 @@ function AdminUsers() {
           </div>
         </div>
       )}
+
+      <AlertDialog open={!!revokeTarget} onOpenChange={(o) => { if (!o) { setRevokeTarget(null); setRevokeInput(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Revoke admin privileges?</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-sm">
+                <div>
+                  You are about to revoke admin access from{" "}
+                  <span className="font-semibold">{revokeTarget?.name ?? "this user"}</span>
+                  {revokeTarget?.email && <> (<span className="font-mono">{revokeTarget.email}</span>)</>}.
+                </div>
+                <div>
+                  They will immediately lose access to the admin dashboard, user management,
+                  database tools, and all admin-only data. This action takes effect right away
+                  but can be reversed by re-granting the admin role.
+                </div>
+                {revokeTarget?.email ? (
+                  <div>
+                    Type <span className="font-mono font-semibold">{revokeTarget.email}</span> to confirm:
+                    <input
+                      autoFocus
+                      value={revokeInput}
+                      onChange={(e) => setRevokeInput(e.target.value)}
+                      className="mt-2 w-full rounded-md border px-3 py-2 text-sm"
+                      placeholder={revokeTarget.email}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-muted-foreground">No email on file — confirm by clicking Revoke.</div>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={!!revokeTarget?.email && revokeInput.trim().toLowerCase() !== revokeTarget.email.toLowerCase()}
+              onClick={() => {
+                if (revokeTarget) setRole.mutate({ userId: revokeTarget.id, grant: false });
+                setRevokeTarget(null);
+                setRevokeInput("");
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Revoke admin
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
