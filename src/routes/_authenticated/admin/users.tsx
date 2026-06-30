@@ -62,7 +62,6 @@ function AdminUsers() {
     onSuccess: () => { toast.success("Credential added"); qc.invalidateQueries({ queryKey: ["admin-users"] }); setCredForm({ userId: "", name: "", score: "100" }); },
   });
 
-  if (q.isLoading) return <p>Loading…</p>;
   const data = q.data;
   const isAdmin = (uid: string) => data?.roles.some((r: any) => r.user_id === uid && r.role === "admin");
   const rolesOf = (uid: string) =>
@@ -90,6 +89,8 @@ function AdminUsers() {
     (data?.profiles ?? []).forEach((p: any) => p.discipline && set.add(p.discipline));
     return Array.from(set).sort();
   }, [data]);
+
+  if (q.isLoading) return <p>Loading…</p>;
 
   const filtered = (data?.profiles ?? []).filter((p: any) => {
     const roles = rolesOf(p.id);
