@@ -82,6 +82,7 @@ function JobDetails() {
     mutationFn: () => applyFn({ data: { jobId } }),
     onSuccess: () => {
       setErrorMsg(null);
+      successOpenerRef.current = confirmOpenerRef.current;
       setConfirmOpen(false);
       setSuccessOpen(true);
       qc.invalidateQueries({ queryKey: ["my-app", jobId] });
