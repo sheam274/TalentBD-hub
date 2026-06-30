@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { CtaButton } from "@/components/CtaButton";
 import { ArrowRight, Code2, Bolt, HardHat, Landmark, Palette, Megaphone, GraduationCap } from "lucide-react";
