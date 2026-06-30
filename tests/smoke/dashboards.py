@@ -45,15 +45,22 @@ async def run():
                 failures.append(f"{label}: redirected to {page.url} (not authorized)")
                 continue
 
-            # 2. Dashboard shell present
-            shell = await page.locator(".dashboard-shell").count()
-            # 3. At least one shadcn Card (gets glow styles via .dashboard-shell .bg-card)
-            cards = await page.locator(".dashboard-shell .bg-card").count()
-            print(f"{label:9s} {page.url}  shell={shell} cards={cards}")
-            if shell < 1:
+            # 2. Dashboard shell present (unified layout wrapper)
+            shell = page.locator(".dashboard-shell")
+            shell_count = await shell.count()
+            # 3. Shell received the unified glow styles (padding from CSS rule)
+            padding = await shell.first.evaluate(
+                "el => el ? getComputedStyle(el).paddingTop : '0px'"
+            ) if shell_count else "0px"
+            # 4. Main content rendered (not blank shell)
+            headings = await page.locator(".dashboard-shell :is(h1,h2,h3)").count()
+            print(f"{label:9s} {page.url}  shell={shell_count} pad={padding} headings={headings}")
+            if shell_count < 1:
                 failures.append(f"{label}: missing .dashboard-shell")
-            if cards < 1:
-                failures.append(f"{label}: no glow cards rendered")
+            if headings < 1:
+                failures.append(f"{label}: no headings rendered inside shell")
+            if padding == "0px":
+                failures.append(f"{label}: shell missing unified spacing")
 
         await browser.close()
 
