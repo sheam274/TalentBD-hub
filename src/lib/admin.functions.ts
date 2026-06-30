@@ -68,7 +68,8 @@ export const adminAdjustCredential = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
-    const { error } = await context.supabase.from("user_credentials").insert({
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("user_credentials").insert({
       user_id: data.userId,
       credential_name: data.credentialName,
       score: data.score,
