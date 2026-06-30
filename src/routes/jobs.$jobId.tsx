@@ -1,8 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getJobPublic, getMyApplicationForJob } from "@/lib/jobs.functions";
+import { getJobPublic, getMyApplicationForJob, applyToJob } from "@/lib/jobs.functions";
 import { useAuth } from "@/lib/auth-context";
+import { useState } from "react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Briefcase, MapPin, Clock, GraduationCap, Star, ArrowLeft, Building2, DollarSign, CalendarDays, CheckCircle2,
 } from "lucide-react";
@@ -44,6 +49,11 @@ function JobDetails() {
 
   const getJobFn = useServerFn(getJobPublic);
   const getAppFn = useServerFn(getMyApplicationForJob);
+  const applyFn = useServerFn(applyToJob);
+  const qc = useQueryClient();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const jobQ = useQuery({
     queryKey: ["job", jobId],
@@ -53,6 +63,19 @@ function JobDetails() {
     queryKey: ["my-app", jobId],
     queryFn: () => getAppFn({ data: { jobId } }),
     enabled: !!user,
+  });
+
+  const applyM = useMutation({
+    mutationFn: () => applyFn({ data: { jobId } }),
+    onSuccess: () => {
+      setErrorMsg(null);
+      setConfirmOpen(false);
+      setSuccessOpen(true);
+      qc.invalidateQueries({ queryKey: ["my-app", jobId] });
+    },
+    onError: (e: unknown) => {
+      setErrorMsg(e instanceof Error ? e.message : "Failed to submit application.");
+    },
   });
 
   if (jobQ.isLoading) return (
@@ -100,14 +123,14 @@ function JobDetails() {
                 <Link to="/my-applications" className="text-xs underline text-muted-foreground">Track in dashboard →</Link>
               </div>
             ) : user ? (
-              <Link
-                to="/jobs/$jobId/apply"
-                params={{ jobId }}
+              <button
+                type="button"
+                onClick={() => { setErrorMsg(null); setConfirmOpen(true); }}
                 className="rounded-md px-5 py-2 text-sm font-semibold text-white shadow"
                 style={{ background: "var(--color-primary)" }}
               >
                 Apply for this job
-              </Link>
+              </button>
             ) : (
               <Link to="/auth" className="rounded-md border px-5 py-2 text-sm font-semibold">Sign in to apply</Link>
             )}
@@ -165,14 +188,14 @@ function JobDetails() {
           </div>
 
           {!alreadyApplied && user && (
-            <Link
-              to="/jobs/$jobId/apply"
-              params={{ jobId }}
+            <button
+              type="button"
+              onClick={() => { setErrorMsg(null); setConfirmOpen(true); }}
               className="block w-full rounded-md px-4 py-3 text-center text-sm font-semibold text-white shadow"
               style={{ background: "var(--color-primary)" }}
             >
               Apply for this job
-            </Link>
+            </button>
           )}
           {alreadyApplied && (
             <Link to="/my-applications" className="block w-full rounded-md border px-4 py-3 text-center text-sm font-semibold hover:bg-white/60">
@@ -181,6 +204,48 @@ function JobDetails() {
           )}
         </aside>
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={(o) => { if (!applyM.isPending) setConfirmOpen(o); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Apply to {j.job_title}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your profile and latest CV will be sent to {j.company}. You can track the status from your applications page.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {errorMsg && (
+            <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {errorMsg}
+            </div>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={applyM.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); applyM.mutate(); }}
+              disabled={applyM.isPending}
+            >
+              {applyM.isPending ? "Submitting…" : errorMsg ? "Try again" : "Confirm & apply"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={successOpen} onOpenChange={setSuccessOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Application submitted 🎉</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your application for {j.job_title} at {j.company} was sent successfully.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Link to="/my-applications">View my applications</Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
