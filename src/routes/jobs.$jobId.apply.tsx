@@ -88,14 +88,19 @@ function ApplyPage() {
   const successActionRef = useRef<HTMLButtonElement>(null);
   const confirmOpenerRef = useRef<HTMLElement | null>(null);
   const successOpenerRef = useRef<HTMLElement | null>(null);
+  const skipRestoreRef = useRef(false);
 
   const restoreFocus = (ref: React.MutableRefObject<HTMLElement | null>) => (e: Event) => {
     const el = ref.current;
+    ref.current = null;
+    if (skipRestoreRef.current) {
+      skipRestoreRef.current = false;
+      return;
+    }
     if (el && document.contains(el)) {
       e.preventDefault();
       el.focus();
     }
-    ref.current = null;
   };
 
   // Load draft once on mount
