@@ -111,6 +111,28 @@ function ApplyPage() {
       }
       qc.invalidateQueries({ queryKey: ["my-app", jobId] });
       qc.invalidateQueries({ queryKey: ["my-apps"] });
+      // Analytics: emit a job_apply_success event for GA/GTM and any listeners.
+      try {
+        if (typeof window !== "undefined") {
+          const job = jobQ.data;
+          const payload = {
+            event: "job_apply_success",
+            jobId,
+            jobTitle: job?.job_title,
+            company: job?.company,
+            method: vars.method,
+            isRemote: !!job?.is_remote,
+            timestamp: new Date().toISOString(),
+          };
+          // GTM/GA4 dataLayer
+          (window as any).dataLayer = (window as any).dataLayer || [];
+          (window as any).dataLayer.push(payload);
+          // Generic listener bus
+          window.dispatchEvent(new CustomEvent("analytics:job_apply_success", { detail: payload }));
+        }
+      } catch {
+        /* analytics must never break the flow */
+      }
       setConfirmOpen(false);
       setSuccessMethod(vars.method);
       setSuccessOpen(true);
