@@ -27,6 +27,42 @@ const CATEGORIES = [
   "Design", "Customer Service", "Healthcare", "Education", "General",
 ];
 
+// Highlight matched query tokens inside a job title so users can immediately
+// see why the result matched. Uses whole-word boundaries to stay in sync
+// with the strict filter above and falls back to the raw title when no
+// tokens are active.
+function HighlightedTitle({ text, tokens }: { text: string; tokens: string[] }) {
+  const safe = text ?? "";
+  const active = tokens.filter((t) => t && t.length >= 2);
+  if (!active.length) return <>{safe}</>;
+  const escaped = active
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .sort((a, b) => b.length - a.length);
+  const re = new RegExp(`\\b(${escaped.join("|")})`, "gi");
+  const parts: Array<{ v: string; hit: boolean }> = [];
+  let last = 0;
+  for (const m of safe.matchAll(re)) {
+    const start = m.index ?? 0;
+    if (start > last) parts.push({ v: safe.slice(last, start), hit: false });
+    parts.push({ v: m[0], hit: true });
+    last = start + m[0].length;
+  }
+  if (last < safe.length) parts.push({ v: safe.slice(last), hit: false });
+  return (
+    <>
+      {parts.map((p, i) =>
+        p.hit ? (
+          <mark key={i} className="rounded-sm bg-primary/20 text-foreground px-0.5">
+            {p.v}
+          </mark>
+        ) : (
+          <span key={i}>{p.v}</span>
+        ),
+      )}
+    </>
+  );
+}
+
 // Map our UI categories to Remotive's category slugs so the live feed
 // reacts to the same filter chips as local jobs.
 const REMOTIVE_CATEGORY: Record<string, string | undefined> = {
