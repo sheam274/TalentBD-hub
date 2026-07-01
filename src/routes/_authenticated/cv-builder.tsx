@@ -653,8 +653,11 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
           </TopcvCard>
         )}
 
-        {/* After Career Objective: split into two masonry-style columns */}
-        <div className="md:columns-2 md:gap-4 [&>*]:mb-4 [&>*]:break-inside-avoid">
+        {/* After Career Objective: always split into two masonry-style columns.
+            The CV sheet is a fixed A4 width that CvSheet scales to fit the
+            viewport, so a 2-column layout is safe on every device/aspect ratio
+            and stays intact in print/PDF. */}
+        <div className="columns-2 gap-4 [column-fill:_balance] [&>*]:mb-4 [&>*]:break-inside-avoid">
         {d.skills && (
           <TopcvCard header="TECHNICAL SKILLS" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
             <div className="flex flex-wrap gap-1.5">
