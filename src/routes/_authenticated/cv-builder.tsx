@@ -119,6 +119,13 @@ function CvBuilder() {
     reader.readAsDataURL(file);
   }
 
+  function cvFileBase() {
+    const slug = (s: string) =>
+      s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    const parts = [slug(data.name || "cv"), slug(data.title || ""), "cv"].filter(Boolean);
+    return parts.join("-");
+  }
+
   function printCv() {
     const node = document.querySelector(".cv-print-area");
     if (!node) { window.print(); return; }
@@ -127,8 +134,10 @@ function CvBuilder() {
     const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
       .map((el) => el.outerHTML)
       .join("\n");
+    // Title becomes the default filename in the browser's Save as PDF dialog.
+    const title = cvFileBase();
     w.document.open();
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(data.name || "CV")} — CV</title>${styles}<style>@page{margin:12mm}body{margin:0;background:#fff}.cv-print-area{box-shadow:none!important;border:0!important;margin:0!important;padding:0!important;background:#fff!important}</style></head><body><div class="cv-print-area">${(node as HTMLElement).innerHTML}</div></body></html>`);
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>${styles}<style>@page{size:A4;margin:10mm}html,body{margin:0;background:#fff}.cv-print-area{width:210mm;min-height:297mm;box-shadow:none!important;border:0!important;margin:0!important;padding:10mm!important;background:#fff!important}</style></head><body><div class="cv-print-area">${(node as HTMLElement).innerHTML}</div></body></html>`);
     w.document.close();
     w.focus();
     setTimeout(() => { w.print(); w.close(); }, 400);
@@ -140,10 +149,7 @@ function CvBuilder() {
     try {
       const mod: any = await import("html2pdf.js");
       const html2pdf = mod.default ?? mod;
-      const slug = (s: string) =>
-        s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-      const parts = [slug(data.name || "cv"), slug(data.title || ""), "cv"].filter(Boolean);
-      const filename = `${parts.join("-")}.pdf`;
+      const filename = `${cvFileBase()}.pdf`;
       await html2pdf()
         .set({
           margin: [10, 10, 10, 10],
