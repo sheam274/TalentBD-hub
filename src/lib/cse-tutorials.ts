@@ -151,6 +151,43 @@ export const CSE_TUTORIALS: Record<string, Tutorial> = {
   },
 };
 
+CSE_TUTORIALS["networking"] = {
+  intro: "Computer networking is how machines talk to each other. It layers physical links, addressing, routing, transport, and application protocols so any device can reach any other on the internet.",
+  sections: [
+    s("osi-model", "OSI & TCP/IP model", "The OSI model has 7 layers (Physical, Data Link, Network, Transport, Session, Presentation, Application). The internet uses a simpler 4-layer TCP/IP stack: Link, Internet (IP), Transport (TCP/UDP), Application (HTTP/DNS/SMTP)."),
+    s("ip-addressing", "IP addressing & subnets", "IPv4 addresses are 32 bits (e.g. 192.168.1.10). CIDR /24 = 256 addresses. IPv6 uses 128-bit hex. Private ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16.", { lang: "bash", source: "ip addr show\nip route\nping -c 4 8.8.8.8" }),
+    s("tcp-vs-udp", "TCP vs UDP", "TCP is connection-oriented, reliable, ordered, with a 3-way handshake (SYN, SYN-ACK, ACK). UDP is connectionless and fire-and-forget — used for DNS, video, and games where speed beats reliability."),
+    s("dns", "DNS", "DNS resolves names like example.com into IPs. Record types: A (IPv4), AAAA (IPv6), CNAME (alias), MX (mail), TXT (metadata), NS (nameserver).", { lang: "bash", source: "dig +short example.com\nnslookup example.com" }),
+    s("http", "HTTP & HTTPS", "HTTP is a request/response protocol over TCP. Methods: GET, POST, PUT, PATCH, DELETE. Status: 2xx success, 3xx redirect, 4xx client error, 5xx server error. HTTPS wraps HTTP in TLS for encryption + integrity.", { lang: "bash", source: "curl -I https://example.com" }),
+    s("routing-switching", "Routing & switching", "Switches forward frames within a LAN using MAC addresses. Routers forward packets between networks using IP and a routing table. Protocols: OSPF and BGP move routes between routers."),
+    s("nat-firewalls", "NAT & firewalls", "NAT lets many private IPs share one public IP by rewriting ports. Firewalls filter traffic on rules (source/dest IP, port, protocol). Stateful firewalls track connections."),
+    s("network-security", "Network security", "TLS gives confidentiality + integrity. Use HTTPS everywhere, strong ciphers, and HSTS. Defend against ARP spoofing, DDoS (rate limit + CDN), and DNS poisoning (DNSSEC)."),
+    s("tools", "Diagnostic tools", "Use ping (reachability), traceroute (path), dig (DNS), netstat/ss (sockets), tcpdump/Wireshark (packet capture), and curl (HTTP debug).", { lang: "bash", source: "traceroute google.com\nss -tulpn\ntcpdump -i any port 80" }),
+  ],
+  practice: [
+    { q: "Which layer does TCP live at?", choices: ["Link", "Internet", "Transport", "Application"], answer: 2 },
+    { q: "Default HTTPS port?", choices: ["21", "80", "443", "8080"], answer: 2 },
+    { q: "Which is connectionless?", choices: ["TCP", "UDP", "SCTP", "QUIC handshake"], answer: 1 },
+    { q: "TCP handshake steps?", choices: ["1", "2", "3", "4"], answer: 2 },
+    { q: "CIDR /24 has how many addresses?", choices: ["64", "128", "256", "512"], answer: 2 },
+    { q: "Private IP range?", choices: ["8.8.8.0/24", "192.168.0.0/16", "1.1.1.0/24", "172.32.0.0/12"], answer: 1 },
+    { q: "Which record maps a name to IPv4?", choices: ["A", "AAAA", "MX", "CNAME"], answer: 0 },
+    { q: "Which record maps a name to IPv6?", choices: ["A", "AAAA", "CNAME", "NS"], answer: 1 },
+    { q: "HTTP 404 means?", choices: ["Server error", "Redirect", "Not found", "Unauthorized"], answer: 2 },
+    { q: "HTTP 301 means?", choices: ["Moved permanently", "Temporary redirect", "OK", "Bad request"], answer: 0 },
+    { q: "Which protocol resolves IP to MAC on a LAN?", choices: ["ARP", "RARP", "ICMP", "DHCP"], answer: 0 },
+    { q: "Default DNS port?", choices: ["22", "53", "80", "123"], answer: 1 },
+    { q: "Which layer of OSI handles routing?", choices: ["Data Link", "Network", "Transport", "Session"], answer: 1 },
+    { q: "Which tool captures packets?", choices: ["ping", "traceroute", "tcpdump", "curl"], answer: 2 },
+    { q: "TLS provides…", choices: ["Only compression", "Confidentiality + integrity", "Only authentication", "Load balancing"], answer: 1 },
+    { q: "NAT primarily solves…", choices: ["DNS caching", "IPv4 exhaustion", "Packet loss", "MAC spoofing"], answer: 1 },
+    { q: "BGP is used between…", choices: ["Switches", "Autonomous systems", "Hosts in a LAN", "Applications"], answer: 1 },
+    { q: "HTTP method that is idempotent and has a body?", choices: ["GET", "POST", "PUT", "CONNECT"], answer: 2 },
+    { q: "MTU stands for…", choices: ["Max Transmission Unit", "Multi Traffic Unit", "Media Transport Unit", "Managed TCP Unit"], answer: 0 },
+    { q: "Which is used for reliable file transfer?", choices: ["UDP", "TCP", "ICMP", "ARP"], answer: 1 },
+  ],
+};
+
 export const CSE_DISCIPLINE_LABEL = "Computer Science";
 export function isCseDiscipline(d: string) {
   const x = d.toLowerCase();
