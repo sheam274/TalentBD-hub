@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
@@ -65,6 +65,7 @@ function CvBuilder() {
   const getFn = useServerFn(getMyCv);
   const saveFn = useServerFn(saveMyCv);
   const qc = useQueryClient();
+  const router = useRouter();
   const q = useQuery({ queryKey: ["my-cv"], queryFn: () => getFn() });
   const [style, setStyle] = useState<"standard" | "premium">("standard");
   const [data, setData] = useState<Payload>(empty);
@@ -78,13 +79,27 @@ function CvBuilder() {
 
   const save = useMutation({
     mutationFn: () => saveFn({ data: { selected_style: style, builder_payload: data as any } }),
-    onSuccess: async () => {
+    onSuccess: async (result) => {
       toast.success("CV saved");
-      // Force immediate refetch so the dashboard shows the updated profile
-      // even if realtime is delayed or the tab isn't focused.
+      // Write the saved profile into the shared dashboard cache immediately,
+      // then force a network fallback in case another dashboard query is active.
+      qc.setQueryData(["me"], (current: any) => ({
+        ...(current ?? {}),
+        profile: result.profile,
+      }));
+      qc.setQueryData(["my-cv"], (current: any) => ({
+        ...(current ?? {}),
+        user_id: result.profile.id,
+        selected_style: style,
+        builder_payload: data,
+        updated_at: result.cvUpdatedAt,
+      }));
       await Promise.all([
+        qc.invalidateQueries({ queryKey: ["me"] }),
+        qc.invalidateQueries({ queryKey: ["my-cv"] }),
         qc.refetchQueries({ queryKey: ["me"], type: "all" }),
         qc.refetchQueries({ queryKey: ["my-cv"], type: "all" }),
+        router.invalidate({ sync: true }),
       ]);
     },
     onError: (e: any) => toast.error(e.message),
