@@ -93,6 +93,11 @@ function Jobs() {
   const [activeSuggest, setActiveSuggest] = useState(-1);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
+    if (activeSuggest < 0 || typeof document === "undefined") return;
+    const el = document.getElementById(`job-suggest-${activeSuggest}`);
+    el?.scrollIntoView({ block: "nearest" });
+  }, [activeSuggest]);
+  useEffect(() => {
     if (typeof window === "undefined") return;
     const onDown = (e: MouseEvent) => {
       if (!searchBoxRef.current?.contains(e.target as Node)) setShowSuggest(false);
@@ -441,7 +446,7 @@ function Jobs() {
               .slice(0, 8);
             if (titles.length === 0) return null;
             return (
-              <ul id="job-search-suggestions" role="listbox" className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-white/40 bg-white/70 backdrop-blur-md shadow-lg">
+              <ul id="job-search-suggestions" role="listbox" className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-white/40 bg-white/70 backdrop-blur-md shadow-lg">
                 {titles.map((t, idx) => (
                   <li key={t} id={`job-suggest-${idx}`} role="option" aria-selected={activeSuggest === idx}>
                     <button
