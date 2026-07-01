@@ -59,6 +59,7 @@ const baseNav: NavItem[] = [
     children: [
       { to: "/career-advice", label: "Career advice", desc: "Guides & playbooks" },
       { to: "/interview-prep", label: "Interview prep", desc: "Practice + checklists" },
+      { to: "/learn/exam-prep", label: "IT Job Exam Prep", desc: "BB AD-IT, BCS, Big Tech quizzes" },
       { to: "/interview", label: "Give Interview", desc: "AI-graded live interviews" },
       { to: "/cv-builder", label: "CV Builder", desc: "Standard + Premium templates" },
       { to: "/cv-parser", label: "CV / ATS Parser", desc: "Match your CV to a job" },
