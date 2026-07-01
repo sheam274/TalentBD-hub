@@ -23,6 +23,8 @@ function OtpPage() {
   const [otp, setOtp] = useState("");
   const [busy, setBusy] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [fatalError, setFatalError] = useState<string | null>(null);
+  const [lastToken, setLastToken] = useState<string>("");
   const [cooldown, setCooldown] = useState(60);
 
   useEffect(() => {
@@ -31,29 +33,49 @@ function OtpPage() {
     return () => clearInterval(t);
   }, [cooldown]);
 
-  async function verify(e: React.FormEvent) {
-    e.preventDefault();
+  async function runVerify(token: string) {
     setBusy(true);
     setOtpError(null);
+    setFatalError(null);
+    setLastToken(token);
     try {
-      const { data, error } = await supabase.auth.verifyOtp({ email, token: otp, type: "signup" });
+      const { data, error } = await supabase.auth.verifyOtp({ email, token, type: "signup" });
       if (error) throw error;
-      // Confirm the session is active before navigating.
       let session = data.session ?? (await supabase.auth.getSession()).data.session;
       if (!session) {
         const { data: userData } = await supabase.auth.getUser();
-        if (!userData.user) throw new Error("Session not established. Please sign in.");
+        if (!userData.user) throw new Error("session_not_established");
       }
       const acct = data.user?.user_metadata?.account_type;
       toast.success("Email verified. Welcome!");
       nav({ to: acct === "employer" ? "/employer" : "/dashboard", replace: true });
     } catch (err: any) {
-      const lower = String(err?.message ?? "").toLowerCase();
-      setOtp("");
-      setOtpError(lower.includes("expired") ? "Code expired. Request a new one." : "Invalid code");
+      const msg = String(err?.message ?? "");
+      const lower = msg.toLowerCase();
+      if (lower.includes("expired")) {
+        setOtp("");
+        setOtpError("Code expired. Request a new one.");
+      } else if (lower.includes("invalid") || lower.includes("token") || lower.includes("otp")) {
+        setOtp("");
+        setOtpError("Invalid code. Please check and try again.");
+      } else if (lower.includes("session_not_established")) {
+        setFatalError("We verified the code but couldn't start your session. Please retry.");
+      } else {
+        setFatalError("Something went wrong. Please check your connection and retry.");
+      }
     } finally {
       setBusy(false);
     }
+  }
+
+  async function verify(e: React.FormEvent) {
+    e.preventDefault();
+    await runVerify(otp);
+  }
+
+  async function retry() {
+    if (!lastToken) return;
+    await runVerify(lastToken);
   }
 
   async function resend() {
@@ -106,6 +128,19 @@ function OtpPage() {
             <Link to="/auth" className="underline text-muted-foreground">Use a different email</Link>
           </div>
         </form>
+        {fatalError && (
+          <div role="alert" className="mt-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+            <p className="font-medium">{fatalError}</p>
+            <button
+              type="button"
+              onClick={retry}
+              disabled={busy || !lastToken}
+              className="mt-2 rounded-md border border-red-400 bg-white px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+            >
+              {busy ? "Retrying…" : "Retry"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
