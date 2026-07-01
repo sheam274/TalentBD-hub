@@ -92,6 +92,7 @@ function Jobs() {
   const [showSuggest, setShowSuggest] = useState(false);
   const [activeSuggest, setActiveSuggest] = useState(-1);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
     if (activeSuggest < 0 || typeof document === "undefined") return;
     const el = document.getElementById(`job-suggest-${activeSuggest}`);
