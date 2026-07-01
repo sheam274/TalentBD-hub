@@ -380,14 +380,41 @@
     color-adjust: exact !important;
   }
 
-  /* Avoid ugly breaks inside sections/cards and image blocks */
+  /* Keep the header (photo + name + title) intact on one page */
+  .cv-print-area > div > .relative > .grid:first-child,
+  .cv-print-area header {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Keep each CV section/card and its children together */
   .cv-print-area section,
   .cv-print-area .rounded-lg,
+  .cv-print-area .rounded-xl,
+  .cv-print-area article,
   .cv-print-area li,
-  .cv-print-area img { break-inside: avoid; page-break-inside: avoid; }
-  .cv-print-area h1, .cv-print-area h2, .cv-print-area h3 {
-    break-after: avoid; page-break-after: avoid;
+  .cv-print-area img,
+  .cv-print-area ul,
+  .cv-print-area figure { 
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
+
+  /* Keep section headings glued to their following content */
+  .cv-print-area h1,
+  .cv-print-area h2,
+  .cv-print-area h3,
+  .cv-print-area h4 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Prevent orphaned/widow lines mid-paragraph */
+  .cv-print-area p, .cv-print-area li { orphans: 3; widows: 3; }
 
   /* Make sure links render as plain text (no giant URL suffix) */
   .cv-print-area a { color: inherit !important; text-decoration: none !important; }
