@@ -406,7 +406,7 @@ function CvBuilder() {
         </div>
 
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <CvSheet bg={style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff"}>
+          <CvSheet paper={paper} bg={style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff"}>
             {style === "standard" ? <StandardCv d={data} /> : <PremiumCv d={data} theme={theme} />}
           </CvSheet>
         </div>
