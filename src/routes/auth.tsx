@@ -72,9 +72,9 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        setOtpSent(true);
-        setCooldown(60);
         toast.success("We sent a 6-digit code to your email.");
+        nav({ to: "/auth/otp", search: { email } });
+        return;
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
