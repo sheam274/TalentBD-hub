@@ -85,7 +85,7 @@ function Landing() {
     <div className="page-enter bg-background">
       {/* Hero — Ink Ambient Glow (premium dark) */}
       <section
-        className="relative flex min-h-[calc(100svh-var(--header-h,4rem))] w-full flex-col justify-center overflow-hidden px-5 pt-6 pb-10 sm:px-6 sm:pt-8 sm:pb-12 md:pt-8 md:pb-12 lg:pt-10 lg:pb-14"
+        className="relative flex min-h-[calc(100svh-var(--header-h,4rem))] w-full flex-col justify-center overflow-hidden px-5 pt-6 pb-6 sm:px-6 sm:pt-8 sm:pb-8 md:pt-8 md:pb-8 lg:pt-10 lg:pb-10"
         style={{
           background:
             "radial-gradient(1200px 600px at 12% 0%, rgba(255,182,6,0.22), transparent 60%)," +
@@ -241,8 +241,8 @@ function Landing() {
           </div>
 
           {/* Trust */}
-          <div className="mt-4 sm:mt-5 md:mt-6 w-full border-t border-[var(--eduma-ink)]/10 px-2 pt-3 sm:px-4 sm:pt-4 md:px-6 md:pt-5 text-center">
-            <p className="mb-2 sm:mb-3 md:mb-4 text-xs font-semibold uppercase tracking-widest leading-none text-[var(--eduma-ink)]">
+          <div className="mt-6 sm:mt-8 md:mt-10 w-full border-t border-[var(--eduma-ink)]/10 px-2 pt-4 sm:px-4 sm:pt-5 md:px-6 md:pt-6 text-center">
+            <p className="mb-3 sm:mb-4 md:mb-5 text-xs font-semibold uppercase tracking-widest leading-none text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
             <div className="mx-auto grid max-w-xl grid-cols-2 items-center gap-x-2 gap-y-2 leading-none sm:grid-cols-4 sm:gap-x-3 md:gap-x-4">
