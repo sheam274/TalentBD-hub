@@ -327,6 +327,15 @@ function Jobs() {
     const loc = location.trim().toLowerCase();
     const typeL = type.toLowerCase();
     const catL = category.toLowerCase();
+    // Infer experience level from a live job's title/description since
+    // external feeds don't expose a structured field. Keeps the filter
+    // strict — anything ambiguous is treated as Mid-level.
+    const inferExp = (j: any): "Entry-level" | "Mid-level" | "Senior" => {
+      const hay = `${j.title ?? ""} ${j.description ?? ""}`.toLowerCase();
+      if (/\b(senior|sr\.?|lead|principal|staff|head of|architect|manager|director)\b/.test(hay)) return "Senior";
+      if (/\b(junior|jr\.?|entry[- ]?level|intern(ship)?|graduate|trainee|apprentice|associate)\b/.test(hay)) return "Entry-level";
+      return "Mid-level";
+    };
     return (remoteQ.data ?? []).filter((j: any) => {
       if (remote === "remote" && !j.is_remote) return false;
       if (remote === "onsite" && j.is_remote) return false;
@@ -334,6 +343,7 @@ function Jobs() {
       if (typeL
           && !(j.job_type ?? "").toLowerCase().includes(typeL.replace("-", "_"))
           && !(j.job_type ?? "").toLowerCase().includes(typeL)) return false;
+      if (exp && inferExp(j) !== exp) return false;
       if (catL) {
         const catHay = `${j.category ?? ""} ${j.title ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
         const parts = catL.split(/[\s/&-]+/).filter(Boolean);
