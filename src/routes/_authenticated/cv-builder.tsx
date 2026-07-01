@@ -221,6 +221,7 @@ function CvBuilder() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => onPhotoFile(e.target.files?.[0] ?? null)} />
             </label>
           </div>
+          <BigTechChecklist d={data} />
           <Section title="Personal">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Full name" value={data.name} onChange={(v) => set("name", v)} />
