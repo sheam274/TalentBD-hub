@@ -162,10 +162,10 @@ function AuthPage() {
         </div>
 
         <form onSubmit={submit} className="space-y-3">
-          {mode === "signup" && (
+          {mode === "signup" && !otpSent && (
             <input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Full name" className="w-full rounded-md border px-3 py-2 text-sm" />
           )}
-          {mode === "signup" && accountType === "employer" && (
+          {mode === "signup" && !otpSent && accountType === "employer" && (
             <>
               <input value={companyName} onChange={(e) => setCompanyName(e.target.value)} required placeholder="Company name" className="w-full rounded-md border px-3 py-2 text-sm" />
               <input value={companyWebsite} onChange={(e) => setCompanyWebsite(e.target.value)} type="url" placeholder="Company website (optional)" className="w-full rounded-md border px-3 py-2 text-sm" />
@@ -179,9 +179,11 @@ function AuthPage() {
               type="email"
               placeholder={emailError ?? "Email"}
               aria-invalid={!!emailError}
+              readOnly={mode === "signup" && otpSent}
               className={`w-full rounded-md border px-3 py-2 text-sm ${emailError ? "border-red-500 placeholder:text-red-500" : ""}`}
             />
           </div>
+          {!(mode === "signup" && otpSent) && (
           <div>
             <input
               value={password}
@@ -194,8 +196,28 @@ function AuthPage() {
               className={`w-full rounded-md border px-3 py-2 text-sm ${passwordError ? "border-red-500 placeholder:text-red-500" : ""}`}
             />
           </div>
+          )}
+          {mode === "signup" && otpSent && (
+            <div>
+              <input
+                value={otp}
+                onChange={(e) => { setOtp(e.target.value.replace(/\D/g, "").slice(0, 6)); setOtpError(null); }}
+                required
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                placeholder={otpError ?? "Enter 6-digit code from email"}
+                aria-invalid={!!otpError}
+                className={`w-full rounded-md border px-3 py-2 text-sm tracking-widest ${otpError ? "border-red-500 placeholder:text-red-500" : ""}`}
+              />
+              <div className="mt-2 flex items-center justify-between text-xs">
+                <button type="button" onClick={resendOtp} disabled={busy} className="underline text-muted-foreground">Resend code</button>
+                <button type="button" onClick={() => { setOtpSent(false); setOtp(""); setOtpError(null); }} className="underline text-muted-foreground">Use a different email</button>
+              </div>
+            </div>
+          )}
           <button disabled={busy} className="w-full rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60" style={{ background: "var(--color-primary)", color: "var(--color-primary-foreground)" }}>
-            {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
+            {busy ? "…" : mode === "signin" ? "Sign in" : otpSent ? "Verify code" : "Create account"}
           </button>
           {formError && (
             <p role="alert" className="text-center text-sm text-red-600 font-medium">{formError}</p>
