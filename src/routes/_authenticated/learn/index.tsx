@@ -40,65 +40,82 @@ function LearnIndex() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
-      <div className="flex items-end justify-between flex-wrap gap-4">
-        <div className="min-w-0">
-          <h1 className="text-3xl sm:text-4xl font-extrabold">Learning <span className="text-gradient">tracks</span></h1>
-          <p className="mt-1 text-sm sm:text-base text-muted-foreground">Pick a discipline, watch the lessons, and earn a verified credential.</p>
-        </div>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1"><PlayCircle className="size-4" /> Video</span>
-          <span className="flex items-center gap-1"><BookOpen className="size-4" /> Docs</span>
-          <span className="flex items-center gap-1"><Award className="size-4" /> Cert</span>
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:px-6 page-enter">
+      <div className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-white via-white to-[color-mix(in_oklab,var(--color-primary)_8%,white)] p-6 sm:p-10 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)]">
+        <div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-[color-mix(in_oklab,var(--color-primary)_18%,transparent)] blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute -left-24 bottom-0 size-72 rounded-full bg-[color-mix(in_oklab,var(--color-accent)_20%,transparent)] blur-3xl" aria-hidden />
+        <div className="relative flex items-end justify-between flex-wrap gap-6">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-2 rounded-full border bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground backdrop-blur">
+              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" /> Curriculum · updated weekly
+            </span>
+            <h1 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight">Learning <span className="text-gradient">tracks</span></h1>
+            <p className="mt-2 max-w-xl text-sm sm:text-base text-muted-foreground leading-relaxed">Pick a discipline, watch the lessons, and earn a verified credential recruiters trust.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+            <span className="flex items-center gap-1.5 rounded-full border bg-white/70 px-3 py-1.5 shadow-sm backdrop-blur"><PlayCircle className="size-4" style={{ color: "var(--color-primary)" }} /> Video</span>
+            <span className="flex items-center gap-1.5 rounded-full border bg-white/70 px-3 py-1.5 shadow-sm backdrop-blur"><BookOpen className="size-4" style={{ color: "var(--color-primary)" }} /> Docs</span>
+            <span className="flex items-center gap-1.5 rounded-full border bg-white/70 px-3 py-1.5 shadow-sm backdrop-blur"><Award className="size-4" style={{ color: "var(--color-primary)" }} /> Cert</span>
+          </div>
         </div>
       </div>
 
-      {q.isLoading && <div className="mt-10 text-center text-muted-foreground">Loading tracks…</div>}
+      {q.isLoading && (
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-64 rounded-2xl border bg-gradient-to-br from-muted/60 to-muted/20 animate-pulse" />
+          ))}
+        </div>
+      )}
 
-      <div className="mt-10 space-y-14">
+      <div className="mt-12 space-y-16">
         {orderedGroups.map(([disc, list]) => {
           const meta = disciplineMeta[disciplineKey(disc)] ?? { label: disc, thumb: "thumb-cse", icon: "📚", blurb: "" };
           return (
             <section key={disc}>
               <ScrollReveal>
-                <div className="flex items-center gap-3">
-                  <div className={`${meta.thumb} thumb-grid flex size-14 items-center justify-center rounded-xl text-2xl shadow-lg`}>
+                <div className="flex items-center gap-4">
+                  <div className={`${meta.thumb} thumb-grid flex size-16 items-center justify-center rounded-2xl text-2xl shadow-[0_10px_30px_-10px_rgba(0,0,0,0.35)] ring-1 ring-white/40`}>
                     {meta.icon}
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold">{meta.label}</h2>
-                    <p className="text-sm text-muted-foreground">{meta.blurb} · {list.length} module{list.length === 1 ? "" : "s"}</p>
+                  <div className="min-w-0">
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{meta.label}</h2>
+                    <p className="text-sm text-muted-foreground">{meta.blurb} · <span className="font-medium text-foreground/80">{list.length} module{list.length === 1 ? "" : "s"}</span></p>
                   </div>
                 </div>
               </ScrollReveal>
-              <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {list.map((m, i) => (
                   <ScrollReveal key={m.id} delay={(i % 3) * 80}>
                     <Link
                       to="/learn/$discipline/$topic"
                       params={{ discipline: m.discipline, topic: m.section_slug }}
-                      className="lift glass group rounded-xl overflow-hidden flex flex-col h-full"
+                      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white shadow-[0_6px_20px_-10px_rgba(15,23,42,0.15)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_-20px_rgba(15,23,42,0.35)] hover:border-[color-mix(in_oklab,var(--color-primary)_40%,transparent)]"
                     >
-                      <div className={`${meta.thumb} thumb-grid relative h-36 overflow-hidden`}>
+                      <div className={`${meta.thumb} thumb-grid relative h-40 overflow-hidden`}>
                         <YouTubeThumb
                           url={m.video_url}
                           alt={`${m.title} thumbnail`}
-                          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-out group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <PlayCircle className="size-14 text-white drop-shadow-lg transition group-hover:scale-110" />
+                          <PlayCircle className="size-16 text-white/90 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)] transition duration-300 group-hover:scale-110 group-hover:text-white" />
                         </div>
-                        <span className="absolute top-2 right-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
+                        <span className="absolute top-3 right-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-md ring-1 ring-white/10">
                           {meta.icon} {meta.label}
                         </span>
                       </div>
-                      <div className="p-5 flex-1 flex flex-col">
-                        <h3 className="font-semibold leading-tight">{m.title}</h3>
-                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{m.description}</p>
-                        <div className="mt-auto pt-3 flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">Free · Certifiable</span>
-                          <span className="font-semibold" style={{ color: "var(--color-primary)" }}>Start →</span>
+                      <div className="flex flex-1 flex-col p-5 sm:p-6">
+                        <h3 className="font-semibold leading-snug tracking-tight text-[15px] sm:text-base transition-colors group-hover:text-[var(--color-primary)]">{m.title}</h3>
+                        <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">{m.description}</p>
+                        <div className="mt-auto flex items-center justify-between pt-4 text-xs">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/60 px-2.5 py-1 font-medium text-muted-foreground">
+                            <Award className="size-3" /> Free · Certifiable
+                          </span>
+                          <span className="inline-flex items-center gap-1 font-semibold transition-transform duration-300 group-hover:translate-x-1" style={{ color: "var(--color-primary)" }}>
+                            Start <span aria-hidden>→</span>
+                          </span>
                         </div>
                       </div>
                     </Link>
