@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
@@ -6,6 +6,7 @@ import { getExamQuiz } from "@/lib/learning.functions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Award, Filter, RefreshCw, CheckCircle2, XCircle } from "lucide-react";
 
 type ExamId = "bb-ad-it" | "govt-it" | "big-tech" | "all";
@@ -55,6 +56,7 @@ export const Route = createFileRoute("/_authenticated/learn/exam-prep")({
 function ExamPrep() {
   const { exam } = Route.useSearch();
   const cfg = EXAMS[exam];
+  const navigate = useNavigate({ from: Route.fullPath });
   const fn = useServerFn(getExamQuiz);
   const q = useQuery({
     queryKey: ["exam-quiz", exam],
@@ -90,13 +92,31 @@ function ExamPrep() {
         <p className="mt-2 max-w-2xl text-sm sm:text-base text-muted-foreground">{cfg.blurb}</p>
 
         <div className="mt-5 flex flex-wrap gap-2">
+          <div className="w-full sm:w-72">
+            <Select
+              value={exam}
+              onValueChange={(v) => {
+                setAnswers({}); setSubmitted(false); setSeed((s) => s + 1);
+                navigate({ search: { exam: v as ExamId } });
+              }}
+            >
+              <SelectTrigger aria-label="Exam type" className="bg-white">
+                <SelectValue placeholder="Choose exam type" />
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(EXAMS) as ExamId[]).map((id) => (
+                  <SelectItem key={id} value={id}>{EXAMS[id].label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           {(Object.keys(EXAMS) as ExamId[]).map((id) => (
             <Link
               key={id}
               to="/learn/exam-prep"
               search={{ exam: id }}
               onClick={() => { setAnswers({}); setSubmitted(false); setSeed((s) => s + 1); }}
-              className={`rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
+              className={`hidden sm:inline-flex rounded-full border px-3.5 py-1.5 text-sm font-medium transition ${
                 id === exam
                   ? "bg-[var(--color-primary)] text-white border-transparent shadow"
                   : "bg-white hover:bg-muted"
