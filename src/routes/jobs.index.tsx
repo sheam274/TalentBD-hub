@@ -90,6 +90,7 @@ function Jobs() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   // Search only runs when the user presses Enter or clicks the Search button.
   const [showSuggest, setShowSuggest] = useState(false);
+  const [activeSuggest, setActiveSuggest] = useState(-1);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -378,17 +379,46 @@ function Jobs() {
       {/* Filters */}
       <div className="mt-4 glass rounded-xl p-3 sm:p-4 grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
         <div ref={searchBoxRef} className="sm:col-span-2 relative min-w-0">
+          {(() => { return null; })()}
           <div className="flex gap-2">
             <input
               value={search}
-              onChange={(e) => { setSearch(e.target.value); setShowSuggest(true); }}
+              onChange={(e) => { setSearch(e.target.value); setShowSuggest(true); setActiveSuggest(-1); }}
               onFocus={() => setShowSuggest(true)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") { e.preventDefault(); setDebouncedSearch(search.trim()); setShowSuggest(false); }
-                if (e.key === "Escape") setShowSuggest(false);
+                const q = search.trim().toLowerCase();
+                const suggestions = q.length >= 1
+                  ? Array.from(new Set([
+                      ...all.map((j: any) => j.job_title as string),
+                      ...((remoteQ.data ?? []) as any[]).map((j) => j.title as string),
+                    ].filter(Boolean)))
+                      .filter((t) => t.toLowerCase().includes(q))
+                      .slice(0, 8)
+                  : [];
+                if (e.key === "ArrowDown" && suggestions.length) {
+                  e.preventDefault(); setShowSuggest(true);
+                  setActiveSuggest((i) => (i + 1) % suggestions.length);
+                } else if (e.key === "ArrowUp" && suggestions.length) {
+                  e.preventDefault(); setShowSuggest(true);
+                  setActiveSuggest((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  const pick = activeSuggest >= 0 && suggestions[activeSuggest] ? suggestions[activeSuggest] : search.trim();
+                  setSearch(pick);
+                  setDebouncedSearch(pick);
+                  setShowSuggest(false);
+                  setActiveSuggest(-1);
+                } else if (e.key === "Escape") {
+                  setShowSuggest(false); setActiveSuggest(-1);
+                }
               }}
               placeholder="Search job title, e.g. network engineer"
               aria-label="Search jobs"
+              role="combobox"
+              aria-expanded={showSuggest}
+              aria-autocomplete="list"
+              aria-controls="job-search-suggestions"
+              aria-activedescendant={activeSuggest >= 0 ? `job-suggest-${activeSuggest}` : undefined}
               className="flex-1 min-w-0 rounded-md border px-3 py-2 text-sm bg-white/60"
             />
             <button
@@ -411,14 +441,15 @@ function Jobs() {
               .slice(0, 8);
             if (titles.length === 0) return null;
             return (
-              <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-white/40 bg-white/70 backdrop-blur-md shadow-lg">
-                {titles.map((t) => (
-                  <li key={t}>
+              <ul id="job-search-suggestions" role="listbox" className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-white/40 bg-white/70 backdrop-blur-md shadow-lg">
+                {titles.map((t, idx) => (
+                  <li key={t} id={`job-suggest-${idx}`} role="option" aria-selected={activeSuggest === idx}>
                     <button
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => { setSearch(t); setDebouncedSearch(t); setShowSuggest(false); }}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-white/80"
+                      onMouseEnter={() => setActiveSuggest(idx)}
+                      onClick={() => { setSearch(t); setDebouncedSearch(t); setShowSuggest(false); setActiveSuggest(-1); }}
+                      className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm ${activeSuggest === idx ? "bg-white/90" : "hover:bg-white/80"}`}
                     >
                       <SearchIcon className="size-3.5 text-muted-foreground" />
                       <span className="truncate">{t}</span>
