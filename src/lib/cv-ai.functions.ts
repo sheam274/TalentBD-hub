@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { loggedFetch, logEvent } from "./server-logger";
 
 const schema = z.object({
   field: z.enum(["skills", "coursework", "summary", "experience_bullets", "project_description", "awards", "certifications", "metrics"]),
@@ -35,7 +36,8 @@ export const suggestCvField = createServerFn({ method: "POST" })
     const system = `You are a big-tech resume coach. Reply ONLY with a JSON object: {"suggestions": string[]}. No prose, no markdown fences.`;
     const user = `${FIELD_PROMPT[data.field]}\n\nCandidate context (JSON):\n${JSON.stringify(data.context ?? {}, null, 2)}`;
 
-    const res = await fetch(url, {
+    const provider = useDirect ? "gemini-direct" : "lovable-ai-gateway";
+    const res = await loggedFetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -46,10 +48,10 @@ export const suggestCvField = createServerFn({ method: "POST" })
         ],
         response_format: { type: "json_object" },
       }),
-    });
+    }, { kind: "ai", op: "cv.suggest", provider, model, extra: { field: data.field } });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      console.error("cv-ai error", res.status, t);
+      logEvent("ai", "error", { op: "cv.suggest", provider, model, field: data.field, status: res.status, body: t.slice(0, 300) });
       return { suggestions: [] as string[], error: res.status === 429 ? "Rate limited. Try again shortly." : "AI unavailable." };
     }
     const json = await res.json();
