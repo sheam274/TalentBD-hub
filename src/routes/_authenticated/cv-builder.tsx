@@ -517,12 +517,19 @@ function PremiumCv({ d }: { d: Payload }) {
             )}
 
             {d.projects.length > 0 && (
-              <TopcvCard header="ACTIVITIES">
+              <TopcvCard header="PROJECT SHOWCASE">
                 {d.projects.map((p) => (
                   <div key={p.id} className="mb-3 last:mb-0 flex gap-2.5">
                     <PersonStanding className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
                     <div className="flex-1">
-                      <div className="font-semibold">{p.name}{p.link && <span className="ml-2 font-normal text-[11px] text-black/70">{p.link}</span>}</div>
+                      <div className="font-semibold">
+                        {p.name}
+                        {p.link && (
+                          <a href={p.link} target="_blank" rel="noreferrer" className="ml-2 font-normal text-[11px] text-black/70 underline underline-offset-2">
+                            {p.link}
+                          </a>
+                        )}
+                      </div>
                       {p.description && <p className="text-[12px]">{p.description}</p>}
                     </div>
                   </div>
