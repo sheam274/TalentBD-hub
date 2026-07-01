@@ -67,12 +67,12 @@ function CvBuilder() {
   const qc = useQueryClient();
   const router = useRouter();
   const q = useQuery({ queryKey: ["my-cv"], queryFn: () => getFn() });
-  const [style, setStyle] = useState<"standard" | "premium">("standard");
+  const [style, setStyle] = useState<"standard" | "premium">("premium");
   const [data, setData] = useState<Payload>(empty);
 
   useEffect(() => {
     if (q.data) {
-      setStyle((q.data.selected_style as any) ?? "standard");
+      setStyle((q.data.selected_style as any) ?? "premium");
       setData(migrate(q.data.builder_payload));
     }
   }, [q.data]);
