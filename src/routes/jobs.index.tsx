@@ -256,6 +256,15 @@ function Jobs() {
       .map((x) => x.j);
   }, [all, debouncedSearch, category, location, exp, type, remote]);
 
+  // Tokens used for on-screen match highlighting. We highlight both the raw
+  // token and its stem so "engineers" in the query still marks "engineer" in
+  // a title, matching the filter behavior above.
+  const highlightTokens = useMemo(() => {
+    const raw = debouncedSearch.trim().toLowerCase();
+    const base = raw.split(/[\s,]+/).filter((t) => t.length >= 2);
+    return Array.from(new Set([...base, ...base.map(stem)])).filter((t) => t.length >= 2);
+  }, [debouncedSearch]);
+
   const featured = filtered.filter((j: any) => j.is_featured);
   const rest = filtered.filter((j: any) => !j.is_featured);
   const counts: Record<string, number> = {};
