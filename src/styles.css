@@ -422,6 +422,16 @@
 
   /* Make sure links render as plain text (no giant URL suffix) */
   .cv-print-area a { color: inherit !important; text-decoration: none !important; }
+
+  /* Lock hero subtitle typography so PDF export matches the preview */
+  .cv-print-area .cv-hero-subtitle {
+    font-size: 12px !important;
+    letter-spacing: 0.22em !important;
+    line-height: 1.15 !important;
+    margin-top: 8px !important;
+    margin-right: -0.22em !important;
+    font-weight: 600 !important;
+  }
 }
 
 @layer utilities {
