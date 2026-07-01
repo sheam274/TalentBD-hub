@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { adminListAuditLogs } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/audit")({
@@ -118,8 +118,8 @@ function AuditPage() {
               {rows.map((r: any) => {
                 const isOpen = expanded === r.id;
                 return (
-                  <>
-                    <tr key={r.id} className="border-t align-top">
+                  <Fragment key={r.id}>
+                    <tr className="border-t align-top">
                       <td className="px-3 py-2 whitespace-nowrap">{new Date(r.occurred_at).toLocaleString()}</td>
                       <td className="px-3 py-2">{r.table_name}</td>
                       <td className="px-3 py-2">
@@ -141,7 +141,7 @@ function AuditPage() {
                       </td>
                     </tr>
                     {isOpen ? (
-                      <tr key={`${r.id}-detail`} className="border-t bg-muted/20">
+                      <tr className="border-t bg-muted/20">
                         <td colSpan={7} className="px-3 py-2">
                           <div className="grid gap-3 sm:grid-cols-2">
                             <div>
@@ -160,7 +160,7 @@ function AuditPage() {
                         </td>
                       </tr>
                     ) : null}
-                  </>
+                  </Fragment>
                 );
               })}
             </tbody>
