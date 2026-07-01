@@ -744,7 +744,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
           </div>
 
           {/* Sidebar */}
-          <div className="col-span-1 space-y-4 min-w-0">
+          <div className="col-span-2 space-y-4 min-w-0">
             {d.education.length > 0 && (
               <TopcvCard header="EDUCATION" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
                 <div className="space-y-2.5">
