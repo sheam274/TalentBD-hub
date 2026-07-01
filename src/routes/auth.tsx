@@ -137,19 +137,46 @@ function AuthPage() {
   async function google() {
     const origin = window.location.origin;
     const isLovableHost = /\.lovable\.(app|dev)$/.test(window.location.hostname);
-    // Lovable broker only works inside the Lovable preview iframe. On localhost
-    // (or any self-hosted domain) fall back to Supabase's own OAuth flow so
-    // Google sign-in stays functional during local development.
-    if (isLovableHost) {
-      const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
-      if (res.error) toast.error(res.error.message ?? "Google sign-in failed");
-      return;
+    const flow = isLovableHost ? "lovable-broker" : "supabase-pkce";
+    console.groupCollapsed(`[auth] Google sign-in (${flow})`);
+    console.log("origin:", origin);
+    console.log("hostname:", window.location.hostname);
+    console.log("href:", window.location.href);
+    console.log("supabaseUrl:", import.meta.env.VITE_SUPABASE_URL);
+    try {
+      if (isLovableHost) {
+        console.log("→ lovable.auth.signInWithOAuth('google', { redirect_uri:", origin, "})");
+        const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
+        console.log("← result:", res);
+        if (res.error) {
+          console.error("[auth] lovable OAuth error:", res.error);
+          toast.error(res.error.message ?? "Google sign-in failed");
+        }
+        return;
+      }
+      console.log("→ supabase.auth.signInWithOAuth({ provider:'google', redirectTo:", origin, "})");
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: origin, skipBrowserRedirect: false },
+      });
+      console.log("← data:", data);
+      if (error) {
+        console.error("[auth] supabase OAuth error:", {
+          name: error.name,
+          message: error.message,
+          status: (error as any).status,
+          code: (error as any).code,
+        });
+        toast.error(error.message ?? "Google sign-in failed");
+      } else if (data?.url) {
+        console.log("[auth] redirecting to provider:", data.url);
+      }
+    } catch (err: any) {
+      console.error("[auth] Google sign-in threw:", err);
+      toast.error(err?.message ?? "Google sign-in failed");
+    } finally {
+      console.groupEnd();
     }
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: origin },
-    });
-    if (error) toast.error(error.message ?? "Google sign-in failed");
   }
 
   return (
