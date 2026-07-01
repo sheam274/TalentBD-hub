@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
@@ -64,6 +64,7 @@ function migrate(p: any): Payload {
 function CvBuilder() {
   const getFn = useServerFn(getMyCv);
   const saveFn = useServerFn(saveMyCv);
+  const qc = useQueryClient();
   const q = useQuery({ queryKey: ["my-cv"], queryFn: () => getFn() });
   const [style, setStyle] = useState<"standard" | "premium">("standard");
   const [data, setData] = useState<Payload>(empty);
@@ -77,7 +78,11 @@ function CvBuilder() {
 
   const save = useMutation({
     mutationFn: () => saveFn({ data: { selected_style: style, builder_payload: data as any } }),
-    onSuccess: () => toast.success("CV saved"),
+    onSuccess: () => {
+      toast.success("CV saved");
+      qc.invalidateQueries({ queryKey: ["me"] });
+      qc.invalidateQueries({ queryKey: ["my-cv"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
