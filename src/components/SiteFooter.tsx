@@ -71,7 +71,7 @@ const columns: Col[] = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-eduma-ink-2 bg-eduma-ink font-sans text-white/70">
+    <footer className="border-t border-eduma-ink-2 bg-eduma-ink font-sans text-white/70">
       <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
         <div className="grid gap-8 md:grid-cols-[1.2fr_3fr]">
           <div>
