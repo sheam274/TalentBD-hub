@@ -4,16 +4,19 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
 import { toast } from "sonner";
-import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding, Award, BadgeCheck, Code2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-builder")({
   head: () => ({ meta: [{ title: "CV Builder — TalentBD" }, { name: "description", content: "Build a professional, print-ready CV with standard or premium layouts." }] }),
   component: CvBuilder,
 });
 
-type Experience = { id: string; role: string; company: string; period: string; bullets: string };
-type Education = { id: string; degree: string; school: string; period: string; details: string };
-type Project = { id: string; name: string; link: string; description: string };
+type Experience = { id: string; role: string; company: string; period: string; bullets: string; tech?: string };
+type Education = { id: string; degree: string; school: string; period: string; details: string; gpa?: string };
+type Project = { id: string; name: string; link: string; description: string; tech?: string };
+type Certification = { id: string; name: string; issuer: string; year: string };
+type Award = { id: string; title: string; detail: string; year: string };
+type Coding = { id: string; platform: string; handle: string; link: string; rating: string };
 
 type Payload = {
   name: string;
@@ -28,9 +31,13 @@ type Payload = {
   summary: string;
   skills: string;
   languages: string;
+  coursework: string;
   experience: Experience[];
   education: Education[];
   projects: Project[];
+  certifications: Certification[];
+  awards: Award[];
+  coding: Coding[];
 };
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -38,8 +45,9 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 const empty: Payload = {
   name: "", title: "", email: "", phone: "", location: "",
   website: "", linkedin: "", github: "", photo: "",
-  summary: "", skills: "", languages: "",
+  summary: "", skills: "", languages: "", coursework: "",
   experience: [], education: [], projects: [],
+  certifications: [], awards: [], coding: [],
 };
 
 function migrate(p: any): Payload {
@@ -58,6 +66,9 @@ function migrate(p: any): Payload {
       ? [{ id: uid(), degree: "", school: "", period: "", details: p.education }]
       : [],
     projects: Array.isArray(p.projects) ? p.projects : [],
+    certifications: Array.isArray(p.certifications) ? p.certifications : [],
+    awards: Array.isArray(p.awards) ? p.awards : [],
+    coding: Array.isArray(p.coding) ? p.coding : [],
   };
 }
 
