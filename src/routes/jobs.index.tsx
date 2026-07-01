@@ -90,6 +90,7 @@ function Jobs() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   // Search only runs when the user presses Enter or clicks the Search button.
   const [showSuggest, setShowSuggest] = useState(false);
+  const [activeSuggest, setActiveSuggest] = useState(-1);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (typeof window === "undefined") return;
