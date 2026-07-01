@@ -41,14 +41,93 @@ export const getMyApplicationForJob = createServerFn({ method: "GET" })
   });
 
 export const listCompaniesPublic = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await publicClient.from("companies").select("*").order("name");
+  const [{ data: dbCos, error }, { data: ext }] = await Promise.all([
+    publicClient.from("companies").select("*").order("name"),
+    publicClient
+      .from("external_jobs_cache")
+      .select("company, company_logo, location, source")
+      .order("company"),
+  ]);
   if (error) throw new Error(error.message);
-  return data ?? [];
+  const list = [...(dbCos ?? [])];
+  const seen = new Set(list.map((c: any) => (c.name || "").toLowerCase()));
+  const grouped = new Map<string, { name: string; logo: string | null; location: string | null; count: number; source: string }>();
+  for (const row of ext ?? []) {
+    const name = (row as any).company?.trim();
+    if (!name || seen.has(name.toLowerCase())) continue;
+    const key = name.toLowerCase();
+    const prev = grouped.get(key);
+    grouped.set(key, {
+      name,
+      logo: prev?.logo ?? (row as any).company_logo ?? null,
+      location: prev?.location ?? (row as any).location ?? null,
+      count: (prev?.count ?? 0) + 1,
+      source: (row as any).source,
+    });
+  }
+  for (const g of grouped.values()) {
+    const slug =
+      "ext-" +
+      g.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+    list.push({
+      id: slug,
+      name: g.name,
+      slug,
+      logo_url: g.logo,
+      location: g.location,
+      industry: null,
+      website: null,
+      description: `Live openings sourced from ${g.source}. Click through to view roles.`,
+      is_external: true,
+    } as any);
+  }
+  return list.sort((a: any, b: any) => a.name.localeCompare(b.name));
 });
 
 export const getCompanyBySlug = createServerFn({ method: "GET" })
   .inputValidator((i: unknown) => z.object({ slug: z.string().min(1).max(120) }).parse(i))
   .handler(async ({ data }) => {
+    if (data.slug.startsWith("ext-")) {
+      const { data: rows } = await publicClient
+        .from("external_jobs_cache")
+        .select("*")
+        .order("publication_date", { ascending: false });
+      const matches = (rows ?? []).filter(
+        (r: any) =>
+          "ext-" + r.company.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") ===
+          data.slug,
+      );
+      if (matches.length === 0) return null;
+      const first: any = matches[0];
+      return {
+        company: {
+          id: data.slug,
+          name: first.company,
+          slug: data.slug,
+          logo_url: first.company_logo,
+          location: first.location,
+          industry: null,
+          website: null,
+          description: `Live openings from ${first.source}.`,
+          is_external: true,
+        },
+        jobs: matches.map((m: any) => ({
+          id: m.external_id,
+          job_title: m.title,
+          location: m.location,
+          job_type: m.job_type,
+          experience_level: null,
+          is_remote: m.is_remote,
+          is_featured: false,
+          salary_range: m.salary,
+          external_url: m.url,
+          source: m.source,
+        })),
+      };
+    }
     const { data: company, error } = await publicClient
       .from("companies")
       .select("*")
