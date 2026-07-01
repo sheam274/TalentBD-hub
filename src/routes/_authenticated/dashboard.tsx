@@ -77,6 +77,7 @@ function Dashboard() {
         <div className="crossover grid grid-cols-2 gap-3 rounded-2xl border bg-white p-4 shadow-sm md:grid-cols-4">
           <QuickAction to="/learn" label="Start learning" />
           <QuickAction to="/assessments" label="Take assessment" />
+          <QuickAction to="/learn/exam-prep?exam=bb-ad-it" label="Exam prep" />
           <QuickAction to="/cv-builder" label="Build CV" />
           <QuickAction to="/cv-parser" label="Parse resume" />
         </div>
