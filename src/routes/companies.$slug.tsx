@@ -73,21 +73,36 @@ function CompanyDetail() {
           <p className="mt-3 text-sm text-muted-foreground">No live openings right now — check back soon.</p>
         )}
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {jobs.map((j: any) => (
-            <Link key={j.id} to="/jobs/$jobId" params={{ jobId: j.id }} className="lift glass rounded-xl p-5 block">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="font-semibold hover:underline">{j.job_title}</h3>
-                {j.is_featured && <span className="badge-featured">Hot</span>}
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {[j.location, j.job_type, j.experience_level].filter(Boolean).join(" · ")}
-                {j.is_remote && " · Remote"}
-              </p>
-              {j.salary_range && (
-                <p className="mt-2 text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary_range}</p>
-              )}
-            </Link>
-          ))}
+          {jobs.map((j: any) => {
+            const inner = (
+              <>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-semibold hover:underline">{j.job_title}</h3>
+                  {j.is_featured && <span className="badge-featured">Hot</span>}
+                  {j.source && <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{j.source}</span>}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {[j.location, j.job_type, j.experience_level].filter(Boolean).join(" · ")}
+                  {j.is_remote && " · Remote"}
+                </p>
+                {j.salary_range && (
+                  <p className="mt-2 text-sm font-medium" style={{ color: "var(--color-primary)" }}>{j.salary_range}</p>
+                )}
+              </>
+            );
+            if (j.external_url) {
+              return (
+                <a key={j.id} href={j.external_url} target="_blank" rel="noreferrer" className="lift glass rounded-xl p-5 block">
+                  {inner}
+                </a>
+              );
+            }
+            return (
+              <Link key={j.id} to="/jobs/$jobId" params={{ jobId: j.id }} className="lift glass rounded-xl p-5 block">
+                {inner}
+              </Link>
+            );
+          })}
         </div>
       </section>
     </div>
