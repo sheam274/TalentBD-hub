@@ -867,7 +867,7 @@ function IconBadge({ children, color }: { children: React.ReactNode; color: stri
  * viewports we scale the sheet down with `transform: scale()` to fit the
  * available width; print CSS resets the transform so PDFs are full-size.
  */
-function CvSheet({ children, bg = "#ffffff" }: { children: React.ReactNode; bg?: string }) {
+function CvSheet({ children, bg = "#ffffff", paper = "a4" }: { children: React.ReactNode; bg?: string; paper?: "a4" | "letter" }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const A4_W = 794;
