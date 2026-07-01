@@ -307,6 +307,7 @@ function InterviewPrep() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link to="/cv-builder" className="rounded-md px-4 py-2 text-sm font-semibold text-white" style={{ background: "var(--color-primary)" }}>Polish your CV</Link>
             <Link to="/jobs" className="rounded-md border bg-white/60 px-4 py-2 text-sm font-semibold">Apply to jobs</Link>
+            <Link to="/interview-prep/mock" className="rounded-md border bg-white/60 px-4 py-2 text-sm font-semibold">Start timed mock ↗</Link>
           </div>
         </div>
       </ScrollReveal>
