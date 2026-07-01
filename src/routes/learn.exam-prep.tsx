@@ -40,7 +40,7 @@ const EXAMS: Record<ExamId, { label: string; blurb: string; slugs: string[] }> =
 
 const EXAM_IDS: ExamId[] = ["bb-ad-it", "govt-it", "big-tech", "all"];
 
-export const Route = createFileRoute("/_authenticated/learn/exam-prep")({
+export const Route = createFileRoute("/learn/exam-prep")({
   validateSearch: (search: Record<string, unknown>): { exam: ExamId } => {
     const raw = search.exam;
     const exam = EXAM_IDS.includes(raw as ExamId) ? (raw as ExamId) : "bb-ad-it";
