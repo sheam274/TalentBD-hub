@@ -151,7 +151,6 @@ function CvBuilder() {
               <Input label="Website" value={data.website} onChange={(v) => set("website", v)} />
               <Input label="LinkedIn" value={data.linkedin} onChange={(v) => set("linkedin", v)} />
               <Input label="GitHub" value={data.github} onChange={(v) => set("github", v)} />
-              <Input label="Photo URL (optional)" value={data.photo} onChange={(v) => set("photo", v)} className="sm:col-span-2" />
             </div>
           </Section>
 
