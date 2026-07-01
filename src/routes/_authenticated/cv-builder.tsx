@@ -284,9 +284,9 @@ function CvBuilder() {
         </div>
 
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <div className="cv-print-area rounded-xl border bg-white p-4 sm:p-6 md:p-8 shadow-sm overflow-x-auto">
+          <CvSheet>
             {style === "standard" ? <StandardCv d={data} /> : <PremiumCv d={data} />}
-          </div>
+          </CvSheet>
         </div>
       </div>
     </div>
