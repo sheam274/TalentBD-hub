@@ -447,7 +447,7 @@ function Jobs() {
           <h2 className="text-lg font-semibold flex items-center gap-2"><Star className="size-4 text-amber-500" /> Featured / Hot jobs</h2>
           <div className="mt-3 grid gap-4 grid-cols-1 md:grid-cols-2">
             {featured.map((j: any, i: number) => (
-              <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
+              <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} highlightTokens={highlightTokens} /></ScrollReveal>
             ))}
           </div>
         </section>
@@ -464,11 +464,11 @@ function Jobs() {
         </h2>
         <div className="mt-3 grid gap-4 grid-cols-1 md:grid-cols-2">
           {rest.map((j: any, i: number) => (
-            <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
+            <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} highlightTokens={highlightTokens} /></ScrollReveal>
           ))}
           {liveForOpenPositions.map((j: any, i: number) => (
             <ScrollReveal key={`live-${j.id}`} delay={(i % 4) * 60}>
-              <LiveJobCard j={j} onOpen={openExternalJob} />
+              <LiveJobCard j={j} onOpen={openExternalJob} highlightTokens={highlightTokens} />
             </ScrollReveal>
           ))}
           {filtered.length === 0 && liveForOpenPositions.length === 0 && (
