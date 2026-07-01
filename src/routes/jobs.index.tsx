@@ -554,7 +554,7 @@ function Jobs() {
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold leading-tight line-clamp-2 break-words">{j.title}</h3>
+                    <h3 className="font-semibold leading-tight line-clamp-2 break-words"><HighlightedTitle text={j.title} tokens={highlightTokens} /></h3>
                     <p className="text-xs text-muted-foreground truncate">{j.company}</p>
                   </div>
                   <ExternalLink className="size-4 shrink-0 text-muted-foreground" />
@@ -613,7 +613,7 @@ function Jobs() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-xl font-bold">{j.job_title}</h3>
+                    <h3 className="text-xl font-bold"><HighlightedTitle text={j.job_title} tokens={highlightTokens} /></h3>
                     {j.is_featured && <span className="badge-featured">Hot</span>}
                     {j.is_live && <span className="badge-live">Live</span>}
                   </div>
@@ -749,7 +749,7 @@ function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => v
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold leading-tight line-clamp-2 break-words">{j.title}</h3>
+          <h3 className="font-semibold leading-tight line-clamp-2 break-words"><HighlightedTitle text={j.title} tokens={highlightTokens} /></h3>
           <p className="text-xs text-muted-foreground truncate">{j.company}</p>
         </div>
         <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
