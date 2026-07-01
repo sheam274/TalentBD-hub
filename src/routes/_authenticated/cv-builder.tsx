@@ -571,6 +571,48 @@ function IconBadge({ children, color }: { children: React.ReactNode; color: stri
   );
 }
 
+/**
+ * CvSheet — renders children at a fixed A4 size (794 × 1123 px @ 96dpi) so the
+ * template looks pixel-identical on every device and in print. On smaller
+ * viewports we scale the sheet down with `transform: scale()` to fit the
+ * available width; print CSS resets the transform so PDFs are full-size.
+ */
+function CvSheet({ children }: { children: React.ReactNode }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const A4_W = 794;
+  const A4_H = 1123;
+
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.clientWidth;
+      setScale(Math.min(1, w / A4_W));
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div ref={wrapRef} className="cv-sheet-wrap w-full" style={{ height: A4_H * scale }}>
+      <div
+        className="cv-print-area bg-white shadow-sm border rounded-xl overflow-hidden"
+        style={{
+          width: A4_W,
+          minHeight: A4_H,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function CvSection({ h, children }: { h: string; children: React.ReactNode }) {
   return (
     <section className="mt-3">
