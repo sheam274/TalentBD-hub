@@ -36,10 +36,17 @@ function OtpPage() {
     setBusy(true);
     setOtpError(null);
     try {
-      const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "signup" });
+      const { data, error } = await supabase.auth.verifyOtp({ email, token: otp, type: "signup" });
       if (error) throw error;
+      // Confirm the session is active before navigating.
+      let session = data.session ?? (await supabase.auth.getSession()).data.session;
+      if (!session) {
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData.user) throw new Error("Session not established. Please sign in.");
+      }
+      const acct = data.user?.user_metadata?.account_type;
       toast.success("Email verified. Welcome!");
-      nav({ to: "/dashboard" });
+      nav({ to: acct === "employer" ? "/employer" : "/dashboard", replace: true });
     } catch (err: any) {
       const lower = String(err?.message ?? "").toLowerCase();
       setOtp("");
