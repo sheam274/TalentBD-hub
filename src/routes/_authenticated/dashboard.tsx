@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { getMyProfile } from "@/lib/profile.functions";
 import { listMyCredentials } from "@/lib/assessments.functions";
 import { listJobsPublic, listMyApplications } from "@/lib/jobs.functions";
@@ -13,6 +15,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const qc = useQueryClient();
   const profileFn = useServerFn(getMyProfile);
   const credsFn = useServerFn(listMyCredentials);
   const jobsFn = useServerFn(listJobsPublic);
@@ -23,6 +26,22 @@ function Dashboard() {
   const jobs = useQuery({ queryKey: ["jobs"], queryFn: () => jobsFn() });
   const apps = useQuery({ queryKey: ["my-apps"], queryFn: () => appsFn() });
   const cv = useQuery({ queryKey: ["my-cv"], queryFn: () => cvFn() });
+
+  useEffect(() => {
+    const uid = p?.id ?? profile.data?.profile?.id;
+    if (!uid) return;
+    const channel = supabase
+      .channel(`dashboard-${uid}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: `id=eq.${uid}` }, () => {
+        qc.invalidateQueries({ queryKey: ["me"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "cv_records", filter: `user_id=eq.${uid}` }, () => {
+        qc.invalidateQueries({ queryKey: ["my-cv"] });
+        qc.invalidateQueries({ queryKey: ["me"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [qc, profile.data?.profile?.id, p?.id]);
 
   const p = profile.data?.profile;
   const isAdmin = profile.data?.isAdmin;
