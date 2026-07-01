@@ -50,9 +50,9 @@ function Parser() {
   const analyze = useMutation({
     mutationFn: () => analyzeFn({ data: {
       cvText: text,
-      jobTitle: selectedJob?.title ?? "",
+      jobTitle: selectedJob?.job_title ?? "",
       jobCompany: selectedJob?.company ?? null,
-      jobDescription: [selectedJob?.description, (selectedJob?.requirements as string[] | null)?.join("\n")].filter(Boolean).join("\n\n") || null,
+      jobDescription: [selectedJob?.description, selectedJob?.requirements?.join("\n")].filter(Boolean).join("\n\n") || null,
     } }),
   });
   const analysis = analyze.data?.ok ? analyze.data.analysis : null;
@@ -102,9 +102,9 @@ function Parser() {
               <SelectValue placeholder={jobsQ.isLoading ? "Loading jobs…" : "Choose an interested job"} />
             </SelectTrigger>
             <SelectContent className="max-h-80">
-              {jobs.map((j: any) => (
+              {jobs.map((j) => (
                 <SelectItem key={j.id} value={j.id}>
-                  {j.title}{j.company ? ` · ${j.company}` : ""}{j.location ? ` · ${j.location}` : ""}
+                  {j.job_title}{j.company ? ` · ${j.company}` : ""}{j.location ? ` · ${j.location}` : ""}
                 </SelectItem>
               ))}
             </SelectContent>
