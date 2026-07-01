@@ -37,5 +37,22 @@ export const saveMyCv = createServerFn({ method: "POST" })
         { onConflict: "user_id" },
       );
     if (error) throw new Error(error.message);
+
+    // Sync key fields into profiles so the dashboard reflects edits.
+    const p = (data.builder_payload ?? {}) as Record<string, unknown>;
+    const name = typeof p.name === "string" ? p.name.trim() : "";
+    const discipline = typeof p.title === "string" ? p.title.trim() : "";
+    const skills =
+      typeof p.skills === "string"
+        ? p.skills.split(",").map((s) => s.trim()).filter(Boolean)
+        : Array.isArray(p.skills)
+          ? (p.skills as unknown[]).map(String)
+          : [];
+    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (name) patch.name = name;
+    if (discipline) patch.discipline = discipline;
+    patch.skills = skills;
+    await supabase.from("profiles").update(patch).eq("id", userId);
+
     return { ok: true };
   });
