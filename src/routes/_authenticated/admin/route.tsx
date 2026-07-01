@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyProfile } from "@/lib/profile.functions";
@@ -12,6 +12,16 @@ function AdminLayout() {
   const { user } = useAuth();
   const fn = useServerFn(getMyProfile);
   const q = useQuery({ queryKey: ["me"], queryFn: () => fn(), enabled: !!user });
+  const search = useRouterState({ select: (s) => s.location.search as { exam?: string } });
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const EXAM_LABELS: Record<string, string> = {
+    "bb-ad-it": "BB AD-IT",
+    "govt-it": "Govt IT",
+    "big-tech": "Big Tech",
+    all: "All CSE",
+  };
+  const activeExam = pathname.startsWith("/learn/exam-prep") ? search.exam : undefined;
+  const currentExam = (activeExam && EXAM_LABELS[activeExam]) || EXAM_LABELS["bb-ad-it"];
 
 
   if (q.isLoading) return <div className="p-10 text-center text-muted-foreground">Loading…</div>;
@@ -37,7 +47,17 @@ function AdminLayout() {
         <Link to="/admin/interviews" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Interviews</Link>
         <Link to="/admin/letters" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Appointment letters</Link>
         <Link to="/admin/modules" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Modules</Link>
-        <Link to="/learn/exam-prep" search={{ exam: "bb-ad-it" }} className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Exam prep</Link>
+        <Link
+          to="/learn/exam-prep"
+          search={{ exam: (activeExam as "bb-ad-it" | "govt-it" | "big-tech" | "all") ?? "bb-ad-it" }}
+          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5"
+          activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}
+        >
+          Exam prep
+          <span className="rounded-full bg-[color-mix(in_oklab,var(--color-primary)_15%,white)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-primary)]">
+            {currentExam}
+          </span>
+        </Link>
         <Link to="/admin/credentials" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Credentials</Link>
         <Link to="/admin/database" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Database</Link>
       </nav>
