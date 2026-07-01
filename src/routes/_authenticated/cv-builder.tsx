@@ -381,11 +381,11 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     </div>
   );
 }
-function Input({ label, value, onChange, className = "" }: { label?: string; value: string; onChange: (v: string) => void; className?: string }) {
+function Input({ label, value, onChange, className = "", placeholder }: { label?: string; value: string; onChange: (v: string) => void; className?: string; placeholder?: string }) {
   return (
     <label className={`block ${className}`}>
       {label && <span className="text-[11px] font-medium text-muted-foreground">{label}</span>}
-      <input value={value} onChange={(e) => onChange(e.target.value)} className="mt-0.5 w-full rounded-md border px-2.5 py-1.5 text-sm" />
+      <input value={value} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} className="mt-0.5 w-full rounded-md border px-2.5 py-1.5 text-sm placeholder:text-muted-foreground/50 placeholder:italic" />
     </label>
   );
 }
@@ -393,7 +393,7 @@ function Textarea({ label, value, onChange, rows = 3, placeholder }: { label?: s
   return (
     <label className="block">
       {label && <span className="text-[11px] font-medium text-muted-foreground">{label}</span>}
-      <textarea rows={rows} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} className="mt-0.5 w-full rounded-md border px-2.5 py-1.5 text-sm" />
+      <textarea rows={rows} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} className="mt-0.5 w-full rounded-md border px-2.5 py-1.5 text-sm placeholder:text-muted-foreground/50 placeholder:italic" />
     </label>
   );
 }
