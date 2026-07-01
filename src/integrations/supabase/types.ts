@@ -718,7 +718,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      default_company_logo: { Args: { _name: string }; Returns: string }
+      slugify_company: { Args: { _name: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "student" | "employer"
