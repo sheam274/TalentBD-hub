@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, X, LogOut, ChevronDown, ShieldCheck, User as UserIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandMark } from "@/components/Brand";
@@ -106,8 +106,21 @@ export function SiteHeader() {
     nav({ to: "/" });
   }
 
+  const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const set = () => {
+      document.documentElement.style.setProperty("--header-h", `${el.offsetHeight}px`);
+    };
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 w-full glass-header text-white">
+    <header ref={headerRef} className="sticky top-0 z-40 w-full glass-header text-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-3 py-2.5 sm:px-4 sm:py-3 md:px-6">
         <Link to="/" className="flex min-w-0 items-center gap-2 font-bold tracking-tight group shrink-0">
           <span className="inline-flex size-8 sm:size-9 items-center justify-center rounded-lg bg-white/10 p-1 ring-1 ring-white/20 transition group-hover:bg-white/20 shrink-0">
