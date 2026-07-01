@@ -85,7 +85,7 @@ function Landing() {
     <div className="page-enter bg-background">
       {/* Hero — Ink Ambient Glow (premium dark) */}
       <section
-        className="relative w-full overflow-hidden px-5 py-16 sm:px-6 sm:py-20 md:py-28 lg:py-36"
+        className="relative w-full overflow-hidden px-5 pt-8 pb-14 sm:px-6 sm:pt-10 sm:pb-16 md:pt-12 md:pb-20 lg:pt-16 lg:pb-24"
         style={{
           background:
             "radial-gradient(1200px 600px at 12% 0%, rgba(255,182,6,0.22), transparent 60%)," +
@@ -118,8 +118,8 @@ function Landing() {
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
             {/* Left card — text + CTAs */}
-            <div className="flex flex-col rounded-3xl p-7 sm:p-10 md:p-12 text-center lg:text-left">
-              <div className="mb-6 inline-flex items-center gap-2 self-center rounded-full border border-[var(--eduma-ink)]/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur lg:self-start">
+            <div className="flex flex-col rounded-3xl px-6 pt-4 pb-7 sm:px-10 sm:pt-6 sm:pb-10 md:px-12 md:pt-8 md:pb-12 text-center lg:text-left">
+              <div className="mb-5 inline-flex items-center gap-2 self-center rounded-full border border-[var(--eduma-ink)]/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur lg:self-start">
                 <span className="relative flex size-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
