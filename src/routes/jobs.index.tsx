@@ -92,6 +92,7 @@ function Jobs() {
   const [showSuggest, setShowSuggest] = useState(false);
   const [activeSuggest, setActiveSuggest] = useState(-1);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
     if (activeSuggest < 0 || typeof document === "undefined") return;
     const el = document.getElementById(`job-suggest-${activeSuggest}`);
@@ -387,6 +388,7 @@ function Jobs() {
           {(() => { return null; })()}
           <div className="flex gap-2">
             <input
+              ref={searchInputRef}
               value={search}
               onChange={(e) => { setSearch(e.target.value); setShowSuggest(true); setActiveSuggest(-1); }}
               onFocus={() => setShowSuggest(true)}
@@ -413,13 +415,16 @@ function Jobs() {
                   setDebouncedSearch(pick);
                   setShowSuggest(false);
                   setActiveSuggest(-1);
+                  searchInputRef.current?.focus();
                 } else if (e.key === "Escape") {
                   setShowSuggest(false); setActiveSuggest(-1);
+                  searchInputRef.current?.focus();
                 }
               }}
               placeholder="Search job title, e.g. network engineer"
               aria-label="Search jobs"
               role="combobox"
+              aria-haspopup="listbox"
               aria-expanded={showSuggest}
               aria-autocomplete="list"
               aria-controls="job-search-suggestions"
@@ -446,14 +451,19 @@ function Jobs() {
               .slice(0, 8);
             if (titles.length === 0) return null;
             return (
-              <ul id="job-search-suggestions" role="listbox" className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-white/40 bg-white/70 backdrop-blur-md shadow-lg">
+              <ul id="job-search-suggestions" role="listbox" aria-label="Job title suggestions" className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-white/40 bg-white/70 backdrop-blur-md shadow-lg">
                 {titles.map((t, idx) => (
                   <li key={t} id={`job-suggest-${idx}`} role="option" aria-selected={activeSuggest === idx}>
                     <button
                       type="button"
+                      tabIndex={-1}
                       onMouseDown={(e) => e.preventDefault()}
                       onMouseEnter={() => setActiveSuggest(idx)}
-                      onClick={() => { setSearch(t); setDebouncedSearch(t); setShowSuggest(false); setActiveSuggest(-1); }}
+                      onClick={() => {
+                        setSearch(t); setDebouncedSearch(t);
+                        setShowSuggest(false); setActiveSuggest(-1);
+                        searchInputRef.current?.focus();
+                      }}
                       className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm ${activeSuggest === idx ? "bg-white/90" : "hover:bg-white/80"}`}
                     >
                       <SearchIcon className="size-3.5 text-muted-foreground" />
