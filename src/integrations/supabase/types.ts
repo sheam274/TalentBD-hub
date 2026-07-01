@@ -719,6 +719,7 @@ export type Database = {
     }
     Functions: {
       default_company_logo: { Args: { _name: string }; Returns: string }
+      is_super_admin_email: { Args: { _email: string }; Returns: boolean }
       slugify_company: { Args: { _name: string }; Returns: string }
     }
     Enums: {
