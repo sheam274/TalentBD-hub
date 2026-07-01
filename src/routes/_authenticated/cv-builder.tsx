@@ -605,9 +605,9 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
               )}
             </div>
             <div className="min-w-0">
-              <h2 className="text-[30px] font-extrabold uppercase tracking-[0.08em] leading-tight">{d.name || "Your Name"}</h2>
+              <h2 className="text-[30px] font-extrabold uppercase tracking-[0.08em] leading-tight" style={{ color: "#ffffff", textShadow: "0 1px 2px rgba(0,0,0,0.35)" }}>{d.name || "Your Name"}</h2>
               {d.title && (
-                <p className="mt-1 text-[14px] font-medium" style={{ color: PEACH_SOFT }}>{d.title}</p>
+                <p className="mt-1 text-[14px] font-semibold" style={{ color: PEACH_SOFT, textShadow: "0 1px 2px rgba(0,0,0,0.25)" }}>{d.title}</p>
               )}
               <div className="mt-3 h-[2px] w-24" style={{ background: PEACH }} />
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11.5px] text-white/90">
