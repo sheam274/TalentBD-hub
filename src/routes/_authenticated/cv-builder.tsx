@@ -241,8 +241,11 @@ function CvBuilder() {
 
           <Section title="Skills & Languages">
             <Textarea label="Skills (comma separated)" value={data.skills} onChange={(v) => set("skills", v)} placeholder="React, Node.js, SQL, AWS" />
+            <SuggestionPicker label="Suggested skills for CSE / big-tech" groups={SKILL_GROUPS} value={data.skills} onAdd={(t) => set("skills", appendCsv(data.skills, t))} />
             <Textarea label="Languages" value={data.languages} onChange={(v) => set("languages", v)} placeholder="English (fluent), Bengali (native)" />
+            <SuggestionPicker label="Suggested languages" groups={LANGUAGE_GROUPS} value={data.languages} onAdd={(t) => set("languages", appendCsv(data.languages, t))} />
             <Textarea label="Relevant Coursework" value={data.coursework} onChange={(v) => set("coursework", v)} placeholder="Data Structures, Algorithms, Operating Systems, Distributed Systems, Machine Learning" />
+            <SuggestionPicker label="Suggested coursework" groups={COURSEWORK_GROUPS} value={data.coursework} onAdd={(t) => set("coursework", appendCsv(data.coursework, t))} />
           </Section>
 
           <Repeater
