@@ -219,6 +219,20 @@ function CvBuilder() {
               })}
             </div>
           )}
+          <div className="flex items-center gap-1 rounded-md border bg-white p-1" role="radiogroup" aria-label="Paper size">
+            {(["a4", "letter"] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                role="radio"
+                aria-checked={paper === p}
+                onClick={() => setPaper(p)}
+                className={`inline-flex items-center rounded px-2 py-1 text-xs font-medium uppercase ${paper === p ? "bg-muted" : "hover:bg-muted/60"}`}
+              >
+                {p === "a4" ? "A4" : "Letter"}
+              </button>
+            ))}
+          </div>
           <button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ background: "var(--color-primary)" }}>
             <Save className="size-4" /> Save
           </button>
