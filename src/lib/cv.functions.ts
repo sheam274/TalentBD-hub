@@ -42,6 +42,7 @@ export const saveMyCv = createServerFn({ method: "POST" })
     const p = (data.builder_payload ?? {}) as Record<string, unknown>;
     const name = typeof p.name === "string" ? p.name.trim() : "";
     const discipline = typeof p.title === "string" ? p.title.trim() : "";
+    const photo = typeof p.photo === "string" ? p.photo.trim() : "";
     const skills =
       typeof p.skills === "string"
         ? p.skills.split(",").map((s) => s.trim()).filter(Boolean)
@@ -51,8 +52,9 @@ export const saveMyCv = createServerFn({ method: "POST" })
     await supabase
       .from("profiles")
       .update({
-        ...(name ? { name } : {}),
-        ...(discipline ? { discipline } : {}),
+        name: name || null,
+        discipline: discipline || null,
+        avatar_url: photo || null,
         skills,
         updated_at: new Date().toISOString(),
       })
