@@ -140,6 +140,9 @@ function ExamPrep() {
 
       <div className="mt-6 flex items-center justify-between gap-3 flex-wrap">
         <div className="text-sm text-muted-foreground">
+          <span className="mr-2 inline-flex items-center gap-1 rounded-full bg-[color-mix(in_oklab,var(--color-primary)_12%,white)] px-2.5 py-1 text-xs font-semibold text-[var(--color-primary)]">
+            <Filter className="size-3" /> {cfg.label}
+          </span>
           {q.isLoading ? "Loading questions…" : `${questions.length} questions · pass mark 80%`}
         </div>
         <div className="flex items-center gap-2">
@@ -161,14 +164,14 @@ function ExamPrep() {
               <div>
                 <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Exam review</div>
                 <h2 className="mt-1 text-xl font-bold">
-                  {pct >= 80 ? "Passed" : "Keep practising"} — {score}/{questions.length} ({pct}%)
+                  {pct >= 80 ? "Passed" : "Keep practising"} · {cfg.label} — {score}/{questions.length} ({pct}%)
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {questions.length - incorrect.length} correct · {incorrect.length - unanswered.length} wrong · {unanswered.length} skipped
                 </p>
               </div>
               <Button size="sm" variant="outline" onClick={() => { setAnswers({}); setSubmitted(false); setSeed((s) => s + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-                <RefreshCw className="size-4" /> Retake with new set
+                <RefreshCw className="size-4" /> Retake {cfg.label}
               </Button>
             </div>
             {incorrect.length > 0 && (
