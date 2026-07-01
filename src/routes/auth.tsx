@@ -33,8 +33,15 @@ function AuthPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => { if (user) nav({ to: "/dashboard" }); }, [user, nav]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setInterval(() => setCooldown((s) => (s <= 1 ? 0 : s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [cooldown]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,6 +73,7 @@ function AuthPage() {
         });
         if (error) throw error;
         setOtpSent(true);
+        setCooldown(60);
         toast.success("We sent a 6-digit code to your email.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -111,11 +119,13 @@ function AuthPage() {
   }
 
   async function resendOtp() {
+    if (cooldown > 0) return;
     setBusy(true);
     setOtpError(null);
     try {
       const { error } = await supabase.auth.resend({ type: "signup", email });
       if (error) throw error;
+      setCooldown(60);
       toast.success("New code sent");
     } catch (err: any) {
       toast.error(err?.message ?? "Could not resend code");
