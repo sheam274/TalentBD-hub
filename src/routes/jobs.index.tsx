@@ -662,7 +662,7 @@ function Jobs() {
   );
 }
 
-function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => void; onPreview: () => void; canApply: boolean }) {
+function JobCard({ j, onApply, onPreview, canApply, highlightTokens = [] }: { j: any; onApply: () => void; onPreview: () => void; canApply: boolean; highlightTokens?: string[] }) {
   const deadline = j.application_deadline ? new Date(j.application_deadline) : null;
   const daysLeft = deadline ? Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
   return (
@@ -733,7 +733,7 @@ const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visible
   },
 );
 
-function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => void }) {
+function LiveJobCard({ j, onOpen, highlightTokens = [] }: { j: any; onOpen: (url?: string | null) => void; highlightTokens?: string[] }) {
   return (
     <button
       type="button"
