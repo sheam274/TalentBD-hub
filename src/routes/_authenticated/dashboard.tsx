@@ -58,7 +58,7 @@ function Dashboard() {
   return (
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:py-14 md:px-6">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 pt-6 pb-8 sm:pt-8 sm:pb-10 md:pt-10 md:pb-12">
           <div className="glass-dark rounded-2xl p-4 sm:p-6">
             <p className="text-sm text-white">Welcome back</p>
             <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-white break-words">{displayedName}</h1>
