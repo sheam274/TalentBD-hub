@@ -140,7 +140,10 @@ function CvBuilder() {
     try {
       const mod: any = await import("html2pdf.js");
       const html2pdf = mod.default ?? mod;
-      const filename = `${(data.name || "cv").replace(/\s+/g, "_")}.pdf`;
+      const slug = (s: string) =>
+        s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      const parts = [slug(data.name || "cv"), slug(data.title || ""), "cv"].filter(Boolean);
+      const filename = `${parts.join("-")}.pdf`;
       await html2pdf()
         .set({
           margin: [10, 10, 10, 10],
