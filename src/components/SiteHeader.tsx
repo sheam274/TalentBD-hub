@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Menu, X, LogOut, ChevronDown, ShieldCheck, User as UserIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -83,6 +83,20 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState<string | null>(null);
   const nav = useNavigate();
+  const currentHref = useRouterState({
+    select: (s) => s.location.pathname + (s.location.searchStr ? `?${s.location.searchStr}` : ""),
+  });
+  const currentPath = useRouterState({ select: (s) => s.location.pathname });
+  const isChildActive = (to: string) => {
+    if (to.includes("?")) return currentHref === to;
+    return currentPath === to;
+  };
+  const isParentActive = (children?: { to: string }[]) =>
+    !!children?.some((c) => isChildActive(c.to));
+  const activeChildCls =
+    "bg-accent/15 text-accent ring-1 ring-accent/40";
+  const activeParentCls =
+    "bg-white/10 ring-1 ring-white/30";
 
   const fetchProfile = useServerFn(getMyProfile);
   const { data: profileData } = useQuery({
