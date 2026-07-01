@@ -80,6 +80,7 @@ function CvBuilder() {
   const router = useRouter();
   const q = useQuery({ queryKey: ["my-cv"], queryFn: () => getFn() });
   const [style, setStyle] = useState<"standard" | "premium">("premium");
+  const [theme, setTheme] = useState<PremiumThemeKey>("peach");
   const [data, setData] = useState<Payload>(empty);
 
   useEffect(() => {
@@ -190,6 +191,28 @@ function CvBuilder() {
             <option value="standard">Standard (single column)</option>
             <option value="premium">Premium (two-column)</option>
           </select>
+          {style === "premium" && (
+            <div className="flex items-center gap-1 rounded-md border bg-white p-1" role="radiogroup" aria-label="Premium theme">
+              {(Object.keys(PREMIUM_THEMES) as PremiumThemeKey[]).map((k) => {
+                const t = PREMIUM_THEMES[k];
+                const active = theme === k;
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    title={t.label}
+                    onClick={() => setTheme(k)}
+                    className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium ${active ? "bg-muted" : "hover:bg-muted/60"}`}
+                  >
+                    <span className="size-3 rounded-full ring-1 ring-black/10" style={{ background: t.accent }} />
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ background: "var(--color-primary)" }}>
             <Save className="size-4" /> Save
           </button>
