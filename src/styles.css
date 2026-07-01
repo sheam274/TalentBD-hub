@@ -348,23 +348,8 @@
 }
 
 @media print {
-  body { background: white !important; }
-  .orb-bg, .no-print { display: none !important; }
-  /* Hide everything, then re-show only the CV preview */
-  body * { visibility: hidden !important; }
-  .cv-print-area, .cv-print-area * { visibility: visible !important; }
-  .cv-print-area {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-shadow: none !important;
-    border: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-    overflow: visible !important;
-  }
+  html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+  .no-print { display: none !important; }
   @page { margin: 12mm; }
 }
 

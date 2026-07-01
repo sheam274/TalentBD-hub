@@ -119,6 +119,21 @@ function CvBuilder() {
     reader.readAsDataURL(file);
   }
 
+  function printCv() {
+    const node = document.querySelector(".cv-print-area");
+    if (!node) { window.print(); return; }
+    const w = window.open("", "_blank", "width=900,height=1200");
+    if (!w) { window.print(); return; }
+    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+      .map((el) => el.outerHTML)
+      .join("\n");
+    w.document.open();
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(data.name || "CV")} — CV</title>${styles}<style>@page{margin:12mm}body{margin:0;background:#fff}.cv-print-area{box-shadow:none!important;border:0!important;margin:0!important;padding:0!important;background:#fff!important}</style></head><body><div class="cv-print-area">${(node as HTMLElement).innerHTML}</div></body></html>`);
+    w.document.close();
+    w.focus();
+    setTimeout(() => { w.print(); w.close(); }, 400);
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
       <div className="no-print flex flex-wrap items-start justify-between gap-3">
@@ -134,7 +149,7 @@ function CvBuilder() {
           <button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ background: "var(--color-primary)" }}>
             <Save className="size-4" /> Save
           </button>
-          <button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-semibold">
+          <button onClick={printCv} className="inline-flex items-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-semibold">
             <Printer className="size-4" /> Print / PDF
           </button>
         </div>
