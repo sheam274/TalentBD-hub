@@ -465,6 +465,24 @@
   .cv-print-area .cv-hero-name * {
     min-width: 0 !important;
   }
+  /* Lock the post-objective two-column split in print/PDF exports so the
+     layout matches the on-screen preview exactly — same columns, same gap,
+     no cards spanning columns, no mid-card page breaks. */
+  .cv-print-area .cv-split-2col {
+    column-count: 2 !important;
+    column-gap: 1rem !important;
+    column-fill: balance !important;
+    widows: 2;
+    orphans: 2;
+  }
+  .cv-print-area .cv-split-2col > * {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+    margin-bottom: 1rem !important;
+    display: block;
+    width: 100%;
+  }
 }
 
 @layer utilities {
