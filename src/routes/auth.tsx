@@ -30,6 +30,9 @@ function AuthPage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
 
   useEffect(() => { if (user) nav({ to: "/dashboard" }); }, [user, nav]);
 
@@ -41,6 +44,12 @@ function AuthPage() {
     setFormError(null);
     try {
       if (mode === "signup") {
+        if (otpSent) {
+          const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "signup" });
+          if (error) throw error;
+          toast.success("Email verified. Welcome!");
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -56,7 +65,8 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account created. Check your email to confirm if required.");
+        setOtpSent(true);
+        toast.success("We sent a 6-digit code to your email.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -65,7 +75,10 @@ function AuthPage() {
     } catch (err: any) {
       const msg: string = err?.message ?? "Sign-in failed";
       const lower = msg.toLowerCase();
-      if (mode === "signin" && (lower.includes("invalid login") || lower.includes("invalid credentials"))) {
+      if (mode === "signup" && otpSent) {
+        setOtp("");
+        setOtpError(lower.includes("expired") ? "Code expired. Request a new one." : "Invalid code");
+      } else if (mode === "signin" && (lower.includes("invalid login") || lower.includes("invalid credentials"))) {
         // Determine which field is wrong by checking if the email is registered.
         try {
           const { exists } = await checkEmailExists({ data: { email } });
@@ -92,6 +105,20 @@ function AuthPage() {
         setFormError(msg);
         toast.error(msg);
       }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resendOtp() {
+    setBusy(true);
+    setOtpError(null);
+    try {
+      const { error } = await supabase.auth.resend({ type: "signup", email });
+      if (error) throw error;
+      toast.success("New code sent");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not resend code");
     } finally {
       setBusy(false);
     }
