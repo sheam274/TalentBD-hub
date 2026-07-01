@@ -93,6 +93,42 @@ export type Database = {
           },
         ]
       }
+      audit_logs: {
+        Row: {
+          actor_id: string | null
+          changed_fields: string[] | null
+          id: number
+          new_data: Json | null
+          occurred_at: string
+          old_data: Json | null
+          operation: string
+          row_pk: string | null
+          table_name: string
+        }
+        Insert: {
+          actor_id?: string | null
+          changed_fields?: string[] | null
+          id?: number
+          new_data?: Json | null
+          occurred_at?: string
+          old_data?: Json | null
+          operation: string
+          row_pk?: string | null
+          table_name: string
+        }
+        Update: {
+          actor_id?: string | null
+          changed_fields?: string[] | null
+          id?: number
+          new_data?: Json | null
+          occurred_at?: string
+          old_data?: Json | null
+          operation?: string
+          row_pk?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           created_at: string
