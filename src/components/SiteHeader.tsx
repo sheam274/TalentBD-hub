@@ -150,7 +150,7 @@ export function SiteHeader() {
             <div key={item.label} className="relative" onMouseEnter={() => setHover(item.label)} onMouseLeave={() => setHover(null)}>
               <a
                 href={item.to}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-accent hover:text-accent-foreground transition"
+                className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-accent hover:text-accent-foreground transition ${isParentActive(item.children) ? activeParentCls : ""}`}
               >
                 {item.label}
                 {item.children && <ChevronDown className="size-3.5 opacity-70" />}
@@ -162,7 +162,8 @@ export function SiteHeader() {
                       <a
                         key={c.to + c.label}
                         href={c.to}
-                        className="block rounded-lg px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
+                        aria-current={isChildActive(c.to) ? "page" : undefined}
+                        className={`block rounded-lg px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${isChildActive(c.to) ? activeChildCls : ""}`}
                       >
                         <div className="font-semibold">{c.label}</div>
                         {c.desc && <div className="text-xs text-muted-foreground">{c.desc}</div>}
