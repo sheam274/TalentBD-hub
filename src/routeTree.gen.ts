@@ -21,6 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsIndexRouteImport } from './routes/jobs.index'
 import { Route as CompaniesIndexRouteImport } from './routes/companies.index'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
+import { Route as InterviewPrepMockRouteImport } from './routes/interview-prep.mock'
 import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
 import { Route as CareerAdviceNgoJobsRouteImport } from './routes/career-advice.ngo-jobs'
 import { Route as AuthenticatedMyApplicationsRouteImport } from './routes/_authenticated/my-applications'
@@ -118,6 +119,11 @@ const JobsJobIdRoute = JobsJobIdRouteImport.update({
   id: '/jobs/$jobId',
   path: '/jobs/$jobId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const InterviewPrepMockRoute = InterviewPrepMockRouteImport.update({
+  id: '/mock',
+  path: '/mock',
+  getParentRoute: () => InterviewPrepRoute,
 } as any)
 const CompaniesSlugRoute = CompaniesSlugRouteImport.update({
   id: '/companies/$slug',
@@ -342,7 +348,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/career-advice': typeof CareerAdviceRouteWithChildren
   '/external-link': typeof ExternalLinkRoute
-  '/interview-prep': typeof InterviewPrepRoute
+  '/interview-prep': typeof InterviewPrepRouteWithChildren
   '/salaries': typeof SalariesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/visual-harness': typeof VisualHarnessRoute
@@ -355,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/my-applications': typeof AuthenticatedMyApplicationsRouteWithChildren
   '/career-advice/ngo-jobs': typeof CareerAdviceNgoJobsRoute
   '/companies/$slug': typeof CompaniesSlugRoute
+  '/interview-prep/mock': typeof InterviewPrepMockRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/companies/': typeof CompaniesIndexRoute
   '/jobs/': typeof JobsIndexRoute
@@ -393,7 +400,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/career-advice': typeof CareerAdviceRouteWithChildren
   '/external-link': typeof ExternalLinkRoute
-  '/interview-prep': typeof InterviewPrepRoute
+  '/interview-prep': typeof InterviewPrepRouteWithChildren
   '/salaries': typeof SalariesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/visual-harness': typeof VisualHarnessRoute
@@ -406,6 +413,7 @@ export interface FileRoutesByTo {
   '/my-applications': typeof AuthenticatedMyApplicationsRouteWithChildren
   '/career-advice/ngo-jobs': typeof CareerAdviceNgoJobsRoute
   '/companies/$slug': typeof CompaniesSlugRoute
+  '/interview-prep/mock': typeof InterviewPrepMockRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/companies': typeof CompaniesIndexRoute
   '/jobs': typeof JobsIndexRoute
@@ -446,7 +454,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/career-advice': typeof CareerAdviceRouteWithChildren
   '/external-link': typeof ExternalLinkRoute
-  '/interview-prep': typeof InterviewPrepRoute
+  '/interview-prep': typeof InterviewPrepRouteWithChildren
   '/salaries': typeof SalariesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/visual-harness': typeof VisualHarnessRoute
@@ -459,6 +467,7 @@ export interface FileRoutesById {
   '/_authenticated/my-applications': typeof AuthenticatedMyApplicationsRouteWithChildren
   '/career-advice/ngo-jobs': typeof CareerAdviceNgoJobsRoute
   '/companies/$slug': typeof CompaniesSlugRoute
+  '/interview-prep/mock': typeof InterviewPrepMockRoute
   '/jobs/$jobId': typeof JobsJobIdRouteWithChildren
   '/companies/': typeof CompaniesIndexRoute
   '/jobs/': typeof JobsIndexRoute
@@ -512,6 +521,7 @@ export interface FileRouteTypes {
     | '/my-applications'
     | '/career-advice/ngo-jobs'
     | '/companies/$slug'
+    | '/interview-prep/mock'
     | '/jobs/$jobId'
     | '/companies/'
     | '/jobs/'
@@ -563,6 +573,7 @@ export interface FileRouteTypes {
     | '/my-applications'
     | '/career-advice/ngo-jobs'
     | '/companies/$slug'
+    | '/interview-prep/mock'
     | '/jobs/$jobId'
     | '/companies'
     | '/jobs'
@@ -615,6 +626,7 @@ export interface FileRouteTypes {
     | '/_authenticated/my-applications'
     | '/career-advice/ngo-jobs'
     | '/companies/$slug'
+    | '/interview-prep/mock'
     | '/jobs/$jobId'
     | '/companies/'
     | '/jobs/'
@@ -655,7 +667,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CareerAdviceRoute: typeof CareerAdviceRouteWithChildren
   ExternalLinkRoute: typeof ExternalLinkRoute
-  InterviewPrepRoute: typeof InterviewPrepRoute
+  InterviewPrepRoute: typeof InterviewPrepRouteWithChildren
   SalariesRoute: typeof SalariesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VisualHarnessRoute: typeof VisualHarnessRoute
@@ -751,6 +763,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/jobs/$jobId'
       preLoaderRoute: typeof JobsJobIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/interview-prep/mock': {
+      id: '/interview-prep/mock'
+      path: '/mock'
+      fullPath: '/interview-prep/mock'
+      preLoaderRoute: typeof InterviewPrepMockRouteImport
+      parentRoute: typeof InterviewPrepRoute
     }
     '/companies/$slug': {
       id: '/companies/$slug'
@@ -1163,6 +1182,18 @@ const CareerAdviceRouteWithChildren = CareerAdviceRoute._addFileChildren(
   CareerAdviceRouteChildren,
 )
 
+interface InterviewPrepRouteChildren {
+  InterviewPrepMockRoute: typeof InterviewPrepMockRoute
+}
+
+const InterviewPrepRouteChildren: InterviewPrepRouteChildren = {
+  InterviewPrepMockRoute: InterviewPrepMockRoute,
+}
+
+const InterviewPrepRouteWithChildren = InterviewPrepRoute._addFileChildren(
+  InterviewPrepRouteChildren,
+)
+
 interface JobsJobIdRouteChildren {
   JobsJobIdAppliedRoute: typeof JobsJobIdAppliedRoute
   JobsJobIdApplyRoute: typeof JobsJobIdApplyRoute
@@ -1183,7 +1214,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CareerAdviceRoute: CareerAdviceRouteWithChildren,
   ExternalLinkRoute: ExternalLinkRoute,
-  InterviewPrepRoute: InterviewPrepRoute,
+  InterviewPrepRoute: InterviewPrepRouteWithChildren,
   SalariesRoute: SalariesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VisualHarnessRoute: VisualHarnessRoute,
