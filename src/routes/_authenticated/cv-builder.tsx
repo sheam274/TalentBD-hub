@@ -81,6 +81,7 @@ function CvBuilder() {
   const q = useQuery({ queryKey: ["my-cv"], queryFn: () => getFn() });
   const [style, setStyle] = useState<"standard" | "premium">("premium");
   const [theme, setTheme] = useState<PremiumThemeKey>("peach");
+  const [paper, setPaper] = useState<"a4" | "letter">("a4");
   const [data, setData] = useState<Payload>(empty);
 
   useEffect(() => {
