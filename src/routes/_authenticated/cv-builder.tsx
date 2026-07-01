@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
+import { suggestCvField } from "@/lib/cv-ai.functions";
 import { toast } from "sonner";
-import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding, Award, BadgeCheck, Code2, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding, Award, BadgeCheck, Code2, CheckCircle2, AlertCircle, Sparkles, Wand2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-builder")({
   head: () => ({ meta: [{ title: "CV Builder — TalentBD" }, { name: "description", content: "Build a professional, print-ready CV with standard or premium layouts." }] }),
@@ -237,15 +238,18 @@ function CvBuilder() {
 
           <Section title="Summary">
             <Textarea value={data.summary} onChange={(v) => set("summary", v)} rows={3} placeholder="2-3 sentence professional summary" />
+            <AiAssist field="summary" ctx={{ name: data.name, title: data.title, skills: data.skills }} mode="replace" onPick={(t) => set("summary", t)} />
           </Section>
 
           <Section title="Skills & Languages">
             <Textarea label="Skills (comma separated)" value={data.skills} onChange={(v) => set("skills", v)} placeholder="React, Node.js, SQL, AWS" />
             <SuggestionPicker label="Suggested skills for CSE / big-tech" groups={SKILL_GROUPS} value={data.skills} onAdd={(t) => set("skills", appendCsv(data.skills, t))} />
+            <AiAssist field="skills" ctx={{ title: data.title, summary: data.summary, existing: data.skills }} onPick={(t) => set("skills", appendCsv(data.skills, t))} />
             <Textarea label="Languages" value={data.languages} onChange={(v) => set("languages", v)} placeholder="English (fluent), Bengali (native)" />
             <SuggestionPicker label="Suggested languages" groups={LANGUAGE_GROUPS} value={data.languages} onAdd={(t) => set("languages", appendCsv(data.languages, t))} />
             <Textarea label="Relevant Coursework" value={data.coursework} onChange={(v) => set("coursework", v)} placeholder="Data Structures, Algorithms, Operating Systems, Distributed Systems, Machine Learning" />
             <SuggestionPicker label="Suggested coursework" groups={COURSEWORK_GROUPS} value={data.coursework} onAdd={(t) => set("coursework", appendCsv(data.coursework, t))} />
+            <AiAssist field="coursework" ctx={{ title: data.title, existing: data.coursework }} onPick={(t) => set("coursework", appendCsv(data.coursework, t))} />
           </Section>
 
           <Repeater
@@ -262,6 +266,8 @@ function CvBuilder() {
                 <Input label="Period (e.g. 2022 - Present)" value={item.period} onChange={(v) => update({ ...item, period: v })} />
                 <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Bullets (one per line)" value={item.bullets} onChange={(v) => update({ ...item, bullets: v })} rows={4} />
+                <AiAssist field="experience_bullets" ctx={{ role: item.role, company: item.company, tech: item.tech, existing: item.bullets }} onPick={(t) => update({ ...item, bullets: (item.bullets ? item.bullets + "\n" : "") + t })} />
+                <AiAssist field="metrics" label="Add metrics" ctx={{ role: item.role, bullets: item.bullets }} onPick={(t) => update({ ...item, bullets: (item.bullets ? item.bullets + "\n" : "") + t })} />
               </>
             )}
           />
@@ -299,6 +305,7 @@ function CvBuilder() {
                 </div>
                 <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Description" value={item.description} onChange={(v) => update({ ...item, description: v })} rows={2} />
+                <AiAssist field="project_description" ctx={{ name: item.name, tech: item.tech, existing: item.description }} mode="replace" onPick={(t) => update({ ...item, description: t })} />
               </>
             )}
           />
