@@ -30,6 +30,9 @@ function AuthPage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
 
   useEffect(() => { if (user) nav({ to: "/dashboard" }); }, [user, nav]);
 
@@ -41,6 +44,12 @@ function AuthPage() {
     setFormError(null);
     try {
       if (mode === "signup") {
+        if (otpSent) {
+          const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "signup" });
+          if (error) throw error;
+          toast.success("Email verified. Welcome!");
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -56,7 +65,8 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account created. Check your email to confirm if required.");
+        setOtpSent(true);
+        toast.success("We sent a 6-digit code to your email.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -65,7 +75,10 @@ function AuthPage() {
     } catch (err: any) {
       const msg: string = err?.message ?? "Sign-in failed";
       const lower = msg.toLowerCase();
-      if (mode === "signin" && (lower.includes("invalid login") || lower.includes("invalid credentials"))) {
+      if (mode === "signup" && otpSent) {
+        setOtp("");
+        setOtpError(lower.includes("expired") ? "Code expired. Request a new one." : "Invalid code");
+      } else if (mode === "signin" && (lower.includes("invalid login") || lower.includes("invalid credentials"))) {
         // Determine which field is wrong by checking if the email is registered.
         try {
           const { exists } = await checkEmailExists({ data: { email } });
@@ -92,6 +105,20 @@ function AuthPage() {
         setFormError(msg);
         toast.error(msg);
       }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resendOtp() {
+    setBusy(true);
+    setOtpError(null);
+    try {
+      const { error } = await supabase.auth.resend({ type: "signup", email });
+      if (error) throw error;
+      toast.success("New code sent");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not resend code");
     } finally {
       setBusy(false);
     }
@@ -135,10 +162,10 @@ function AuthPage() {
         </div>
 
         <form onSubmit={submit} className="space-y-3">
-          {mode === "signup" && (
+          {mode === "signup" && !otpSent && (
             <input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Full name" className="w-full rounded-md border px-3 py-2 text-sm" />
           )}
-          {mode === "signup" && accountType === "employer" && (
+          {mode === "signup" && !otpSent && accountType === "employer" && (
             <>
               <input value={companyName} onChange={(e) => setCompanyName(e.target.value)} required placeholder="Company name" className="w-full rounded-md border px-3 py-2 text-sm" />
               <input value={companyWebsite} onChange={(e) => setCompanyWebsite(e.target.value)} type="url" placeholder="Company website (optional)" className="w-full rounded-md border px-3 py-2 text-sm" />
@@ -152,9 +179,11 @@ function AuthPage() {
               type="email"
               placeholder={emailError ?? "Email"}
               aria-invalid={!!emailError}
+              readOnly={mode === "signup" && otpSent}
               className={`w-full rounded-md border px-3 py-2 text-sm ${emailError ? "border-red-500 placeholder:text-red-500" : ""}`}
             />
           </div>
+          {!(mode === "signup" && otpSent) && (
           <div>
             <input
               value={password}
@@ -167,8 +196,28 @@ function AuthPage() {
               className={`w-full rounded-md border px-3 py-2 text-sm ${passwordError ? "border-red-500 placeholder:text-red-500" : ""}`}
             />
           </div>
+          )}
+          {mode === "signup" && otpSent && (
+            <div>
+              <input
+                value={otp}
+                onChange={(e) => { setOtp(e.target.value.replace(/\D/g, "").slice(0, 6)); setOtpError(null); }}
+                required
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                placeholder={otpError ?? "Enter 6-digit code from email"}
+                aria-invalid={!!otpError}
+                className={`w-full rounded-md border px-3 py-2 text-sm tracking-widest ${otpError ? "border-red-500 placeholder:text-red-500" : ""}`}
+              />
+              <div className="mt-2 flex items-center justify-between text-xs">
+                <button type="button" onClick={resendOtp} disabled={busy} className="underline text-muted-foreground">Resend code</button>
+                <button type="button" onClick={() => { setOtpSent(false); setOtp(""); setOtpError(null); }} className="underline text-muted-foreground">Use a different email</button>
+              </div>
+            </div>
+          )}
           <button disabled={busy} className="w-full rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60" style={{ background: "var(--color-primary)", color: "var(--color-primary-foreground)" }}>
-            {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
+            {busy ? "…" : mode === "signin" ? "Sign in" : otpSent ? "Verify code" : "Create account"}
           </button>
           {formError && (
             <p role="alert" className="text-center text-sm text-red-600 font-medium">{formError}</p>
