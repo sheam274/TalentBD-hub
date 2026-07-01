@@ -241,8 +241,8 @@ function Landing() {
           </div>
 
           {/* Trust */}
-          <div className="mt-4 sm:mt-6 md:mt-12 w-full border-t border-[var(--eduma-ink)]/10 pt-3 sm:pt-4 md:pt-8 text-center">
-            <p className="mb-3 sm:mb-4 md:mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
+          <div className="mt-8 sm:mt-10 md:mt-14 lg:mt-16 w-full border-t border-[var(--eduma-ink)]/10 px-2 pt-6 sm:px-4 sm:pt-8 md:px-6 md:pt-10 text-center">
+            <p className="mb-4 sm:mb-6 md:mb-8 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
             <div className="mx-auto grid max-w-5xl grid-cols-2 place-items-center gap-x-8 gap-y-6 sm:grid-cols-4 sm:gap-x-10 md:gap-x-14 lg:gap-x-16">
