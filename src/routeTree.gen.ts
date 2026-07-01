@@ -25,6 +25,7 @@ import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 import { Route as InterviewPrepMockRouteImport } from './routes/interview-prep.mock'
 import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
 import { Route as CareerAdviceNgoJobsRouteImport } from './routes/career-advice.ngo-jobs'
+import { Route as AuthOtpRouteImport } from './routes/auth.otp'
 import { Route as AuthenticatedMyApplicationsRouteImport } from './routes/_authenticated/my-applications'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCvParserRouteImport } from './routes/_authenticated/cv-parser'
@@ -139,6 +140,11 @@ const CareerAdviceNgoJobsRoute = CareerAdviceNgoJobsRouteImport.update({
   id: '/ngo-jobs',
   path: '/ngo-jobs',
   getParentRoute: () => CareerAdviceRoute,
+} as any)
+const AuthOtpRoute = AuthOtpRouteImport.update({
+  id: '/otp',
+  path: '/otp',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthenticatedMyApplicationsRoute =
   AuthenticatedMyApplicationsRouteImport.update({
@@ -344,7 +350,7 @@ const AuthenticatedEmployerApplicantsAppIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/career-advice': typeof CareerAdviceRouteWithChildren
   '/external-link': typeof ExternalLinkRoute
   '/interview-prep': typeof InterviewPrepRouteWithChildren
@@ -358,6 +364,7 @@ export interface FileRoutesByFullPath {
   '/cv-parser': typeof AuthenticatedCvParserRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/my-applications': typeof AuthenticatedMyApplicationsRouteWithChildren
+  '/auth/otp': typeof AuthOtpRoute
   '/career-advice/ngo-jobs': typeof CareerAdviceNgoJobsRoute
   '/companies/$slug': typeof CompaniesSlugRoute
   '/interview-prep/mock': typeof InterviewPrepMockRoute
@@ -396,7 +403,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/career-advice': typeof CareerAdviceRouteWithChildren
   '/external-link': typeof ExternalLinkRoute
   '/interview-prep': typeof InterviewPrepRouteWithChildren
@@ -410,6 +417,7 @@ export interface FileRoutesByTo {
   '/cv-parser': typeof AuthenticatedCvParserRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/my-applications': typeof AuthenticatedMyApplicationsRouteWithChildren
+  '/auth/otp': typeof AuthOtpRoute
   '/career-advice/ngo-jobs': typeof CareerAdviceNgoJobsRoute
   '/companies/$slug': typeof CompaniesSlugRoute
   '/interview-prep/mock': typeof InterviewPrepMockRoute
@@ -450,7 +458,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/career-advice': typeof CareerAdviceRouteWithChildren
   '/external-link': typeof ExternalLinkRoute
   '/interview-prep': typeof InterviewPrepRouteWithChildren
@@ -464,6 +472,7 @@ export interface FileRoutesById {
   '/_authenticated/cv-parser': typeof AuthenticatedCvParserRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/my-applications': typeof AuthenticatedMyApplicationsRouteWithChildren
+  '/auth/otp': typeof AuthOtpRoute
   '/career-advice/ngo-jobs': typeof CareerAdviceNgoJobsRoute
   '/companies/$slug': typeof CompaniesSlugRoute
   '/interview-prep/mock': typeof InterviewPrepMockRoute
@@ -518,6 +527,7 @@ export interface FileRouteTypes {
     | '/cv-parser'
     | '/dashboard'
     | '/my-applications'
+    | '/auth/otp'
     | '/career-advice/ngo-jobs'
     | '/companies/$slug'
     | '/interview-prep/mock'
@@ -570,6 +580,7 @@ export interface FileRouteTypes {
     | '/cv-parser'
     | '/dashboard'
     | '/my-applications'
+    | '/auth/otp'
     | '/career-advice/ngo-jobs'
     | '/companies/$slug'
     | '/interview-prep/mock'
@@ -623,6 +634,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cv-parser'
     | '/_authenticated/dashboard'
     | '/_authenticated/my-applications'
+    | '/auth/otp'
     | '/career-advice/ngo-jobs'
     | '/companies/$slug'
     | '/interview-prep/mock'
@@ -663,7 +675,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   CareerAdviceRoute: typeof CareerAdviceRouteWithChildren
   ExternalLinkRoute: typeof ExternalLinkRoute
   InterviewPrepRoute: typeof InterviewPrepRouteWithChildren
@@ -791,6 +803,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/career-advice/ngo-jobs'
       preLoaderRoute: typeof CareerAdviceNgoJobsRouteImport
       parentRoute: typeof CareerAdviceRoute
+    }
+    '/auth/otp': {
+      id: '/auth/otp'
+      path: '/otp'
+      fullPath: '/auth/otp'
+      preLoaderRoute: typeof AuthOtpRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_authenticated/my-applications': {
       id: '/_authenticated/my-applications'
@@ -1168,6 +1187,16 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthOtpRoute: typeof AuthOtpRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthOtpRoute: AuthOtpRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 interface CareerAdviceRouteChildren {
   CareerAdviceNgoJobsRoute: typeof CareerAdviceNgoJobsRoute
 }
@@ -1209,7 +1238,7 @@ const JobsJobIdRouteWithChildren = JobsJobIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   CareerAdviceRoute: CareerAdviceRouteWithChildren,
   ExternalLinkRoute: ExternalLinkRoute,
   InterviewPrepRoute: InterviewPrepRouteWithChildren,
