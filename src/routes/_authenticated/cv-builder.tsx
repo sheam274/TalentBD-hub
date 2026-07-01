@@ -151,8 +151,11 @@ function CvBuilder() {
     // Title becomes the default filename in the browser's Save as PDF dialog.
     const title = cvFileBase();
     const bg = style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff";
+    const pageSize = paper === "letter" ? "Letter" : "A4";
+    const pageW = paper === "letter" ? "216mm" : "210mm";
+    const pageH = paper === "letter" ? "279mm" : "297mm";
     w.document.open();
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>${styles}<style>@page{size:A4;margin:10mm;background:${bg}}html,body{margin:0;background:${bg};-webkit-print-color-adjust:exact;print-color-adjust:exact}.cv-print-area{width:210mm;min-height:297mm;box-shadow:none!important;border:0!important;margin:0!important;padding:0!important;background:${bg}!important;transform:none!important}</style></head><body><div class="cv-print-area" style="background:${bg}">${(node as HTMLElement).innerHTML}</div></body></html>`);
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>${styles}<style>@page{size:${pageSize};margin:10mm;background:${bg}}html,body{margin:0;background:${bg};-webkit-print-color-adjust:exact;print-color-adjust:exact}.cv-print-area{width:${pageW};min-height:${pageH};box-shadow:none!important;border:0!important;margin:0!important;padding:0!important;background:${bg}!important;transform:none!important}</style></head><body><div class="cv-print-area cv-paper-${paper}" style="background:${bg}">${(node as HTMLElement).innerHTML}</div></body></html>`);
     w.document.close();
     w.focus();
     setTimeout(() => { w.print(); w.close(); }, 400);
@@ -172,7 +175,7 @@ function CvBuilder() {
           filename,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, backgroundColor: bg },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          jsPDF: { unit: "mm", format: paper === "letter" ? "letter" : "a4", orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
         })
         .from(node)
