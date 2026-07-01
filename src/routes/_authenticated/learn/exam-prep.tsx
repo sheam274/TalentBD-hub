@@ -108,7 +108,7 @@ function ExamPrep() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2 text-xs">
-          {cfg.slugs.map((s) => (
+          {cfg.slugs.map((s: string) => (
             <Badge key={s} variant="outline" className="bg-white/70">
               <Link to="/learn/$discipline/$topic" params={{ discipline: "Computer Science", topic: s }}>{s}</Link>
             </Badge>
@@ -147,7 +147,7 @@ function ExamPrep() {
                 </div>
               </div>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {qq.choices.map((c: string) => {
+                {(qq.choices as string[]).map((c: string) => {
                   const isChosen = chosen === c;
                   const isCorrect = submitted && c === correct;
                   const isWrong = submitted && isChosen && c !== correct;
