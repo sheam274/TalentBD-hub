@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { getModulePublic } from "@/lib/learning.functions";
+import { useMemo, useState } from "react";
+import { getModulePublic, listModulesPublic } from "@/lib/learning.functions";
 import { submitQuiz } from "@/lib/assessments.functions";
 import { youtubeEmbed, youtubeThumb } from "@/lib/youtube";
 import { YouTubeThumb } from "@/components/YouTubeThumb";
 import { toast } from "sonner";
+import { CSE_TUTORIALS, isCseDiscipline } from "@/lib/cse-tutorials";
+import { BookOpen, ChevronRight, GraduationCap, ListTree } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/learn/$discipline/$topic")({
   head: ({ params }) => ({
@@ -22,10 +24,20 @@ function Topic() {
   const { discipline, topic } = Route.useParams();
   const fn = useServerFn(getModulePublic);
   const subFn = useServerFn(submitQuiz);
+  const listFn = useServerFn(listModulesPublic);
   const q = useQuery({ queryKey: ["module", discipline, topic], queryFn: () => fn({ data: { discipline, slug: topic } }) });
+  const isCse = isCseDiscipline(discipline);
+  const siblings = useQuery({
+    queryKey: ["modules", "sidebar"],
+    queryFn: () => listFn(),
+    enabled: isCse,
+    staleTime: 60_000,
+  });
   const [docOpen, setDocOpen] = useState(false);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null);
+  const [practice, setPractice] = useState<Record<number, number>>({});
+  const [practiceResult, setPracticeResult] = useState<{ score: number; correct: number; total: number } | null>(null);
   const submit = useMutation({
     mutationFn: (vars: { moduleId: string }) => subFn({ data: { moduleId: vars.moduleId, answers } }),
     onSuccess: (r) => {
@@ -38,12 +50,25 @@ function Topic() {
   if (q.isLoading) return <div className="p-10 text-center text-muted-foreground">Loading…</div>;
   if (!q.data) return <div className="p-10 text-center">Not found. <Link to="/learn">Back</Link></div>;
   const { module: m, quizzes } = q.data;
+  const tutorial = isCse ? CSE_TUTORIALS[topic] : undefined;
+  const cseSiblings = useMemo(
+    () => (siblings.data ?? []).filter((x: any) => isCseDiscipline(x.discipline)),
+    [siblings.data],
+  );
 
-  return (
-    <div className="mx-auto max-w-5xl px-4 py-6 sm:py-10 md:px-6 page-enter">
+  function scorePractice() {
+    if (!tutorial) return;
+    const total = tutorial.practice.length;
+    let correct = 0;
+    tutorial.practice.forEach((p, i) => { if (practice[i] === p.answer) correct += 1; });
+    setPracticeResult({ correct, total, score: Math.round((correct / total) * 100) });
+  }
+
+  const MainContent = (
+    <>
       <Link to="/learn" className="text-sm" style={{ color: "var(--color-primary)" }}>← All tracks</Link>
       <h1 className="mt-2 text-2xl sm:text-3xl font-bold break-words">{m.title}</h1>
-      <p className="mt-1 text-muted-foreground text-sm sm:text-base">{m.description}</p>
+      <p className="mt-1 text-muted-foreground text-sm sm:text-base">{tutorial?.intro ?? m.description}</p>
 
       {m.video_url && (() => {
         const embed = youtubeEmbed(m.video_url);
@@ -54,41 +79,41 @@ function Topic() {
               className="mt-6 aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl bg-cover bg-center"
               style={thumb ? { backgroundImage: `url(${thumb})` } : undefined}
             >
-              <iframe
-                src={embed}
-                title={m.title}
-                className="h-full w-full"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              <iframe src={embed} title={m.title} className="h-full w-full" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
             </div>
           );
         }
-        // Non-YouTube source — render a clickable thumbnail link instead of an
-        // iframe (most video hosts block embedding).
         return (
-          <a
-            href={m.video_url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-6 relative block aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl group"
-          >
-            <YouTubeThumb
-              url={m.video_url}
-              alt={`${m.title} preview`}
-              className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 grid place-items-center bg-black/30 text-white text-sm font-semibold">
-              ▶ Open video
-            </div>
+          <a href={m.video_url} target="_blank" rel="noreferrer" className="mt-6 relative block aspect-video w-full overflow-hidden rounded-xl border bg-black shadow-2xl group">
+            <YouTubeThumb url={m.video_url} alt={`${m.title} preview`} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+            <div className="absolute inset-0 grid place-items-center bg-black/30 text-white text-sm font-semibold">▶ Open video</div>
           </a>
         );
       })()}
 
+      {tutorial && (
+        <div className="mt-8 space-y-6">
+          {tutorial.sections.map((sec) => (
+            <section key={sec.id} id={sec.id} className="rounded-xl border bg-white p-5 sm:p-6 shadow-sm scroll-mt-24">
+              <h2 className="text-xl font-bold" style={{ color: "var(--color-primary)" }}>{sec.title}</h2>
+              <p className="mt-2 text-[15px] leading-relaxed text-foreground/90">{sec.body}</p>
+              {sec.code && (
+                <div className="mt-3 rounded-lg border bg-[#0f172a] text-slate-100 overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-white/10 px-3 py-1.5 text-[11px] uppercase tracking-wider text-slate-300">
+                    <span>{sec.code.lang}</span>
+                    <span className="opacity-60">Try it yourself</span>
+                  </div>
+                  <pre className="p-4 text-[13px] leading-relaxed overflow-x-auto"><code>{sec.code.source}</code></pre>
+                </div>
+              )}
+            </section>
+          ))}
+        </div>
+      )}
+
       <div className="mt-6 rounded-xl border bg-white overflow-hidden">
         <button onClick={() => setDocOpen((v) => !v)} className="flex w-full items-center justify-between p-4 text-left font-semibold">
-          <span>📖 Documentation</span>
+          <span className="flex items-center gap-2"><BookOpen className="size-4" /> Full documentation</span>
           <span className="text-sm text-muted-foreground">{docOpen ? "Hide" : "Show"}</span>
         </button>
         {docOpen && (
@@ -98,16 +123,11 @@ function Topic() {
 
       {Array.isArray(m.resources) && m.resources.length > 0 && (
         <div className="mt-6 rounded-xl border bg-white p-5">
-          <h2 className="font-semibold flex items-center gap-2">📚 Recommended resources <span className="text-xs font-normal text-muted-foreground">(W3Schools, MDN, official docs)</span></h2>
+          <h2 className="font-semibold flex items-center gap-2">📚 Recommended resources</h2>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {m.resources.map((r: any, i: number) => (
               <li key={i}>
-                <a
-                  href={r.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="lift flex items-center gap-3 rounded-lg border bg-white/70 p-3 text-sm hover:bg-white"
-                >
+                <a href={r.url} target="_blank" rel="noreferrer" className="lift flex items-center gap-3 rounded-lg border bg-white/70 p-3 text-sm hover:bg-white">
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-md text-white text-xs font-bold" style={{ background: r.type === "pdf" ? "oklch(0.55 0.2 25)" : "var(--color-primary)" }}>
                     {r.type === "pdf" ? "PDF" : "DOC"}
                   </span>
@@ -119,10 +139,57 @@ function Topic() {
         </div>
       )}
 
+      {tutorial && tutorial.practice.length > 0 && (
+        <div className="mt-8 rounded-xl border-2 bg-white p-4 sm:p-6" style={{ borderColor: "color-mix(in oklab, var(--color-primary) 30%, transparent)" }}>
+          <div className="flex items-center gap-2">
+            <GraduationCap className="size-5" style={{ color: "var(--color-primary)" }} />
+            <h2 className="text-lg sm:text-xl font-bold">Practice exam · {tutorial.practice.length} questions</h2>
+          </div>
+          <p className="text-sm text-muted-foreground">Untimed. Answers scored instantly — use it to prep for the certification below.</p>
+          <ol className="mt-4 space-y-5">
+            {tutorial.practice.map((p, i) => (
+              <li key={i}>
+                <p className="font-medium">{i + 1}. {p.q}</p>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  {p.choices.map((c, ci) => {
+                    const selected = practice[i] === ci;
+                    const done = practiceResult != null;
+                    const correct = done && ci === p.answer;
+                    const wrong = done && selected && ci !== p.answer;
+                    return (
+                      <label key={ci} className={`flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm hover:bg-muted ${correct ? "border-green-500 bg-green-50" : wrong ? "border-red-500 bg-red-50" : ""}`}>
+                        <input type="radio" name={`p-${i}`} checked={selected} onChange={() => setPractice({ ...practice, [i]: ci })} />
+                        {c}
+                      </label>
+                    );
+                  })}
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <button
+              onClick={scorePractice}
+              disabled={Object.keys(practice).length < tutorial.practice.length}
+              className="rounded-md px-5 py-2 font-semibold text-white disabled:opacity-50"
+              style={{ background: "var(--color-primary)" }}
+            >
+              Score my exam
+            </button>
+            {practiceResult && (
+              <span className="text-sm">
+                <strong>{practiceResult.correct}/{practiceResult.total}</strong> correct · {practiceResult.score}% {practiceResult.score >= 80 ? "🎉 you're certification-ready" : "— review the highlighted answers"}
+              </span>
+            )}
+            <button onClick={() => { setPractice({}); setPracticeResult(null); }} className="text-xs text-muted-foreground underline">Reset</button>
+          </div>
+        </div>
+      )}
+
       {quizzes.length > 0 && (
         <div className="mt-8 rounded-xl border bg-white p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-semibold">Assessment</h2>
-          <p className="text-sm text-muted-foreground">Score 80% or higher to earn a credential.</p>
+          <h2 className="text-lg sm:text-xl font-semibold">Official certification</h2>
+          <p className="text-sm text-muted-foreground">Score 80% or higher to earn a credential on your profile.</p>
           <div className="mt-4 space-y-5">
             {quizzes.map((qz: any, idx: number) => (
               <div key={qz.id}>
@@ -144,7 +211,7 @@ function Topic() {
             className="mt-5 rounded-md px-5 py-2 font-semibold disabled:opacity-50"
             style={{ background: "var(--color-accent)", color: "var(--color-accent-foreground)" }}
           >
-            {submit.isPending ? "Scoring…" : "Submit answers"}
+            {submit.isPending ? "Scoring…" : "Submit for credential"}
           </button>
           {result && (
             <div className="mt-4 rounded-md border p-3 text-sm" style={{ background: result.passed ? "color-mix(in oklab, var(--color-accent) 15%, white)" : undefined }}>
@@ -153,6 +220,64 @@ function Topic() {
           )}
         </div>
       )}
+    </>
+  );
+
+  if (!isCse) {
+    return (
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:py-10 md:px-6 page-enter">
+        {MainContent}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-[1400px] px-4 py-6 sm:py-10 md:px-6 page-enter">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0">{MainContent}</div>
+        <aside className="hidden lg:block">
+          <div className="sticky top-24 space-y-5">
+            {tutorial && (
+              <div className="rounded-xl border bg-white p-4 shadow-sm">
+                <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                  <ListTree className="size-4" /> On this page
+                </h3>
+                <ul className="mt-3 space-y-1 text-sm">
+                  {tutorial.sections.map((sec) => (
+                    <li key={sec.id}>
+                      <a href={`#${sec.id}`} className="flex items-center gap-1 rounded px-2 py-1.5 hover:bg-muted">
+                        <ChevronRight className="size-3 opacity-60" /> {sec.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="rounded-xl border bg-white p-4 shadow-sm">
+              <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                <BookOpen className="size-4" /> CSE tutorials
+              </h3>
+              <ul className="mt-3 space-y-1 text-sm">
+                {cseSiblings.map((s: any) => {
+                  const active = s.section_slug === topic;
+                  return (
+                    <li key={s.id}>
+                      <Link
+                        to="/learn/$discipline/$topic"
+                        params={{ discipline: s.discipline, topic: s.section_slug }}
+                        className={`flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted ${active ? "font-semibold" : ""}`}
+                        style={active ? { background: "color-mix(in oklab, var(--color-primary) 12%, white)", color: "var(--color-primary)" } : undefined}
+                      >
+                        <ChevronRight className="size-3 opacity-60" /> {s.title}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
