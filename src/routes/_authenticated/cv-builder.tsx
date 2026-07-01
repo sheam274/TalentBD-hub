@@ -620,7 +620,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
               </h2>
               {d.title && (
                 <p
-                  className="mt-2 font-semibold uppercase leading-tight break-words"
+                  className="cv-hero-subtitle mt-2 font-semibold uppercase leading-tight break-words"
                   style={{
                     color: PEACH_SOFT,
                     fontSize: "clamp(11px, 1.05vw, 13px)",
