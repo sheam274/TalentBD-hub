@@ -565,7 +565,43 @@ function Jobs() {
             </ScrollReveal>
           ))}
           {filtered.length === 0 && liveForOpenPositions.length === 0 && (
-            <p className="text-sm text-muted-foreground">No jobs match those filters.</p>
+            <div className="md:col-span-2 glass rounded-xl p-6 text-center">
+              <p className="text-base font-semibold">No jobs match your filters</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Try broadening your search to see more openings.
+              </p>
+              <ul className="mt-3 flex flex-wrap justify-center gap-2 text-xs">
+                {debouncedSearch && (
+                  <li>
+                    <button onClick={() => { setSearch(""); setDebouncedSearch(""); }} className="rounded-full border bg-white/70 px-3 py-1 hover:bg-white">
+                      Clear search "{debouncedSearch}"
+                    </button>
+                  </li>
+                )}
+                {category && (
+                  <li><button onClick={() => setCategory("")} className="rounded-full border bg-white/70 px-3 py-1 hover:bg-white">Remove category</button></li>
+                )}
+                {location && (
+                  <li><button onClick={() => setLocation("")} className="rounded-full border bg-white/70 px-3 py-1 hover:bg-white">Remove location</button></li>
+                )}
+                {exp && (
+                  <li><button onClick={() => setExp("")} className="rounded-full border bg-white/70 px-3 py-1 hover:bg-white">Any experience</button></li>
+                )}
+                {type && (
+                  <li><button onClick={() => setType("")} className="rounded-full border bg-white/70 px-3 py-1 hover:bg-white">Any job type</button></li>
+                )}
+                {remote !== "all" && (
+                  <li><button onClick={() => setRemote("all")} className="rounded-full border bg-white/70 px-3 py-1 hover:bg-white">Remote + On-site</button></li>
+                )}
+                {hasFilters && (
+                  <li>
+                    <button onClick={clearFilters} className="rounded-full px-3 py-1 font-semibold text-white" style={{ background: "var(--color-primary)" }}>
+                      Clear all filters
+                    </button>
+                  </li>
+                )}
+              </ul>
+            </div>
           )}
         </div>
         {liveFiltered.length > liveForOpenPositions.length && (
