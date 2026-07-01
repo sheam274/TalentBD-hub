@@ -267,7 +267,7 @@ function CvBuilder() {
           />
 
           <Repeater
-            title="Projects"
+            title="Project Showcase"
             items={data.projects}
             onChange={(items) => set("projects", items)}
             create={() => ({ id: uid(), name: "", link: "", description: "" })}
