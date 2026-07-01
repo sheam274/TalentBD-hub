@@ -93,6 +93,11 @@ function Jobs() {
   const [activeSuggest, setActiveSuggest] = useState(-1);
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
+    if (activeSuggest < 0 || typeof document === "undefined") return;
+    const el = document.getElementById(`job-suggest-${activeSuggest}`);
+    el?.scrollIntoView({ block: "nearest" });
+  }, [activeSuggest]);
+  useEffect(() => {
     if (typeof window === "undefined") return;
     const onDown = (e: MouseEvent) => {
       if (!searchBoxRef.current?.contains(e.target as Node)) setShowSuggest(false);
