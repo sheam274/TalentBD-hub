@@ -242,10 +242,10 @@ function Landing() {
 
           {/* Trust */}
           <div className="mt-8 sm:mt-10 md:mt-14 lg:mt-16 w-full border-t border-[var(--eduma-ink)]/10 px-2 pt-6 sm:px-4 sm:pt-8 md:px-6 md:pt-10 text-center">
-            <p className="mb-4 sm:mb-6 md:mb-8 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
+            <p className="mb-4 sm:mb-6 md:mb-8 text-xs font-semibold uppercase tracking-widest leading-none text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
-            <div className="mx-auto grid max-w-xl grid-cols-2 gap-x-1 gap-y-2 sm:grid-cols-4 sm:gap-x-1.5 md:gap-x-2">
+            <div className="mx-auto grid max-w-xl grid-cols-2 items-center gap-x-2 gap-y-4 leading-none sm:grid-cols-4 sm:gap-x-3 md:gap-x-4">
               {PARTNER_LOGOS.map((logo) => (
                 <img
                   key={logo.name}
@@ -257,7 +257,7 @@ function Landing() {
                   sizes="(min-width: 1024px) 160px, (min-width: 768px) 140px, (min-width: 640px) 120px, 110px"
                   width={160}
                   height={64}
-                  className="mx-auto block h-16 w-auto max-w-full self-center object-contain opacity-90 transition duration-300 hover:opacity-100 hover:scale-105 sm:h-16 md:h-16"
+                  className="mx-auto block h-16 w-auto max-w-full self-center object-contain align-middle leading-none opacity-90 transition duration-300 hover:opacity-100 hover:scale-105"
                 />
               ))}
             </div>
