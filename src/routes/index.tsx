@@ -245,7 +245,7 @@ function Landing() {
             <p className="mb-4 sm:mb-6 md:mb-8 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
-            <div className="mx-auto grid max-w-3xl grid-cols-2 place-items-center gap-x-4 gap-y-4 sm:grid-cols-4 sm:gap-x-6 md:gap-x-8">
+            <div className="mx-auto grid max-w-2xl grid-cols-2 place-items-center gap-x-2 gap-y-3 sm:grid-cols-4 sm:gap-x-3 md:gap-x-4">
               {PARTNER_LOGOS.map((logo) => (
                 <img
                   key={logo.name}
