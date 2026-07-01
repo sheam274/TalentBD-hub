@@ -645,27 +645,117 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
           </div>
         </div>
 
-        {/* Objective */}
+        {/* Fresher-first layout: highlight Summary, Skills, Languages, Education,
+            Coursework, Project Showcase, and Certifications at the top. */}
         {d.summary && (
-          <TopcvCard header="PROFILE" accent={ACCENT} icon={<Sparkles className="size-3.5" />}>
+          <TopcvCard header="CAREER OBJECTIVE" accent={ACCENT} icon={<Sparkles className="size-3.5" />}>
             <p className="text-[12.5px] leading-relaxed">{d.summary}</p>
           </TopcvCard>
         )}
 
-        {/* Skills — full width chips */}
-        {d.skills && (
-          <TopcvCard header="TECHNICAL SKILLS" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
-            <div className="flex flex-wrap gap-1.5">
-              {splitList(d.skills).map((s, i) => (
-                <span key={i} className="rounded-full px-2.5 py-0.5 text-[11.5px] font-medium" style={{ background: PEACH_SOFT, color: INK }}>{s}</span>
+        {(d.skills || d.languages) && (
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {d.skills && (
+              <div className="md:col-span-3 min-w-0">
+                <TopcvCard header="TECHNICAL SKILLS" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
+                  <div className="flex flex-wrap gap-1.5">
+                    {splitList(d.skills).map((s, i) => (
+                      <span key={i} className="rounded-full px-2.5 py-0.5 text-[11.5px] font-medium" style={{ background: PEACH_SOFT, color: INK }}>{s}</span>
+                    ))}
+                  </div>
+                </TopcvCard>
+              </div>
+            )}
+            {d.languages && (
+              <div className="md:col-span-2 min-w-0">
+                <TopcvCard header="LANGUAGES" accent={ACCENT} icon={<Globe className="size-3.5" />}>
+                  <div className="flex flex-wrap gap-1">
+                    {splitList(d.languages).map((l, i) => (
+                      <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: PEACH_SOFT, color: INK }}>{l}</span>
+                    ))}
+                  </div>
+                </TopcvCard>
+              </div>
+            )}
+          </div>
+        )}
+
+        {d.education.length > 0 && (
+          <TopcvCard header="EDUCATION" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {d.education.map((e) => (
+                <div key={e.id} className="rounded-md border-l-2 pl-3" style={{ borderColor: ACCENT }}>
+                  <div className="font-semibold text-[12.5px]">{e.school}</div>
+                  {e.degree && <div className="text-[11.5px] text-black/75">{e.degree}</div>}
+                  <div className="flex justify-between gap-2 text-[11px] text-black/60">
+                    {e.period && <span>{e.period}</span>}
+                    {e.gpa && <span className="font-semibold" style={{ color: ACCENT }}>CGPA {e.gpa}</span>}
+                  </div>
+                  {e.details && <div className="text-[11.5px] mt-0.5">{e.details}</div>}
+                </div>
               ))}
             </div>
           </TopcvCard>
         )}
 
-        {/* Two column body — Experience/Projects (2/3) | Education/etc (1/3) */}
+        {d.coursework && (
+          <TopcvCard header="RELEVANT COURSEWORK" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
+            <div className="flex flex-wrap gap-1">
+              {splitList(d.coursework).map((c, i) => (
+                <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: "#fff", border: `1px solid ${PEACH_SOFT}`, color: INK }}>{c}</span>
+              ))}
+            </div>
+          </TopcvCard>
+        )}
+
+        {d.projects.length > 0 && (
+          <TopcvCard header="PROJECT SHOWCASE" accent={ACCENT} icon={<PersonStanding className="size-3.5" />}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+              {d.projects.map((p) => (
+                <div key={p.id} className="rounded-md p-2.5" style={{ background: "#fff7f0", border: `1px solid ${PEACH_SOFT}` }}>
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+                    <div className="font-semibold text-[13px]">{p.name}</div>
+                    {p.link && (
+                      <a href={p.link} target="_blank" rel="noreferrer" className="text-[11px] underline underline-offset-2" style={{ color: ACCENT }}>
+                        {p.link}
+                      </a>
+                    )}
+                  </div>
+                  {p.tech && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {splitList(p.tech).map((t, i) => (
+                        <span key={i} className="rounded px-1.5 py-0.5 text-[10.5px] font-medium" style={{ background: "#fff", color: INK, border: `1px solid ${PEACH_SOFT}` }}>{t}</span>
+                      ))}
+                    </div>
+                  )}
+                  {p.description && <p className="mt-1 text-[12px] leading-snug">{p.description}</p>}
+                </div>
+              ))}
+            </div>
+          </TopcvCard>
+        )}
+
+        {d.certifications.length > 0 && (
+          <TopcvCard header="CERTIFICATIONS" accent={ACCENT} icon={<BadgeCheck className="size-3.5" />}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {d.certifications.map((c) => (
+                <div key={c.id} className="flex items-start gap-2">
+                  <BadgeCheck className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                  <div className="flex-1">
+                    <div className="font-semibold text-[12px]">{c.name}</div>
+                    <div className="flex justify-between text-[11px] text-black/60">
+                      {c.issuer && <span>{c.issuer}</span>}
+                      {c.year && <span>{c.year}</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TopcvCard>
+        )}
+
+        {/* Supporting content — experience, coding profiles, awards */}
         <div className="grid grid-cols-5 gap-4">
-          {/* Main column */}
           <div className="col-span-3 space-y-4 min-w-0">
             {d.experience.length > 0 && (
               <TopcvCard header="WORK EXPERIENCE" accent={ACCENT} icon={<Briefcase className="size-3.5" />}>
@@ -696,33 +786,6 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
               </TopcvCard>
             )}
 
-            {d.projects.length > 0 && (
-              <TopcvCard header="PROJECT SHOWCASE" accent={ACCENT} icon={<PersonStanding className="size-3.5" />}>
-                <div className="grid grid-cols-1 gap-2.5">
-                  {d.projects.map((p) => (
-                    <div key={p.id} className="rounded-md p-2.5" style={{ background: "#fff7f0", border: `1px solid ${PEACH_SOFT}` }}>
-                      <div className="flex flex-wrap items-baseline justify-between gap-x-2">
-                        <div className="font-semibold text-[13px]">{p.name}</div>
-                        {p.link && (
-                          <a href={p.link} target="_blank" rel="noreferrer" className="text-[11px] underline underline-offset-2" style={{ color: ACCENT }}>
-                            {p.link}
-                          </a>
-                        )}
-                      </div>
-                      {p.tech && (
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {splitList(p.tech).map((t, i) => (
-                            <span key={i} className="rounded px-1.5 py-0.5 text-[10.5px] font-medium" style={{ background: "#fff", color: INK, border: `1px solid ${PEACH_SOFT}` }}>{t}</span>
-                          ))}
-                        </div>
-                      )}
-                      {p.description && <p className="mt-1 text-[12px] leading-snug">{p.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              </TopcvCard>
-            )}
-
             {d.awards.length > 0 && (
               <TopcvCard header="AWARDS & ACHIEVEMENTS" accent={ACCENT} icon={<Award className="size-3.5" />}>
                 <div className="space-y-1.5">
@@ -743,36 +806,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="col-span-2 space-y-4 min-w-0">
-            {d.education.length > 0 && (
-              <TopcvCard header="EDUCATION" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
-                <div className="space-y-2.5">
-                  {d.education.map((e) => (
-                    <div key={e.id}>
-                      <div className="font-semibold text-[12.5px]">{e.school}</div>
-                      {e.degree && <div className="text-[11.5px] text-black/75">{e.degree}</div>}
-                      <div className="flex justify-between gap-2 text-[11px] text-black/60">
-                        {e.period && <span>{e.period}</span>}
-                        {e.gpa && <span className="font-semibold" style={{ color: ACCENT }}>CGPA {e.gpa}</span>}
-                      </div>
-                      {e.details && <div className="text-[11.5px] mt-0.5">{e.details}</div>}
-                    </div>
-                  ))}
-                </div>
-              </TopcvCard>
-            )}
-
-            {d.coursework && (
-              <TopcvCard header="COURSEWORK" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
-                <div className="flex flex-wrap gap-1">
-                  {splitList(d.coursework).map((c, i) => (
-                    <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: "#fff", border: `1px solid ${PEACH_SOFT}`, color: INK }}>{c}</span>
-                  ))}
-                </div>
-              </TopcvCard>
-            )}
-
             {d.coding.length > 0 && (
               <TopcvCard header="CODING PROFILES" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
                 <ul className="space-y-1.5">
@@ -787,35 +821,6 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
                     </li>
                   ))}
                 </ul>
-              </TopcvCard>
-            )}
-
-            {d.certifications.length > 0 && (
-              <TopcvCard header="CERTIFICATIONS" accent={ACCENT} icon={<BadgeCheck className="size-3.5" />}>
-                <div className="space-y-1.5">
-                  {d.certifications.map((c) => (
-                    <div key={c.id} className="flex items-start gap-2">
-                      <BadgeCheck className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                      <div className="flex-1">
-                        <div className="font-semibold text-[12px]">{c.name}</div>
-                        <div className="flex justify-between text-[11px] text-black/60">
-                          {c.issuer && <span>{c.issuer}</span>}
-                          {c.year && <span>{c.year}</span>}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TopcvCard>
-            )}
-
-            {d.languages && (
-              <TopcvCard header="LANGUAGES" accent={ACCENT} icon={<Globe className="size-3.5" />}>
-                <div className="flex flex-wrap gap-1">
-                  {splitList(d.languages).map((l, i) => (
-                    <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: PEACH_SOFT, color: INK }}>{l}</span>
-                  ))}
-                </div>
               </TopcvCard>
             )}
           </div>
