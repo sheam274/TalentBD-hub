@@ -139,8 +139,14 @@ function Jobs() {
 
 
   const all = q.data ?? [];
-  // Light stemmer so "engineering" matches "engineer", "developers" matches "developer", etc.
-  const stem = (w: string) => w.replace(/(ing|ers|er|s)$/i, "");
+  // Minimal stemmer (plural + -ing) to avoid over-matching (keeps "engineer" ≠ "engine").
+  const stem = (w: string) => w.replace(/(ing|s)$/i, "");
+  // Whole-word test on a haystack: matches token as a standalone word, not substring.
+  const wordHit = (hay: string, tok: string) => {
+    if (!tok) return false;
+    const re = new RegExp(`(^|[^a-z0-9])${tok.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z0-9]|$)`, "i");
+    return re.test(hay);
+  };
   // Relevance score: title hits > tags/category > company > description; plus recency & featured boosts.
   const scoreJob = (fields: { title?: string; company?: string; category?: string; tags?: string[]; description?: string; date?: string | null; featured?: boolean }, tokens: string[]) => {
     const title = (fields.title ?? "").toLowerCase();
@@ -167,24 +173,18 @@ function Jobs() {
     return s;
   };
   const filtered = useMemo(() => {
-    const tokens = debouncedSearch
-      .toLowerCase()
-      .split(/[\s,]+/)
-      .filter((t) => t.length >= 2)
-      .map(stem);
+    const raw = debouncedSearch.trim().toLowerCase();
+    const tokens = raw.split(/[\s,]+/).filter((t) => t.length >= 2).map(stem);
     const loc = location.trim().toLowerCase();
     const matched = all.filter((j: any) => {
       if (tokens.length) {
-        // Strict: every search token must appear in the job TITLE (or tags/requirements).
-        // Company, description, location, category no longer trigger a match —
-        // searching "network engineer" only returns network-engineer roles.
+        // Strict AND-match on TITLE using whole-word boundaries. Multi-word
+        // queries ("network engineer") must also appear as a contiguous phrase
+        // in the title so "network administrator" is excluded.
         const title = (j.job_title ?? "").toLowerCase();
-        const tagHay = [
-          ...(Array.isArray(j.requirements) ? j.requirements : []),
-          ...(Array.isArray(j.tags) ? j.tags : []),
-        ].join(" ").toLowerCase();
-        const hit = (t: string) => title.includes(t) || tagHay.split(/\s+/).some((w) => stem(w).includes(t));
-        if (!tokens.every(hit)) return false;
+        const titleStem = title.split(/\s+/).map(stem).join(" ");
+        if (tokens.length > 1 && !titleStem.includes(tokens.join(" "))) return false;
+        if (!tokens.every((t) => wordHit(titleStem, t))) return false;
       }
       if (category) {
         const jc = (j.category ?? "General").toLowerCase();
@@ -270,11 +270,8 @@ function Jobs() {
   // Apply the same UI filters to the live (external) feed so category chips,
   // search, location, type, and remote toggle drive live jobs too.
   const liveFiltered = useMemo(() => {
-    const tokens = debouncedSearch
-      .toLowerCase()
-      .split(/[\s,]+/)
-      .filter((t) => t.length >= 2)
-      .map(stem);
+    const raw = debouncedSearch.trim().toLowerCase();
+    const tokens = raw.split(/[\s,]+/).filter((t) => t.length >= 2).map(stem);
     const loc = location.trim().toLowerCase();
     const typeL = type.toLowerCase();
     const catL = category.toLowerCase();
@@ -291,10 +288,12 @@ function Jobs() {
         if (!parts.some((p) => catHay.includes(p))) return false;
       }
       if (!tokens.length) return true;
-      // Strict: every token must appear in the live job title or tags.
+      // Strict whole-word AND-match on the live job title; multi-word queries
+      // must appear as a contiguous phrase.
       const title = (j.title ?? "").toLowerCase();
-      const tagHay = (j.tags ?? []).join(" ").toLowerCase();
-      return tokens.every((tok) => title.includes(tok) || tagHay.includes(tok));
+      const titleStem = title.split(/\s+/).map(stem).join(" ");
+      if (tokens.length > 1 && !titleStem.includes(tokens.join(" "))) return false;
+      return tokens.every((tok) => wordHit(titleStem, tok));
     });
   }, [remoteQ.data, debouncedSearch, category, location, exp, type, remote]);
 
