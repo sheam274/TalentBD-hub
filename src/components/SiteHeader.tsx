@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Menu, X, LogOut, ChevronDown, ShieldCheck, User as UserIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -83,6 +83,20 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState<string | null>(null);
   const nav = useNavigate();
+  const currentHref = useRouterState({
+    select: (s) => s.location.pathname + (s.location.searchStr ? `?${s.location.searchStr}` : ""),
+  });
+  const currentPath = useRouterState({ select: (s) => s.location.pathname });
+  const isChildActive = (to: string) => {
+    if (to.includes("?")) return currentHref === to;
+    return currentPath === to;
+  };
+  const isParentActive = (children?: { to: string }[]) =>
+    !!children?.some((c) => isChildActive(c.to));
+  const activeChildCls =
+    "bg-accent/15 text-accent ring-1 ring-accent/40";
+  const activeParentCls =
+    "bg-white/10 ring-1 ring-white/30";
 
   const fetchProfile = useServerFn(getMyProfile);
   const { data: profileData } = useQuery({
@@ -136,7 +150,7 @@ export function SiteHeader() {
             <div key={item.label} className="relative" onMouseEnter={() => setHover(item.label)} onMouseLeave={() => setHover(null)}>
               <a
                 href={item.to}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-accent hover:text-accent-foreground transition"
+                className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white hover:bg-accent hover:text-accent-foreground transition ${isParentActive(item.children) ? activeParentCls : ""}`}
               >
                 {item.label}
                 {item.children && <ChevronDown className="size-3.5 opacity-70" />}
@@ -148,7 +162,8 @@ export function SiteHeader() {
                       <a
                         key={c.to + c.label}
                         href={c.to}
-                        className="block rounded-lg px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
+                        aria-current={isChildActive(c.to) ? "page" : undefined}
+                        className={`block rounded-lg px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${isChildActive(c.to) ? activeChildCls : ""}`}
                       >
                         <div className="font-semibold">{c.label}</div>
                         {c.desc && <div className="text-xs text-muted-foreground">{c.desc}</div>}
@@ -255,7 +270,7 @@ export function SiteHeader() {
               <div key={item.label} className="border-t border-white/10 pt-2 mt-1">
                 <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/85">{item.label}</div>
                 {(item.children ?? [{ to: item.to, label: item.label }]).map((c) => (
-                  <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
+                  <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} aria-current={isChildActive(c.to) ? "page" : undefined} className={`block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${isChildActive(c.to) ? activeChildCls : ""}`}>
                     {c.label}
                   </a>
                 ))}
