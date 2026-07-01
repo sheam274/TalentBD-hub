@@ -116,10 +116,10 @@ function Landing() {
         />
 
         <div className="relative z-10 mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
+          <div className="grid grid-cols-1 items-stretch gap-4 sm:gap-5 lg:grid-cols-2 lg:gap-8">
             {/* Left card — text + CTAs */}
-            <div className="flex flex-col justify-center rounded-3xl px-2 pt-2 pb-6 sm:px-4 sm:pt-4 sm:pb-8 md:px-6 md:pt-6 md:pb-10 lg:pr-8 text-center lg:text-left">
-              <div className="mb-5 inline-flex items-center gap-2 self-center rounded-full border border-[var(--eduma-ink)]/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur lg:self-start">
+            <div className="flex flex-col justify-center rounded-3xl px-2 pt-1 pb-3 sm:px-4 sm:pt-2 sm:pb-4 md:px-6 md:pt-4 md:pb-6 lg:pr-8 text-center lg:text-left">
+              <div className="mb-3 sm:mb-4 inline-flex items-center gap-2 self-center rounded-full border border-[var(--eduma-ink)]/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur lg:self-start">
                 <span className="relative flex size-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
@@ -129,7 +129,7 @@ function Landing() {
                 </span>
               </div>
 
-              <h1 className="mb-5 text-[2.15rem] font-extrabold leading-[1.1] tracking-tight text-[var(--eduma-ink)] sm:text-5xl sm:leading-[1.05] md:text-6xl md:leading-[1.02] lg:text-[4.25rem]">
+              <h1 className="mb-3 sm:mb-4 text-[2rem] font-extrabold leading-[1.1] tracking-tight text-[var(--eduma-ink)] sm:text-[2.75rem] sm:leading-[1.05] md:text-5xl md:leading-[1.02] lg:text-[4.25rem]">
                 Build skills.
                 <br />
                 Earn credentials.
@@ -145,7 +145,7 @@ function Landing() {
                 </span>
               </h1>
 
-              <p className="mb-8 max-w-xl text-base leading-[1.65] text-[var(--eduma-ink)]/85 sm:text-lg md:leading-[1.7] mx-auto lg:mx-0">
+              <p className="mb-5 sm:mb-6 max-w-xl text-base leading-[1.6] text-[var(--eduma-ink)]/85 sm:text-[1.0625rem] md:leading-[1.65] mx-auto lg:mx-0">
                 TalentBD is Bangladesh's premium learn-and-earn platform — courses, verified
                 certifications, a dual-style CV builder, an ATS parser, and a local + global jobs
                 marketplace.
@@ -175,7 +175,7 @@ function Landing() {
             </div>
 
             {/* Right — borderless video, blended into hero */}
-            <div className="relative mx-auto w-full max-w-[640px] aspect-[4/3] sm:aspect-video lg:aspect-[5/4] lg:max-w-none lg:h-full">
+            <div className="relative mx-auto w-full max-w-[520px] sm:max-w-[560px] aspect-[16/10] sm:aspect-[16/9] lg:aspect-[5/4] lg:max-w-none lg:h-full">
               <video
                 ref={heroVideoRef}
                 {...(heroVideoSrc ? { src: heroVideoSrc } : {})}
@@ -241,8 +241,8 @@ function Landing() {
           </div>
 
           {/* Trust */}
-          <div className="mt-10 md:mt-12 w-full border-t border-[var(--eduma-ink)]/10 pt-6 md:pt-8 text-center">
-            <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
+          <div className="mt-6 sm:mt-8 md:mt-12 w-full border-t border-[var(--eduma-ink)]/10 pt-4 sm:pt-6 md:pt-8 text-center">
+            <p className="mb-4 sm:mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-12">
