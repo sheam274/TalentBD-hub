@@ -108,7 +108,8 @@ ${(data.jobDescription ?? "").slice(0, 12000) || "(not provided)"}
 CANDIDATE CV
 ${data.cvText.slice(0, 15000)}`;
 
-    const res = await fetch(url, {
+    const provider = useDirect ? "gemini-direct" : "lovable-ai-gateway";
+    const res = await loggedFetch(url, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -119,10 +120,10 @@ ${data.cvText.slice(0, 15000)}`;
         ],
         response_format: { type: "json_object" },
       }),
-    });
+    }, { kind: "ai", op: "cv.analyze", provider, model, extra: { job: data.jobTitle.slice(0, 60) } });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      console.error("analyzeCvForJob error", res.status, t);
+      logEvent("ai", "error", { op: "cv.analyze", provider, model, status: res.status, body: t.slice(0, 300) });
       return { ok: false as const, error: res.status === 429 ? "Rate limited. Try again shortly." : res.status === 402 ? "AI credits exhausted." : "AI unavailable." };
     }
     const json = await res.json();
