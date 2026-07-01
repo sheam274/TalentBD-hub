@@ -124,7 +124,7 @@ function Landing() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                   <span className="relative inline-flex size-2.5 rounded-full bg-green-500 ring-2 ring-green-400/40" />
                 </span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--eduma-ink)]">
+                <span className="text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
                   The Premium Talent Network
                 </span>
               </div>
