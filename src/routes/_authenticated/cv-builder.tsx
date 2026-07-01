@@ -852,3 +852,64 @@ function BigTechChecklist({ d }: { d: Payload }) {
     </section>
   );
 }
+
+/* --- Suggestion picker --- */
+type SuggestGroup = { label: string; items: string[] };
+
+const SKILL_GROUPS: SuggestGroup[] = [
+  { label: "Languages", items: ["C", "C++", "Java", "Python", "JavaScript", "TypeScript", "Go", "Rust", "Kotlin", "Swift", "SQL", "Bash"] },
+  { label: "Frontend", items: ["React", "Next.js", "TanStack Start", "Vue", "Svelte", "Tailwind CSS", "Redux", "React Native"] },
+  { label: "Backend", items: ["Node.js", "Express", "NestJS", "Django", "Flask", "FastAPI", "Spring Boot", "GraphQL", "gRPC", "REST APIs"] },
+  { label: "Databases", items: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "SQLite", "DynamoDB", "Elasticsearch", "Supabase"] },
+  { label: "Cloud & DevOps", items: ["AWS", "GCP", "Azure", "Docker", "Kubernetes", "Terraform", "CI/CD", "GitHub Actions", "Linux", "Nginx"] },
+  { label: "CS Fundamentals", items: ["Data Structures", "Algorithms", "System Design", "OOP", "Operating Systems", "Networking", "DBMS"] },
+  { label: "AI / ML / Data", items: ["PyTorch", "TensorFlow", "scikit-learn", "Pandas", "NumPy", "LLMs", "RAG", "Prompt Engineering", "OpenCV"] },
+  { label: "Tools", items: ["Git", "GitHub", "Jira", "Figma", "Postman", "VS Code", "Vim"] },
+];
+
+const LANGUAGE_GROUPS: SuggestGroup[] = [
+  { label: "Common", items: ["English (fluent)", "English (professional)", "Bengali (native)", "Hindi (conversational)", "Urdu (conversational)", "Arabic (basic)", "French (basic)", "German (basic)", "Spanish (basic)", "Japanese (basic)", "Mandarin (basic)"] },
+];
+
+const COURSEWORK_GROUPS: SuggestGroup[] = [
+  { label: "Core CSE", items: ["Data Structures", "Algorithms", "Operating Systems", "Computer Networks", "Database Systems", "Computer Architecture", "Discrete Mathematics", "Theory of Computation", "Compilers", "Software Engineering"] },
+  { label: "Advanced", items: ["Distributed Systems", "Machine Learning", "Deep Learning", "Artificial Intelligence", "Computer Graphics", "Cryptography", "Cloud Computing", "Information Security", "Parallel Computing", "Human-Computer Interaction"] },
+];
+
+function appendCsv(current: string, token: string): string {
+  const existing = current.split(",").map((s) => s.trim()).filter(Boolean);
+  if (existing.some((e) => e.toLowerCase() === token.toLowerCase())) return current;
+  return [...existing, token].join(", ");
+}
+
+function SuggestionPicker({ label, groups, value, onAdd }: { label: string; groups: SuggestGroup[]; value: string; onAdd: (t: string) => void }) {
+  const selected = new Set(value.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean));
+  return (
+    <div className="rounded-md border border-dashed bg-muted/30 p-2.5">
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label} — click to add</p>
+      <div className="mt-2 space-y-2">
+        {groups.map((g) => (
+          <div key={g.label}>
+            <p className="text-[10px] font-medium text-muted-foreground/80">{g.label}</p>
+            <div className="mt-1 flex flex-wrap gap-1">
+              {g.items.map((it) => {
+                const isOn = selected.has(it.toLowerCase());
+                return (
+                  <button
+                    key={it}
+                    type="button"
+                    onClick={() => onAdd(it)}
+                    disabled={isOn}
+                    className={`rounded-full border px-2 py-0.5 text-[11px] transition ${isOn ? "border-emerald-300 bg-emerald-50 text-emerald-700 cursor-default" : "border-border bg-white hover:border-primary hover:text-primary"}`}
+                  >
+                    {isOn ? "✓ " : "+ "}{it}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
