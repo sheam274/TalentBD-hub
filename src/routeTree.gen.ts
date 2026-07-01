@@ -35,6 +35,7 @@ import { Route as AuthenticatedInterviewIndexRouteImport } from './routes/_authe
 import { Route as JobsJobIdApplyRouteImport } from './routes/jobs.$jobId.apply'
 import { Route as JobsJobIdAppliedRouteImport } from './routes/jobs.$jobId.applied'
 import { Route as AuthenticatedMyApplicationsAppIdRouteImport } from './routes/_authenticated/my-applications.$appId'
+import { Route as AuthenticatedLearnExamPrepRouteImport } from './routes/_authenticated/learn/exam-prep'
 import { Route as AuthenticatedInterviewSetupRouteImport } from './routes/_authenticated/interview/setup'
 import { Route as AuthenticatedInterviewHistoryRouteImport } from './routes/_authenticated/interview/history'
 import { Route as AuthenticatedEmployerJobsRouteImport } from './routes/_authenticated/employer/jobs'
@@ -192,6 +193,12 @@ const AuthenticatedMyApplicationsAppIdRoute =
     id: '/$appId',
     path: '/$appId',
     getParentRoute: () => AuthenticatedMyApplicationsRoute,
+  } as any)
+const AuthenticatedLearnExamPrepRoute =
+  AuthenticatedLearnExamPrepRouteImport.update({
+    id: '/learn/exam-prep',
+    path: '/learn/exam-prep',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedInterviewSetupRoute =
   AuthenticatedInterviewSetupRouteImport.update({
@@ -369,6 +376,7 @@ export interface FileRoutesByFullPath {
   '/employer/jobs': typeof AuthenticatedEmployerJobsRoute
   '/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/interview/setup': typeof AuthenticatedInterviewSetupRoute
+  '/learn/exam-prep': typeof AuthenticatedLearnExamPrepRoute
   '/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
   '/jobs/$jobId/applied': typeof JobsJobIdAppliedRoute
   '/jobs/$jobId/apply': typeof JobsJobIdApplyRoute
@@ -419,6 +427,7 @@ export interface FileRoutesByTo {
   '/employer/jobs': typeof AuthenticatedEmployerJobsRoute
   '/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/interview/setup': typeof AuthenticatedInterviewSetupRoute
+  '/learn/exam-prep': typeof AuthenticatedLearnExamPrepRoute
   '/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
   '/jobs/$jobId/applied': typeof JobsJobIdAppliedRoute
   '/jobs/$jobId/apply': typeof JobsJobIdApplyRoute
@@ -471,6 +480,7 @@ export interface FileRoutesById {
   '/_authenticated/employer/jobs': typeof AuthenticatedEmployerJobsRoute
   '/_authenticated/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/_authenticated/interview/setup': typeof AuthenticatedInterviewSetupRoute
+  '/_authenticated/learn/exam-prep': typeof AuthenticatedLearnExamPrepRoute
   '/_authenticated/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
   '/jobs/$jobId/applied': typeof JobsJobIdAppliedRoute
   '/jobs/$jobId/apply': typeof JobsJobIdApplyRoute
@@ -523,6 +533,7 @@ export interface FileRouteTypes {
     | '/employer/jobs'
     | '/interview/history'
     | '/interview/setup'
+    | '/learn/exam-prep'
     | '/my-applications/$appId'
     | '/jobs/$jobId/applied'
     | '/jobs/$jobId/apply'
@@ -573,6 +584,7 @@ export interface FileRouteTypes {
     | '/employer/jobs'
     | '/interview/history'
     | '/interview/setup'
+    | '/learn/exam-prep'
     | '/my-applications/$appId'
     | '/jobs/$jobId/applied'
     | '/jobs/$jobId/apply'
@@ -624,6 +636,7 @@ export interface FileRouteTypes {
     | '/_authenticated/employer/jobs'
     | '/_authenticated/interview/history'
     | '/_authenticated/interview/setup'
+    | '/_authenticated/learn/exam-prep'
     | '/_authenticated/my-applications/$appId'
     | '/jobs/$jobId/applied'
     | '/jobs/$jobId/apply'
@@ -836,6 +849,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/my-applications/$appId'
       preLoaderRoute: typeof AuthenticatedMyApplicationsAppIdRouteImport
       parentRoute: typeof AuthenticatedMyApplicationsRoute
+    }
+    '/_authenticated/learn/exam-prep': {
+      id: '/_authenticated/learn/exam-prep'
+      path: '/learn/exam-prep'
+      fullPath: '/learn/exam-prep'
+      preLoaderRoute: typeof AuthenticatedLearnExamPrepRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/interview/setup': {
       id: '/_authenticated/interview/setup'
@@ -1097,6 +1117,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppointmentLetterIdRoute: typeof AuthenticatedAppointmentLetterIdRoute
   AuthenticatedInterviewHistoryRoute: typeof AuthenticatedInterviewHistoryRoute
   AuthenticatedInterviewSetupRoute: typeof AuthenticatedInterviewSetupRoute
+  AuthenticatedLearnExamPrepRoute: typeof AuthenticatedLearnExamPrepRoute
   AuthenticatedInterviewIndexRoute: typeof AuthenticatedInterviewIndexRoute
   AuthenticatedLearnIndexRoute: typeof AuthenticatedLearnIndexRoute
   AuthenticatedInterviewResultSessionIdRoute: typeof AuthenticatedInterviewResultSessionIdRoute
@@ -1116,6 +1137,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppointmentLetterIdRoute: AuthenticatedAppointmentLetterIdRoute,
   AuthenticatedInterviewHistoryRoute: AuthenticatedInterviewHistoryRoute,
   AuthenticatedInterviewSetupRoute: AuthenticatedInterviewSetupRoute,
+  AuthenticatedLearnExamPrepRoute: AuthenticatedLearnExamPrepRoute,
   AuthenticatedInterviewIndexRoute: AuthenticatedInterviewIndexRoute,
   AuthenticatedLearnIndexRoute: AuthenticatedLearnIndexRoute,
   AuthenticatedInterviewResultSessionIdRoute:
