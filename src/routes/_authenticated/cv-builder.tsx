@@ -81,6 +81,7 @@ function CvBuilder() {
   const q = useQuery({ queryKey: ["my-cv"], queryFn: () => getFn() });
   const [style, setStyle] = useState<"standard" | "premium">("premium");
   const [theme, setTheme] = useState<PremiumThemeKey>("peach");
+  const [paper, setPaper] = useState<"a4" | "letter">("a4");
   const [data, setData] = useState<Payload>(empty);
 
   useEffect(() => {
@@ -150,8 +151,11 @@ function CvBuilder() {
     // Title becomes the default filename in the browser's Save as PDF dialog.
     const title = cvFileBase();
     const bg = style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff";
+    const pageSize = paper === "letter" ? "Letter" : "A4";
+    const pageW = paper === "letter" ? "216mm" : "210mm";
+    const pageH = paper === "letter" ? "279mm" : "297mm";
     w.document.open();
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>${styles}<style>@page{size:A4;margin:10mm;background:${bg}}html,body{margin:0;background:${bg};-webkit-print-color-adjust:exact;print-color-adjust:exact}.cv-print-area{width:210mm;min-height:297mm;box-shadow:none!important;border:0!important;margin:0!important;padding:0!important;background:${bg}!important;transform:none!important}</style></head><body><div class="cv-print-area" style="background:${bg}">${(node as HTMLElement).innerHTML}</div></body></html>`);
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>${styles}<style>@page{size:${pageSize};margin:10mm;background:${bg}}html,body{margin:0;background:${bg};-webkit-print-color-adjust:exact;print-color-adjust:exact}.cv-print-area{width:${pageW};min-height:${pageH};box-shadow:none!important;border:0!important;margin:0!important;padding:0!important;background:${bg}!important;transform:none!important}</style></head><body><div class="cv-print-area cv-paper-${paper}" style="background:${bg}">${(node as HTMLElement).innerHTML}</div></body></html>`);
     w.document.close();
     w.focus();
     setTimeout(() => { w.print(); w.close(); }, 400);
@@ -171,7 +175,7 @@ function CvBuilder() {
           filename,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, backgroundColor: bg },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          jsPDF: { unit: "mm", format: paper === "letter" ? "letter" : "a4", orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
         })
         .from(node)
@@ -215,6 +219,20 @@ function CvBuilder() {
               })}
             </div>
           )}
+          <div className="flex items-center gap-1 rounded-md border bg-white p-1" role="radiogroup" aria-label="Paper size">
+            {(["a4", "letter"] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                role="radio"
+                aria-checked={paper === p}
+                onClick={() => setPaper(p)}
+                className={`inline-flex items-center rounded px-2 py-1 text-xs font-medium uppercase ${paper === p ? "bg-muted" : "hover:bg-muted/60"}`}
+              >
+                {p === "a4" ? "A4" : "Letter"}
+              </button>
+            ))}
+          </div>
           <button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ background: "var(--color-primary)" }}>
             <Save className="size-4" /> Save
           </button>
@@ -388,7 +406,7 @@ function CvBuilder() {
         </div>
 
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <CvSheet bg={style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff"}>
+          <CvSheet paper={paper} bg={style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff"}>
             {style === "standard" ? <StandardCv d={data} /> : <PremiumCv d={data} theme={theme} />}
           </CvSheet>
         </div>
@@ -849,11 +867,17 @@ function IconBadge({ children, color }: { children: React.ReactNode; color: stri
  * viewports we scale the sheet down with `transform: scale()` to fit the
  * available width; print CSS resets the transform so PDFs are full-size.
  */
-function CvSheet({ children, bg = "#ffffff" }: { children: React.ReactNode; bg?: string }) {
+function CvSheet({ children, bg = "#ffffff", paper = "a4" }: { children: React.ReactNode; bg?: string; paper?: "a4" | "letter" }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const A4_W = 794;
-  const A4_H = 1123;
+  // 96dpi pixel dimensions: A4 = 210×297mm, US Letter = 216×279mm.
+  // Keeping identical 10mm print margins on both, the on-screen scale ratio
+  // matches the printed page so the two-column split spacing is identical.
+  const PAPER = paper === "letter"
+    ? { w: 816, h: 1056 }  // 8.5in × 11in @ 96dpi
+    : { w: 794, h: 1123 }; // 210mm × 297mm @ 96dpi
+  const A4_W = PAPER.w;
+  const A4_H = PAPER.h;
 
   useLayoutEffect(() => {
     const el = wrapRef.current;
@@ -871,7 +895,7 @@ function CvSheet({ children, bg = "#ffffff" }: { children: React.ReactNode; bg?:
   return (
     <div ref={wrapRef} className="cv-sheet-wrap w-full" style={{ height: A4_H * scale }}>
       <div
-        className="cv-print-area shadow-sm border rounded-xl overflow-hidden"
+        className={`cv-print-area cv-paper-${paper} shadow-sm border rounded-xl overflow-hidden`}
         style={{
           width: A4_W,
           minHeight: A4_H,

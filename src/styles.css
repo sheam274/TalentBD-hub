@@ -351,7 +351,15 @@
 @media print {
   html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
   .no-print { display: none !important; }
+  /* Default page size — A4. Explicit named page rules let the CV export
+     switch between A4 and US Letter while keeping identical margins so the
+     two-column split spacing stays pixel-consistent across paper sizes. */
   @page { size: A4; margin: 10mm; }
+  @page a4 { size: A4; margin: 10mm; }
+  @page letter { size: Letter; margin: 10mm; }
+
+  .cv-print-area.cv-paper-a4 { page: a4; width: 210mm !important; min-height: 297mm !important; }
+  .cv-print-area.cv-paper-letter { page: letter; width: 216mm !important; min-height: 279mm !important; }
 
   /* Hide everything except the CV print area */
   body * { visibility: hidden !important; }
