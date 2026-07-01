@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
+import { checkEmailExists } from "@/lib/auth-check.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -28,7 +29,7 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [formError, setFormError] = useState<React.ReactNode>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => { if (user) nav({ to: "/dashboard" }); }, [user, nav]);
 
@@ -65,16 +66,20 @@ function AuthPage() {
       const msg: string = err?.message ?? "Sign-in failed";
       const lower = msg.toLowerCase();
       if (mode === "signin" && (lower.includes("invalid login") || lower.includes("invalid credentials"))) {
-        setEmailError("Incorrect email or password");
-        setPasswordError("Incorrect email or password");
-        setFormError(
-          <>
-            No account found for this email.{" "}
-            <button type="button" onClick={() => setMode("signup")} className="underline font-semibold">
-              Create an account
-            </button>
-          </>,
-        );
+        // Determine which field is wrong by checking if the email is registered.
+        try {
+          const { exists } = await checkEmailExists({ data: { email } });
+          if (exists) {
+            setPassword("");
+            setPasswordError("Incorrect password");
+          } else {
+            setEmail("");
+            setEmailError("No account with this email");
+          }
+        } catch {
+          setPassword("");
+          setPasswordError("Incorrect password");
+        }
       } else if (lower.includes("email not confirmed")) {
         setEmailError("Please confirm your email before signing in");
       } else if (lower.includes("user already registered") || lower.includes("already registered")) {
@@ -85,8 +90,8 @@ function AuthPage() {
         setEmailError(msg);
       } else {
         setFormError(msg);
+        toast.error(msg);
       }
-      toast.error(msg);
     } finally {
       setBusy(false);
     }
