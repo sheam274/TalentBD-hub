@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { listModulesPublic } from "@/lib/learning.functions";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { YouTubeThumb } from "@/components/YouTubeThumb";
-import { BookOpen, PlayCircle, Award } from "lucide-react";
+import { BookOpen, PlayCircle, Award, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/learn/")({
   head: () => ({ meta: [{ title: "Learn — Engineering tracks | TalentBD" }, { name: "description", content: "Browse curated learning tracks across CSE, EEE, and Civil engineering." }] }),
@@ -38,6 +38,7 @@ function LearnIndex() {
     const ib = DISCIPLINE_ORDER.indexOf(disciplineKey(b));
     return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
   });
+  const cseModules = (q.data ?? []).filter((m: any) => disciplineKey(m.discipline) === "cse");
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:px-6 page-enter">
@@ -68,7 +69,8 @@ function LearnIndex() {
         </div>
       )}
 
-      <div className="mt-12 space-y-16">
+      <div className="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="min-w-0 space-y-16">
         {orderedGroups.map(([disc, list]) => {
           const meta = disciplineMeta[disciplineKey(disc)] ?? { label: disc, thumb: "thumb-cse", icon: "📚", blurb: "" };
           return (
@@ -125,6 +127,37 @@ function LearnIndex() {
             </section>
           );
         })}
+        </div>
+        <aside className="hidden lg:block">
+          <div className="sticky top-24 space-y-4">
+            <div className="overflow-hidden rounded-2xl border bg-white shadow-[0_10px_30px_-20px_rgba(15,23,42,0.35)]">
+              <div className="px-4 py-3 text-white text-sm font-bold tracking-wide" style={{ background: "var(--color-primary)" }}>
+                💻 CSE Tutorials
+              </div>
+              <ul className="max-h-[70vh] overflow-y-auto py-1 text-sm">
+                {cseModules.length === 0 && (
+                  <li className="px-4 py-3 text-muted-foreground text-xs">Loading topics…</li>
+                )}
+                {cseModules.map((m: any) => (
+                  <li key={m.id}>
+                    <Link
+                      to="/learn/$discipline/$topic"
+                      params={{ discipline: m.discipline, topic: m.section_slug }}
+                      className="group flex items-center justify-between gap-2 border-b border-border/40 px-4 py-2.5 last:border-b-0 hover:bg-muted transition-colors"
+                    >
+                      <span className="truncate font-medium group-hover:text-[var(--color-primary)]">{m.title}</span>
+                      <ChevronRight className="size-3.5 shrink-0 opacity-40 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border bg-gradient-to-br from-[color-mix(in_oklab,var(--color-accent)_15%,white)] to-white p-4 text-sm">
+              <div className="flex items-center gap-2 font-semibold"><Award className="size-4" style={{ color: "var(--color-primary)" }} /> Certifications</div>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">Every tutorial ends with a practice exam and an official quiz. Score 80%+ to earn a shareable credential.</p>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );
