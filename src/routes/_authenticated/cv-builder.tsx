@@ -392,10 +392,17 @@ function StandardCv({ d }: { d: Payload }) {
         </CvSection>
       )}
       {d.projects.length > 0 && (
-        <CvSection h="Projects">
+        <CvSection h="Project Showcase">
           {d.projects.map((p) => (
             <div key={p.id} className="mb-1.5">
-              <div className="font-semibold">{p.name}{p.link && <span className="ml-2 font-normal text-xs">{p.link}</span>}</div>
+              <div className="font-semibold">
+                {p.name}
+                {p.link && (
+                  <a href={p.link} target="_blank" rel="noreferrer" className="ml-2 font-normal text-xs underline">
+                    {p.link}
+                  </a>
+                )}
+              </div>
               {p.description && <p className="text-[12.5px]">{p.description}</p>}
             </div>
           ))}
