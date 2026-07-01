@@ -44,7 +44,7 @@ function Parser() {
   const listJobs = useServerFn(listJobsPublic);
   const jobsQ = useQuery({ queryKey: ["parser-jobs"], queryFn: () => listJobs(), staleTime: 60_000 });
   const jobs = jobsQ.data ?? [];
-  const selectedJob = useMemo(() => jobs.find((j: any) => j.id === selectedJobId), [jobs, selectedJobId]);
+  const selectedJob = useMemo(() => jobs.find((j) => j.id === selectedJobId), [jobs, selectedJobId]);
 
   const analyzeFn = useServerFn(analyzeCvForJob);
   const analyze = useMutation({
