@@ -327,6 +327,15 @@ function Jobs() {
     const loc = location.trim().toLowerCase();
     const typeL = type.toLowerCase();
     const catL = category.toLowerCase();
+    // Infer experience level from a live job's title/description since
+    // external feeds don't expose a structured field. Keeps the filter
+    // strict — anything ambiguous is treated as Mid-level.
+    const inferExp = (j: any): "Entry-level" | "Mid-level" | "Senior" => {
+      const hay = `${j.title ?? ""} ${j.description ?? ""}`.toLowerCase();
+      if (/\b(senior|sr\.?|lead|principal|staff|head of|architect|manager|director)\b/.test(hay)) return "Senior";
+      if (/\b(junior|jr\.?|entry[- ]?level|intern(ship)?|graduate|trainee|apprentice|associate)\b/.test(hay)) return "Entry-level";
+      return "Mid-level";
+    };
     return (remoteQ.data ?? []).filter((j: any) => {
       if (remote === "remote" && !j.is_remote) return false;
       if (remote === "onsite" && j.is_remote) return false;
@@ -334,6 +343,7 @@ function Jobs() {
       if (typeL
           && !(j.job_type ?? "").toLowerCase().includes(typeL.replace("-", "_"))
           && !(j.job_type ?? "").toLowerCase().includes(typeL)) return false;
+      if (exp && inferExp(j) !== exp) return false;
       if (catL) {
         const catHay = `${j.category ?? ""} ${j.title ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
         const parts = catL.split(/[\s/&-]+/).filter(Boolean);
@@ -551,34 +561,21 @@ function Jobs() {
 
         <div className="mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {(() => {
+            // Use the shared strict `liveFiltered` list so every filter
+            // (search, category, location, experience, job type, remote)
+            // behaves identically across the "Open positions" and live feeds.
+            const list = liveFiltered;
             const tokens = debouncedSearch
               .toLowerCase()
               .split(/[\s,]+/)
-              .filter((t) => t.length >= 2)
-              .map(stem);
-            const loc = location.trim().toLowerCase();
-            const typeL = type.toLowerCase();
-            const catL = category.toLowerCase();
-            const list = (remoteQ.data ?? []).filter((j: any) => {
-              if (remote === "remote" && !j.is_remote) return false;
-              if (remote === "onsite" && j.is_remote) return false;
-              if (loc && !(j.location ?? "").toLowerCase().includes(loc)) return false;
-              if (typeL && !(j.job_type ?? "").toLowerCase().includes(typeL.replace("-", "_"))
-                  && !(j.job_type ?? "").toLowerCase().includes(typeL)) return false;
-              if (catL) {
-                const catHay = `${j.category ?? ""} ${j.title ?? ""} ${(j.tags ?? []).join(" ")}`.toLowerCase();
-                // Match either the full label or its first word (e.g. "IT/Software" -> "it", "software")
-                const parts = catL.split(/[\s/&-]+/).filter(Boolean);
-                if (!parts.some((p) => catHay.includes(p))) return false;
-              }
-              if (!tokens.length) return true;
-              const hay = `${j.title} ${j.company} ${j.category ?? ""} ${(j.tags ?? []).join(" ")} ${j.location ?? ""} ${j.job_type ?? ""}`.toLowerCase();
-              return tokens.some((tok) => hay.includes(tok));
-            });
+              .filter((t) => t.length >= 2);
             // Server returns results pre-sorted by relevance + recency, so
             // pagination stays stable as more pages append. Don't re-sort here.
             if (tokens.length && list.length === 0) {
               return <p className="text-sm text-muted-foreground">No live jobs match "{search}".</p>;
+            }
+            if (!tokens.length && list.length === 0 && hasFilters) {
+              return <p className="text-sm text-muted-foreground">No live jobs match the selected filters.</p>;
             }
             const shown = list.slice(0, visibleCount);
             if (typeof window !== "undefined") {
