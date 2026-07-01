@@ -52,7 +52,7 @@ function externalApplyUrl(text?: string | null): string | null {
 function linkify(text: string) {
   const parts = text.split(URL_RE);
   return parts.map((p, i) =>
-    URL_RE.test(p) ? (
+    /^https?:\/\//.test(p) ? (
       <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="underline text-primary break-all">{p}</a>
     ) : (
       <span key={i}>{p}</span>
