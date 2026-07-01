@@ -605,9 +605,31 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
               )}
             </div>
             <div className="min-w-0">
-              <h2 className="text-[30px] font-extrabold uppercase tracking-[0.08em] leading-tight" style={{ color: "#ffffff", textShadow: "0 1px 2px rgba(0,0,0,0.35)" }}>{d.name || "Your Name"}</h2>
+              <h2
+                className="font-black uppercase leading-[1.05] break-words"
+                style={{
+                  color: "#ffffff",
+                  fontSize: "clamp(22px, 3.4vw, 34px)",
+                  letterSpacing: "0.045em",
+                  textShadow:
+                    "0 1px 0 rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.35), 0 0 1px rgba(255,255,255,0.4)",
+                  WebkitFontSmoothing: "antialiased",
+                }}
+              >
+                {d.name || "Your Name"}
+              </h2>
               {d.title && (
-                <p className="mt-1 text-[14px] font-semibold" style={{ color: PEACH_SOFT, textShadow: "0 1px 2px rgba(0,0,0,0.25)" }}>{d.title}</p>
+                <p
+                  className="mt-1.5 font-semibold uppercase"
+                  style={{
+                    color: PEACH_SOFT,
+                    fontSize: "clamp(12px, 1.3vw, 14.5px)",
+                    letterSpacing: "0.18em",
+                    textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  {d.title}
+                </p>
               )}
               <div className="mt-3 h-[2px] w-24" style={{ background: PEACH }} />
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11.5px] text-white/90">
