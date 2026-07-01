@@ -241,7 +241,7 @@ function Landing() {
           </div>
 
           {/* Trust */}
-          <div className="mt-6 sm:mt-8 md:mt-10 w-full border-t border-[var(--eduma-ink)]/10 px-2 pt-4 sm:px-4 sm:pt-5 md:px-6 md:pt-6 text-center">
+          <div className="mt-auto pt-6 sm:pt-8 md:pt-10 w-full border-t border-[var(--eduma-ink)]/10 px-2 sm:px-4 md:px-6 text-center">
             <p className="mb-3 sm:mb-4 md:mb-5 text-xs font-semibold uppercase tracking-widest leading-none text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
