@@ -582,6 +582,30 @@ function PremiumCv({ d }: { d: Payload }) {
               </TopcvCard>
             )}
 
+            {d.coursework && (
+              <TopcvCard header="COURSEWORK">
+                <p className="whitespace-pre-line">{d.coursework}</p>
+              </TopcvCard>
+            )}
+
+            {d.coding.length > 0 && (
+              <TopcvCard header="CODING PROFILES">
+                <ul className="space-y-1.5 text-[12px]">
+                  {d.coding.map((c) => (
+                    <li key={c.id} className="flex items-start gap-2">
+                      <Code2 className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span className="min-w-0 break-words">
+                        <span className="font-semibold">{c.platform}</span>
+                        {c.handle && <> — {c.handle}</>}
+                        {c.rating && <> ({c.rating})</>}
+                        {c.link && <div className="text-[11px] text-black/60 break-all">{c.link}</div>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </TopcvCard>
+            )}
+
             {d.languages && (
               <TopcvCard header="INTERESTS"><p>{d.languages}</p></TopcvCard>
             )}
@@ -595,7 +619,7 @@ function PremiumCv({ d }: { d: Payload }) {
                   <div key={e.id} className="mb-3 last:mb-0 flex gap-2.5">
                     <GraduationCap className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
                     <div className="flex-1">
-                      <div className="font-semibold">{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}</div>
+                      <div className="font-semibold">{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}{e.gpa && <span className="font-normal"> · CGPA {e.gpa}</span>}</div>
                       {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
                       {e.details && <div className="text-[12px]">{e.details}</div>}
                     </div>
@@ -612,6 +636,7 @@ function PremiumCv({ d }: { d: Payload }) {
                     <div className="flex-1">
                       <div className="font-semibold">{e.company}{e.role && <span className="font-normal">, {e.role}</span>}</div>
                       {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
+                      {e.tech && <div className="text-[12px] italic text-black/70">Tech: {e.tech}</div>}
                       {e.bullets && (
                         <ul className="mt-1 space-y-0.5 text-[12px]">
                           {e.bullets.split("\n").filter(Boolean).map((b, i) => (
@@ -639,7 +664,42 @@ function PremiumCv({ d }: { d: Payload }) {
                           </a>
                         )}
                       </div>
+                      {p.tech && <div className="text-[12px] italic text-black/70">Tech: {p.tech}</div>}
                       {p.description && <p className="text-[12px]">{p.description}</p>}
+                    </div>
+                  </div>
+                ))}
+              </TopcvCard>
+            )}
+
+            {d.certifications.length > 0 && (
+              <TopcvCard header="CERTIFICATIONS">
+                {d.certifications.map((c) => (
+                  <div key={c.id} className="mb-2 last:mb-0 flex gap-2.5">
+                    <BadgeCheck className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <div className="flex-1 flex justify-between gap-2">
+                      <div>
+                        <span className="font-semibold">{c.name}</span>
+                        {c.issuer && <span className="text-[12px] text-black/70"> · {c.issuer}</span>}
+                      </div>
+                      {c.year && <div className="text-[12px] text-black/70 shrink-0">{c.year}</div>}
+                    </div>
+                  </div>
+                ))}
+              </TopcvCard>
+            )}
+
+            {d.awards.length > 0 && (
+              <TopcvCard header="AWARDS & ACHIEVEMENTS">
+                {d.awards.map((a) => (
+                  <div key={a.id} className="mb-2 last:mb-0 flex gap-2.5">
+                    <Award className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <div className="flex-1">
+                      <div className="flex justify-between gap-2">
+                        <span className="font-semibold">{a.title}</span>
+                        {a.year && <span className="text-[12px] text-black/70">{a.year}</span>}
+                      </div>
+                      {a.detail && <div className="text-[12px]">{a.detail}</div>}
                     </div>
                   </div>
                 ))}
