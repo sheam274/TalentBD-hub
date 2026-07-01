@@ -381,7 +381,8 @@ function Jobs() {
           <div className="flex gap-2">
             <input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setShowSuggest(true); }}
+              onFocus={() => setShowSuggest(true)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") { e.preventDefault(); setDebouncedSearch(search.trim()); setShowSuggest(false); }
                 if (e.key === "Escape") setShowSuggest(false);
@@ -400,7 +401,7 @@ function Jobs() {
               <SearchIcon className="size-4" /> Search
             </button>
           </div>
-          {false && showSuggest && search.trim().length >= 1 && (() => {
+          {showSuggest && search.trim().length >= 1 && (() => {
             const q = search.trim().toLowerCase();
             const titles = Array.from(new Set([
               ...all.map((j: any) => j.job_title as string),
