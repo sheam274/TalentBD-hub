@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { loggedFetch, logEvent } from "./server-logger";
 
 const messageSchema = z.object({
   messages: z
@@ -49,11 +50,16 @@ export const talentChat = createServerFn({ method: "POST" })
     const body = (m: string) =>
       JSON.stringify({ model: m, messages: [{ role: "system", content: system }, ...data.messages] });
 
-    let res = await fetch(url, { method: "POST", headers, body: body(primaryModel) });
+    const provider = useDirect ? "gemini-direct" : "lovable-ai-gateway";
+    let res = await loggedFetch(url, { method: "POST", headers, body: body(primaryModel) }, {
+      kind: "ai", op: "chat.completion", provider, model: primaryModel, extra: { mode: data.mode ?? "coach", msgs: data.messages.length },
+    });
     let modelUsed = primaryModel;
     let fellBack = false;
     if (res.status === 429 && useDirect) {
-      res = await fetch(url, { method: "POST", headers, body: body("gemini-2.5-flash-lite") });
+      res = await loggedFetch(url, { method: "POST", headers, body: body("gemini-2.5-flash-lite") }, {
+        kind: "ai", op: "chat.completion.fallback", provider, model: "gemini-2.5-flash-lite",
+      });
       modelUsed = "gemini-2.5-flash-lite";
       fellBack = true;
     }
@@ -62,7 +68,7 @@ export const talentChat = createServerFn({ method: "POST" })
     if (res.status === 402) return { reply: "AI credits exhausted. Please contact support.", error: true };
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      console.error("AI gateway error", res.status, t);
+      logEvent("ai", "error", { op: "chat.completion", provider, model: modelUsed, status: res.status, body: t.slice(0, 300) });
       return { reply: "AI service is temporarily unavailable.", error: true, model: modelUsed, fellBack };
     }
 

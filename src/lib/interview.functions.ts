@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type { Json } from "@/integrations/supabase/types";
+import { loggedFetch } from "./server-logger";
 
 const MODEL = "google/gemini-2.5-flash";
 const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
@@ -9,7 +10,7 @@ const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
 async function callAI(system: string, user: string): Promise<string> {
   const key = process.env.LOVABLE_API_KEY;
   if (!key) throw new Error("AI is not configured (missing LOVABLE_API_KEY).");
-  const res = await fetch(GATEWAY, {
+  const res = await loggedFetch(GATEWAY, {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -19,7 +20,7 @@ async function callAI(system: string, user: string): Promise<string> {
         { role: "user", content: user },
       ],
     }),
-  });
+  }, { kind: "ai", op: "interview.callAI", provider: "lovable-ai-gateway", model: MODEL });
   if (res.status === 429) throw new Error("AI rate limit. Please retry shortly.");
   if (res.status === 402) throw new Error("AI credits exhausted. Please contact support.");
   if (!res.ok) throw new Error(`AI error ${res.status}`);
