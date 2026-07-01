@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { useState } from "react";
-import { CheckCircle2, MessageSquare, Code2, Building2, Landmark, GraduationCap, Rocket, Globe2, BookOpen, ExternalLink } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CheckCircle2, MessageSquare, Code2, Building2, Landmark, GraduationCap, Rocket, Globe2, BookOpen, ExternalLink, CalendarDays, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/interview-prep")({
   head: () => ({
@@ -75,6 +75,56 @@ type Track = {
   resources: { label: string; href: string }[];
   examSlug?: "bb-ad-it" | "govt-it" | "big-tech";
 };
+
+type DayPlan = { topic: string; tasks: string[] };
+
+const PLANS: Record<Track["id"], DayPlan[]> = {
+  "bd-govt-it": [
+    { topic: "DBMS foundations", tasks: ["Read normalization 1NF–3NF", "Write 10 SQL joins on sample DB", "Solve 5 MCQs on ACID"] },
+    { topic: "Networking basics", tasks: ["OSI + TCP/IP layers", "Subnetting drill: /24, /26, /30", "5 MCQs on HTTP vs HTTPS, DNS"] },
+    { topic: "Operating systems", tasks: ["Process vs thread, scheduling algos", "Deadlock: 4 conditions + prevention", "Paging vs segmentation notes"] },
+    { topic: "Data structures", tasks: ["Arrays, linked lists, stacks, queues", "Big-O of common sorts", "Solve 5 easy problems"] },
+    { topic: "Software engineering", tasks: ["SDLC models, agile vs waterfall", "Testing types (unit/integration/UAT)", "10 SE MCQs"] },
+    { topic: "Bangladesh ICT & GK", tasks: ["Digital Bangladesh + Smart BD 2041", "BCC, a2i, ICT Division roles", "Read a current-affairs digest"] },
+    { topic: "Mock exam", tasks: ["Take the BB AD-IT timed quiz", "Review wrong answers", "Redo weakest topic"] },
+  ],
+  bcs: [
+    { topic: "Bangla language & literature", tasks: ["ব্যাকরণ: সন্ধি, সমাস, প্রকৃতি-প্রত্যয়", "5 কবি-সাহিত্যিকের জীবনী নোট", "10 MCQ প্র্যাকটিস"] },
+    { topic: "English grammar", tasks: ["Tenses + articles review", "Vocabulary: 30 GRE-style words", "Reading comprehension x2"] },
+    { topic: "Bangladesh affairs", tasks: ["1971: key events + dates", "Constitution — fundamental rights", "Geography + rivers"] },
+    { topic: "International affairs", tasks: ["UN organs + recent summits", "SAARC/BIMSTEC snapshot", "5 current-events MCQs"] },
+    { topic: "Math & mental ability", tasks: ["Arithmetic: ratio, percentage", "Algebra basics + series", "10 mental-ability MCQs"] },
+    { topic: "Science + ICT", tasks: ["Physics + biology essentials", "Computing basics: hardware, OS, internet", "10 general-science MCQs"] },
+    { topic: "Full mock + viva prep", tasks: ["Take timed govt-IT quiz", "Prepare 3 viva self-intros", "List 5 'why civil service' answers"] },
+  ],
+  "big-tech": [
+    { topic: "Arrays & hashing", tasks: ["Two Sum, Group Anagrams, Top-K", "Study prefix-sum pattern", "Solve 4 easy + 2 medium"] },
+    { topic: "Two pointers & sliding window", tasks: ["Longest substring w/o repeat", "Container With Most Water", "Solve 4 mediums"] },
+    { topic: "Trees & graphs", tasks: ["BFS/DFS templates", "LCA + tree diameter", "Solve Number of Islands + Course Schedule"] },
+    { topic: "Dynamic programming", tasks: ["1D DP: house robber, climb stairs", "2D DP: LCS, edit distance", "Solve 3 DP mediums"] },
+    { topic: "System design 101", tasks: ["Read: load balancer, cache, CDN", "Design URL shortener", "Watch a scalability talk"] },
+    { topic: "System design advanced", tasks: ["Design Twitter timeline", "Sharding + consistency trade-offs", "Sketch rate limiter"] },
+    { topic: "Behavioral + mock", tasks: ["Write 5 STAR stories", "Take big-tech timed quiz", "1 mock interview (peer/AI)"] },
+  ],
+  remote: [
+    { topic: "Written English + async", tasks: ["Write a 200-word async update", "Draft a PR description template", "Read GitLab remote handbook §1"] },
+    { topic: "Stack deep-dive", tasks: ["Refactor a small React component", "Add TypeScript types + tests", "Push to GitHub with clean commits"] },
+    { topic: "Git & code review", tasks: ["Practice interactive rebase", "Review a friend's PR with comments", "Study Conventional Commits"] },
+    { topic: "Testing", tasks: ["Write Jest unit tests", "Add a Playwright e2e flow", "Read testing-library best practices"] },
+    { topic: "APIs & auth", tasks: ["Build a REST endpoint w/ pagination", "Implement JWT auth", "Read OAuth 2.0 basics"] },
+    { topic: "Cloud + CI/CD", tasks: ["Dockerize the app", "Set up GitHub Actions", "Deploy to a free tier (Fly/Render)"] },
+    { topic: "Take-home + interview", tasks: ["Time-box a 4-hour take-home", "Record a 2-min Loom walkthrough", "Prep 5 async-collab STAR stories"] },
+  ],
+};
+
+const PLAN_STORAGE_KEY = "talentbd:interview-plan-progress";
+function loadProgress(): Record<string, boolean> {
+  if (typeof window === "undefined") return {};
+  try { return JSON.parse(localStorage.getItem(PLAN_STORAGE_KEY) ?? "{}"); } catch { return {}; }
+}
+function saveProgress(p: Record<string, boolean>) {
+  try { localStorage.setItem(PLAN_STORAGE_KEY, JSON.stringify(p)); } catch { /* ignore */ }
+}
 
 const TRACKS: Track[] = [
   {
@@ -205,6 +255,20 @@ function InterviewPrep() {
   const active = TABS.find((t) => t.id === tab)!;
   const [track, setTrack] = useState<Track["id"]>(TRACKS[0].id);
   const activeTrack = TRACKS.find((t) => t.id === track)!;
+  const [progress, setProgress] = useState<Record<string, boolean>>({});
+  useEffect(() => { setProgress(loadProgress()); }, []);
+  const plan = PLANS[track];
+  const completed = useMemo(() => plan.reduce((n, _d, i) => n + (progress[`${track}:${i}`] ? 1 : 0), 0), [plan, progress, track]);
+  function toggleDay(i: number) {
+    const key = `${track}:${i}`;
+    const next = { ...progress, [key]: !progress[key] };
+    setProgress(next); saveProgress(next);
+  }
+  function resetPlan() {
+    const next = { ...progress };
+    plan.forEach((_d, i) => { delete next[`${track}:${i}`]; });
+    setProgress(next); saveProgress(next);
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 md:px-6 page-enter">
@@ -338,6 +402,51 @@ function InterviewPrep() {
                 Browse matching jobs
               </Link>
             </div>
+          </div>
+
+          <div className="mt-6 glass rounded-xl p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="size-5 text-[var(--color-primary)]" />
+                <h3 className="text-lg font-bold">7-day study plan</h3>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-muted-foreground">{completed}/7 days complete</span>
+                <button onClick={resetPlan} className="inline-flex items-center gap-1 rounded-full border bg-white/60 px-3 py-1 text-xs font-semibold hover:bg-white">
+                  <RotateCcw className="size-3" /> Reset
+                </button>
+              </div>
+            </div>
+            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/60">
+              <div className="h-full transition-all" style={{ width: `${(completed / 7) * 100}%`, background: "linear-gradient(90deg, var(--color-primary), var(--color-accent))" }} />
+            </div>
+            <ol className="mt-5 grid gap-3 md:grid-cols-2">
+              {plan.map((day, i) => {
+                const done = !!progress[`${track}:${i}`];
+                return (
+                  <li key={i} className={`rounded-lg border p-4 transition ${done ? "border-emerald-300 bg-emerald-50/70" : "bg-white/60"}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Day {i + 1}</div>
+                        <div className={`text-base font-semibold ${done ? "line-through opacity-70" : ""}`}>{day.topic}</div>
+                      </div>
+                      <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold">
+                        <input type="checkbox" checked={done} onChange={() => toggleDay(i)} className="size-4 accent-emerald-600" />
+                        {done ? "Done" : "Mark"}
+                      </label>
+                    </div>
+                    <ul className="mt-3 space-y-1.5 text-sm">
+                      {day.tasks.map((t, ti) => (
+                        <li key={ti} className="flex gap-2">
+                          <CheckCircle2 className={`mt-0.5 size-4 shrink-0 ${done ? "text-emerald-600" : "text-muted-foreground/40"}`} />
+                          <span className={done ? "opacity-70" : ""}>{t}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              })}
+            </ol>
           </div>
         </section>
       </ScrollReveal>
