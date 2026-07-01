@@ -149,8 +149,9 @@ function CvBuilder() {
       .join("\n");
     // Title becomes the default filename in the browser's Save as PDF dialog.
     const title = cvFileBase();
+    const bg = style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff";
     w.document.open();
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>${styles}<style>@page{size:A4;margin:10mm}html,body{margin:0;background:#fff}.cv-print-area{width:210mm;min-height:297mm;box-shadow:none!important;border:0!important;margin:0!important;padding:10mm!important;background:#fff!important}</style></head><body><div class="cv-print-area">${(node as HTMLElement).innerHTML}</div></body></html>`);
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>${styles}<style>@page{size:A4;margin:10mm;background:${bg}}html,body{margin:0;background:${bg};-webkit-print-color-adjust:exact;print-color-adjust:exact}.cv-print-area{width:210mm;min-height:297mm;box-shadow:none!important;border:0!important;margin:0!important;padding:0!important;background:${bg}!important;transform:none!important}</style></head><body><div class="cv-print-area" style="background:${bg}">${(node as HTMLElement).innerHTML}</div></body></html>`);
     w.document.close();
     w.focus();
     setTimeout(() => { w.print(); w.close(); }, 400);
@@ -163,12 +164,13 @@ function CvBuilder() {
       const mod: any = await import("html2pdf.js");
       const html2pdf = mod.default ?? mod;
       const filename = `${cvFileBase()}.pdf`;
+      const bg = style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff";
       await html2pdf()
         .set({
           margin: [10, 10, 10, 10],
           filename,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: bg },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
         })
