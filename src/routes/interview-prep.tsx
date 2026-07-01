@@ -73,7 +73,7 @@ type Track = {
   focus: string[];
   questions: string[];
   resources: { label: string; href: string }[];
-  examSlug?: "bb-ad-it" | "govt-bcs" | "big-tech";
+  examSlug?: "bb-ad-it" | "govt-it" | "big-tech";
 };
 
 const TRACKS: Track[] = [
@@ -136,7 +136,7 @@ const TRACKS: Track[] = [
       { label: "Constitution of Bangladesh (full text)", href: "http://bdlaws.minlaw.gov.bd/act-367.html" },
       { label: "Bangladesh Bureau of Statistics", href: "http://www.bbs.gov.bd/" },
     ],
-    examSlug: "govt-bcs",
+    examSlug: "govt-it",
   },
   {
     id: "big-tech",
