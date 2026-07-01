@@ -4,16 +4,19 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
 import { toast } from "sonner";
-import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding, Award, BadgeCheck, Code2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-builder")({
   head: () => ({ meta: [{ title: "CV Builder — TalentBD" }, { name: "description", content: "Build a professional, print-ready CV with standard or premium layouts." }] }),
   component: CvBuilder,
 });
 
-type Experience = { id: string; role: string; company: string; period: string; bullets: string };
-type Education = { id: string; degree: string; school: string; period: string; details: string };
-type Project = { id: string; name: string; link: string; description: string };
+type Experience = { id: string; role: string; company: string; period: string; bullets: string; tech?: string };
+type Education = { id: string; degree: string; school: string; period: string; details: string; gpa?: string };
+type Project = { id: string; name: string; link: string; description: string; tech?: string };
+type Certification = { id: string; name: string; issuer: string; year: string };
+type Award = { id: string; title: string; detail: string; year: string };
+type Coding = { id: string; platform: string; handle: string; link: string; rating: string };
 
 type Payload = {
   name: string;
@@ -28,9 +31,13 @@ type Payload = {
   summary: string;
   skills: string;
   languages: string;
+  coursework: string;
   experience: Experience[];
   education: Education[];
   projects: Project[];
+  certifications: Certification[];
+  awards: Award[];
+  coding: Coding[];
 };
 
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -38,8 +45,9 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 const empty: Payload = {
   name: "", title: "", email: "", phone: "", location: "",
   website: "", linkedin: "", github: "", photo: "",
-  summary: "", skills: "", languages: "",
+  summary: "", skills: "", languages: "", coursework: "",
   experience: [], education: [], projects: [],
+  certifications: [], awards: [], coding: [],
 };
 
 function migrate(p: any): Payload {
@@ -58,6 +66,9 @@ function migrate(p: any): Payload {
       ? [{ id: uid(), degree: "", school: "", period: "", details: p.education }]
       : [],
     projects: Array.isArray(p.projects) ? p.projects : [],
+    certifications: Array.isArray(p.certifications) ? p.certifications : [],
+    awards: Array.isArray(p.awards) ? p.awards : [],
+    coding: Array.isArray(p.coding) ? p.coding : [],
   };
 }
 
@@ -230,13 +241,14 @@ function CvBuilder() {
           <Section title="Skills & Languages">
             <Textarea label="Skills (comma separated)" value={data.skills} onChange={(v) => set("skills", v)} placeholder="React, Node.js, SQL, AWS" />
             <Textarea label="Languages" value={data.languages} onChange={(v) => set("languages", v)} placeholder="English (fluent), Bengali (native)" />
+            <Textarea label="Relevant Coursework" value={data.coursework} onChange={(v) => set("coursework", v)} placeholder="Data Structures, Algorithms, Operating Systems, Distributed Systems, Machine Learning" />
           </Section>
 
           <Repeater
             title="Experience"
             items={data.experience}
             onChange={(items) => set("experience", items)}
-            create={() => ({ id: uid(), role: "", company: "", period: "", bullets: "" })}
+            create={() => ({ id: uid(), role: "", company: "", period: "", bullets: "", tech: "" })}
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -244,6 +256,7 @@ function CvBuilder() {
                   <Input label="Company" value={item.company} onChange={(v) => update({ ...item, company: v })} />
                 </div>
                 <Input label="Period (e.g. 2022 - Present)" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Bullets (one per line)" value={item.bullets} onChange={(v) => update({ ...item, bullets: v })} rows={4} />
               </>
             )}
@@ -253,14 +266,17 @@ function CvBuilder() {
             title="Education"
             items={data.education}
             onChange={(items) => set("education", items)}
-            create={() => ({ id: uid(), degree: "", school: "", period: "", details: "" })}
+            create={() => ({ id: uid(), degree: "", school: "", period: "", details: "", gpa: "" })}
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input label="Degree" value={item.degree} onChange={(v) => update({ ...item, degree: v })} />
                   <Input label="School" value={item.school} onChange={(v) => update({ ...item, school: v })} />
                 </div>
-                <Input label="Period" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Period" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                  <Input label="CGPA / GPA" value={item.gpa ?? ""} onChange={(v) => update({ ...item, gpa: v })} />
+                </div>
                 <Textarea label="Details" value={item.details} onChange={(v) => update({ ...item, details: v })} rows={2} />
               </>
             )}
@@ -270,14 +286,66 @@ function CvBuilder() {
             title="Project Showcase"
             items={data.projects}
             onChange={(items) => set("projects", items)}
-            create={() => ({ id: uid(), name: "", link: "", description: "" })}
+            create={() => ({ id: uid(), name: "", link: "", description: "", tech: "" })}
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input label="Name" value={item.name} onChange={(v) => update({ ...item, name: v })} />
                   <Input label="Link" value={item.link} onChange={(v) => update({ ...item, link: v })} />
                 </div>
+                <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Description" value={item.description} onChange={(v) => update({ ...item, description: v })} rows={2} />
+              </>
+            )}
+          />
+
+          <Repeater
+            title="Certifications"
+            items={data.certifications}
+            onChange={(items) => set("certifications", items)}
+            create={() => ({ id: uid(), name: "", issuer: "", year: "" })}
+            render={(item, update) => (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Name" value={item.name} onChange={(v) => update({ ...item, name: v })} />
+                  <Input label="Issuer" value={item.issuer} onChange={(v) => update({ ...item, issuer: v })} />
+                </div>
+                <Input label="Year" value={item.year} onChange={(v) => update({ ...item, year: v })} />
+              </>
+            )}
+          />
+
+          <Repeater
+            title="Awards & Achievements"
+            items={data.awards}
+            onChange={(items) => set("awards", items)}
+            create={() => ({ id: uid(), title: "", detail: "", year: "" })}
+            render={(item, update) => (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Title" value={item.title} onChange={(v) => update({ ...item, title: v })} />
+                  <Input label="Year" value={item.year} onChange={(v) => update({ ...item, year: v })} />
+                </div>
+                <Textarea label="Detail" value={item.detail} onChange={(v) => update({ ...item, detail: v })} rows={2} />
+              </>
+            )}
+          />
+
+          <Repeater
+            title="Coding Profiles"
+            items={data.coding}
+            onChange={(items) => set("coding", items)}
+            create={() => ({ id: uid(), platform: "", handle: "", link: "", rating: "" })}
+            render={(item, update) => (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Platform (LeetCode, Codeforces, HackerRank…)" value={item.platform} onChange={(v) => update({ ...item, platform: v })} />
+                  <Input label="Handle / Username" value={item.handle} onChange={(v) => update({ ...item, handle: v })} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Profile link" value={item.link} onChange={(v) => update({ ...item, link: v })} />
+                  <Input label="Rating / Rank (optional)" value={item.rating} onChange={(v) => update({ ...item, rating: v })} />
+                </div>
               </>
             )}
           />
@@ -377,11 +445,13 @@ function StandardCv({ d }: { d: Payload }) {
       </header>
       {d.summary && <CvSection h="Professional Summary"><p>{d.summary}</p></CvSection>}
       {d.skills && <CvSection h="Skills"><p>{d.skills}</p></CvSection>}
+      {d.coursework && <CvSection h="Relevant Coursework"><p>{d.coursework}</p></CvSection>}
       {d.experience.length > 0 && (
         <CvSection h="Experience">
           {d.experience.map((e) => (
             <div key={e.id} className="mb-2.5">
               <div className="flex justify-between font-semibold"><span>{e.role}{e.company && ` · ${e.company}`}</span><span className="text-xs font-normal">{e.period}</span></div>
+              {e.tech && <div className="text-[12px] italic text-black/70">Tech: {e.tech}</div>}
               {e.bullets && (
                 <ul className="ml-4 list-disc text-[12.5px]">
                   {e.bullets.split("\n").filter(Boolean).map((b, i) => <li key={i}>{b.replace(/^[-•*]\s*/, "")}</li>)}
@@ -403,6 +473,7 @@ function StandardCv({ d }: { d: Payload }) {
                   </a>
                 )}
               </div>
+              {p.tech && <div className="text-[12px] italic text-black/70">Tech: {p.tech}</div>}
               {p.description && <p className="text-[12.5px]">{p.description}</p>}
             </div>
           ))}
@@ -412,10 +483,41 @@ function StandardCv({ d }: { d: Payload }) {
         <CvSection h="Education">
           {d.education.map((e) => (
             <div key={e.id} className="mb-1.5">
-              <div className="flex justify-between font-semibold"><span>{e.degree}{e.school && ` · ${e.school}`}</span><span className="text-xs font-normal">{e.period}</span></div>
+              <div className="flex justify-between font-semibold"><span>{e.degree}{e.school && ` · ${e.school}`}{e.gpa && <span className="font-normal"> · CGPA {e.gpa}</span>}</span><span className="text-xs font-normal">{e.period}</span></div>
               {e.details && <p className="text-[12.5px]">{e.details}</p>}
             </div>
           ))}
+        </CvSection>
+      )}
+      {d.certifications.length > 0 && (
+        <CvSection h="Certifications">
+          {d.certifications.map((c) => (
+            <div key={c.id} className="flex justify-between text-[12.5px]"><span><span className="font-semibold">{c.name}</span>{c.issuer && ` · ${c.issuer}`}</span><span className="text-xs">{c.year}</span></div>
+          ))}
+        </CvSection>
+      )}
+      {d.awards.length > 0 && (
+        <CvSection h="Awards & Achievements">
+          {d.awards.map((a) => (
+            <div key={a.id} className="mb-1 text-[12.5px]">
+              <div className="flex justify-between font-semibold"><span>{a.title}</span><span className="text-xs font-normal">{a.year}</span></div>
+              {a.detail && <p>{a.detail}</p>}
+            </div>
+          ))}
+        </CvSection>
+      )}
+      {d.coding.length > 0 && (
+        <CvSection h="Coding Profiles">
+          <ul className="text-[12.5px] space-y-0.5">
+            {d.coding.map((c) => (
+              <li key={c.id}>
+                <span className="font-semibold">{c.platform}</span>
+                {c.handle && ` — ${c.handle}`}
+                {c.rating && ` (${c.rating})`}
+                {c.link && <a href={c.link} target="_blank" rel="noreferrer" className="ml-2 text-xs underline">{c.link}</a>}
+              </li>
+            ))}
+          </ul>
         </CvSection>
       )}
       {d.languages && <CvSection h="Languages"><p>{d.languages}</p></CvSection>}
@@ -480,6 +582,30 @@ function PremiumCv({ d }: { d: Payload }) {
               </TopcvCard>
             )}
 
+            {d.coursework && (
+              <TopcvCard header="COURSEWORK">
+                <p className="whitespace-pre-line">{d.coursework}</p>
+              </TopcvCard>
+            )}
+
+            {d.coding.length > 0 && (
+              <TopcvCard header="CODING PROFILES">
+                <ul className="space-y-1.5 text-[12px]">
+                  {d.coding.map((c) => (
+                    <li key={c.id} className="flex items-start gap-2">
+                      <Code2 className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <span className="min-w-0 break-words">
+                        <span className="font-semibold">{c.platform}</span>
+                        {c.handle && <> — {c.handle}</>}
+                        {c.rating && <> ({c.rating})</>}
+                        {c.link && <div className="text-[11px] text-black/60 break-all">{c.link}</div>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </TopcvCard>
+            )}
+
             {d.languages && (
               <TopcvCard header="INTERESTS"><p>{d.languages}</p></TopcvCard>
             )}
@@ -493,7 +619,7 @@ function PremiumCv({ d }: { d: Payload }) {
                   <div key={e.id} className="mb-3 last:mb-0 flex gap-2.5">
                     <GraduationCap className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
                     <div className="flex-1">
-                      <div className="font-semibold">{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}</div>
+                      <div className="font-semibold">{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}{e.gpa && <span className="font-normal"> · CGPA {e.gpa}</span>}</div>
                       {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
                       {e.details && <div className="text-[12px]">{e.details}</div>}
                     </div>
@@ -510,6 +636,7 @@ function PremiumCv({ d }: { d: Payload }) {
                     <div className="flex-1">
                       <div className="font-semibold">{e.company}{e.role && <span className="font-normal">, {e.role}</span>}</div>
                       {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
+                      {e.tech && <div className="text-[12px] italic text-black/70">Tech: {e.tech}</div>}
                       {e.bullets && (
                         <ul className="mt-1 space-y-0.5 text-[12px]">
                           {e.bullets.split("\n").filter(Boolean).map((b, i) => (
@@ -537,7 +664,42 @@ function PremiumCv({ d }: { d: Payload }) {
                           </a>
                         )}
                       </div>
+                      {p.tech && <div className="text-[12px] italic text-black/70">Tech: {p.tech}</div>}
                       {p.description && <p className="text-[12px]">{p.description}</p>}
+                    </div>
+                  </div>
+                ))}
+              </TopcvCard>
+            )}
+
+            {d.certifications.length > 0 && (
+              <TopcvCard header="CERTIFICATIONS">
+                {d.certifications.map((c) => (
+                  <div key={c.id} className="mb-2 last:mb-0 flex gap-2.5">
+                    <BadgeCheck className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <div className="flex-1 flex justify-between gap-2">
+                      <div>
+                        <span className="font-semibold">{c.name}</span>
+                        {c.issuer && <span className="text-[12px] text-black/70"> · {c.issuer}</span>}
+                      </div>
+                      {c.year && <div className="text-[12px] text-black/70 shrink-0">{c.year}</div>}
+                    </div>
+                  </div>
+                ))}
+              </TopcvCard>
+            )}
+
+            {d.awards.length > 0 && (
+              <TopcvCard header="AWARDS & ACHIEVEMENTS">
+                {d.awards.map((a) => (
+                  <div key={a.id} className="mb-2 last:mb-0 flex gap-2.5">
+                    <Award className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <div className="flex-1">
+                      <div className="flex justify-between gap-2">
+                        <span className="font-semibold">{a.title}</span>
+                        {a.year && <span className="text-[12px] text-black/70">{a.year}</span>}
+                      </div>
+                      {a.detail && <div className="text-[12px]">{a.detail}</div>}
                     </div>
                   </div>
                 ))}
