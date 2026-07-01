@@ -237,7 +237,7 @@
   /* Dashboard shell — unifies every authenticated page (admin,    */
   /* employer, candidate) with the Soft Pastel Glow card system.   */
   /* ============================================================ */
-  .dashboard-shell { padding-block: clamp(1.25rem, 2.5vw, 2.5rem); }
+  .dashboard-shell { padding-block: 0; }
   .dashboard-shell > * { animation: page-slide-in 0.4s ease-out both; }
 
   /* Auto-upgrade any shadcn Card (`.bg-card`) inside dashboard pages */
