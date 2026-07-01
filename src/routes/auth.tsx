@@ -135,8 +135,21 @@ function AuthPage() {
   }
 
   async function google() {
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (res.error) toast.error(res.error.message ?? "Google sign-in failed");
+    const origin = window.location.origin;
+    const isLovableHost = /\.lovable\.(app|dev)$/.test(window.location.hostname);
+    // Lovable broker only works inside the Lovable preview iframe. On localhost
+    // (or any self-hosted domain) fall back to Supabase's own OAuth flow so
+    // Google sign-in stays functional during local development.
+    if (isLovableHost) {
+      const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: origin });
+      if (res.error) toast.error(res.error.message ?? "Google sign-in failed");
+      return;
+    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: origin },
+    });
+    if (error) toast.error(error.message ?? "Google sign-in failed");
   }
 
   return (
