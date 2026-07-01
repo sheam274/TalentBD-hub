@@ -241,11 +241,11 @@ function Landing() {
           </div>
 
           {/* Trust */}
-          <div className="mt-8 sm:mt-10 md:mt-14 lg:mt-16 w-full border-t border-[var(--eduma-ink)]/10 px-2 pt-6 sm:px-4 sm:pt-8 md:px-6 md:pt-10 text-center">
-            <p className="mb-4 sm:mb-6 md:mb-8 text-xs font-semibold uppercase tracking-widest leading-none text-[var(--eduma-ink)]">
+          <div className="mt-4 sm:mt-5 md:mt-6 w-full border-t border-[var(--eduma-ink)]/10 px-2 pt-3 sm:px-4 sm:pt-4 md:px-6 md:pt-5 text-center">
+            <p className="mb-2 sm:mb-3 md:mb-4 text-xs font-semibold uppercase tracking-widest leading-none text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
-            <div className="mx-auto grid max-w-xl grid-cols-2 items-center gap-x-2 gap-y-4 leading-none sm:grid-cols-4 sm:gap-x-3 md:gap-x-4">
+            <div className="mx-auto grid max-w-xl grid-cols-2 items-center gap-x-2 gap-y-2 leading-none sm:grid-cols-4 sm:gap-x-3 md:gap-x-4">
               {PARTNER_LOGOS.map((logo) => (
                 <img
                   key={logo.name}
