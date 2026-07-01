@@ -784,3 +784,68 @@ function CvSection({ h, children }: { h: string; children: React.ReactNode }) {
     </section>
   );
 }
+
+function BigTechChecklist({ d }: { d: Payload }) {
+  const metricRe = /\b\d+(\.\d+)?\s*(%|x|k|m|ms|s|users?|requests?|qps|rps|gb|mb)\b|\b(reduced|improved|increased|decreased|saved|shipped|scaled|led|built)\b.*\b\d/i;
+  const bulletsAll = d.experience.flatMap((e) => e.bullets.split("\n").map((b) => b.trim()).filter(Boolean));
+  const projBullets = d.projects.map((p) => p.description).filter(Boolean);
+  const hasMetrics = [...bulletsAll, ...projBullets].some((b) => metricRe.test(b));
+  const skillsCount = d.skills.split(",").map((s) => s.trim()).filter(Boolean).length;
+
+  const checks: { ok: boolean; label: string; hint?: string }[] = [
+    { ok: !!d.summary && d.summary.length >= 80, label: "Professional summary (2–3 sentences)", hint: "Lead with role, focus area, and standout achievement." },
+    { ok: !!d.coursework.trim(), label: "Relevant coursework", hint: "DSA, OS, Distributed Systems, DBMS, ML — signals CS fundamentals." },
+    { ok: skillsCount >= 6, label: "At least 6 concrete skills", hint: "Languages + frameworks + cloud/infra + tools." },
+    { ok: d.projects.length >= 2, label: "2+ substantive projects", hint: "Show scope, tech stack, and a link (GitHub / live demo)." },
+    { ok: d.projects.every((p) => !!p.tech), label: "Tech stack on every project" },
+    { ok: d.projects.every((p) => !!p.link), label: "Link on every project", hint: "GitHub repo or deployed URL." },
+    { ok: d.experience.length >= 1, label: "At least one experience entry (internship, RA, OSS counts)" },
+    { ok: d.experience.every((e) => !!e.tech), label: "Tech stack on every role" },
+    { ok: hasMetrics, label: "Quantified impact (metrics: %, users, ms, x-faster…)", hint: "Rewrite bullets as: action + tech + measurable result." },
+    { ok: d.coding.length >= 1, label: "Coding profile (LeetCode / Codeforces)", hint: "Include handle + link; rating optional but recommended." },
+    { ok: !!d.github, label: "GitHub link in header" },
+    { ok: !!d.linkedin, label: "LinkedIn link in header" },
+    { ok: d.education.some((e) => !!e.gpa), label: "CGPA on education (if ≥ 3.3/4)" },
+    { ok: d.certifications.length >= 1, label: "Certification or notable award", hint: "AWS, GCP, or a hackathon / ICPC placement." },
+  ];
+
+  const done = checks.filter((c) => c.ok).length;
+  const total = checks.length;
+  const pct = Math.round((done / total) * 100);
+  const missing = checks.filter((c) => !c.ok);
+
+  return (
+    <section className="no-print rounded-xl border bg-gradient-to-br from-primary/5 to-transparent p-4">
+      <header className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="size-4 text-primary" />
+          <h3 className="text-sm font-semibold">Big-Tech Resume Readiness</h3>
+        </div>
+        <span className="text-xs font-semibold tabular-nums">{done}/{total} · {pct}%</span>
+      </header>
+      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+      </div>
+      <ul className="mt-3 space-y-1.5 text-xs">
+        {checks.map((c, i) => (
+          <li key={i} className="flex items-start gap-2">
+            {c.ok ? (
+              <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
+            ) : (
+              <AlertCircle className="mt-0.5 size-3.5 shrink-0 text-amber-600" />
+            )}
+            <span className={c.ok ? "text-muted-foreground line-through" : ""}>
+              {c.label}
+              {!c.ok && c.hint && <span className="ml-1 text-muted-foreground">— {c.hint}</span>}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {missing.length > 0 && (
+        <p className="mt-3 rounded-md bg-amber-50 px-3 py-2 text-[11px] text-amber-900">
+          <strong>Next up:</strong> {missing.slice(0, 3).map((m) => m.label).join(" · ")}
+        </p>
+      )}
+    </section>
+  );
+}
