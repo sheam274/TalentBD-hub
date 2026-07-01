@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { useMemo, useState } from "react";
 import { getExamQuiz } from "@/lib/learning.functions";
 import { Card } from "@/components/ui/card";
@@ -39,12 +37,14 @@ const EXAMS: Record<ExamId, { label: string; blurb: string; slugs: string[] }> =
   },
 };
 
-const searchSchema = z.object({
-  exam: fallback(z.enum(["bb-ad-it", "govt-it", "big-tech", "all"]), "bb-ad-it").default("bb-ad-it"),
-});
+const EXAM_IDS: ExamId[] = ["bb-ad-it", "govt-it", "big-tech", "all"];
 
 export const Route = createFileRoute("/_authenticated/learn/exam-prep")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (search: Record<string, unknown>): { exam: ExamId } => {
+    const raw = search.exam;
+    const exam = EXAM_IDS.includes(raw as ExamId) ? (raw as ExamId) : "bb-ad-it";
+    return { exam };
+  },
   head: () => ({ meta: [
     { title: "IT Job Exam Prep — BB AD-IT, Govt IT, Big Tech | TalentBD" },
     { name: "description", content: "Targeted quizzes by exam type for Bangladesh Bank AD-IT, government IT recruitment, and big-tech interviews." },
