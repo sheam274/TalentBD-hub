@@ -7,7 +7,7 @@ import { listRemoteJobsExternal } from "@/lib/external-jobs.functions";
 import { useAuth } from "@/lib/auth-context";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { toast } from "sonner";
-import { Briefcase, MapPin, Clock, GraduationCap, Star, Globe, ExternalLink, Radio, Search as SearchIcon } from "lucide-react";
+import { Briefcase, MapPin, Clock, GraduationCap, Star, Globe, ExternalLink, Radio, Search as SearchIcon, X } from "lucide-react";
 
 export const Route = createFileRoute("/jobs/")({
   head: () => ({
@@ -498,6 +498,33 @@ function Jobs() {
           <option value="all">Remote + On-site</option><option value="remote">Remote only</option><option value="onsite">On-site only</option>
         </select>
       </div>
+
+      {/* Active filter chips — each removable individually */}
+      {(location || exp || type || remote !== "all" || category) && (() => {
+        const chips: Array<{ key: string; label: string; onRemove: () => void }> = [];
+        if (category) chips.push({ key: "category", label: `Category: ${category}`, onRemove: () => setCategory("") });
+        if (location) chips.push({ key: "location", label: `Location: ${location}`, onRemove: () => setLocation("") });
+        if (exp) chips.push({ key: "exp", label: `Experience: ${exp}`, onRemove: () => setExp("") });
+        if (type) chips.push({ key: "type", label: `Type: ${type}`, onRemove: () => setType("") });
+        if (remote !== "all") chips.push({ key: "remote", label: remote === "remote" ? "Remote only" : "On-site only", onRemove: () => setRemote("all") });
+        return (
+          <div className="mt-3 flex flex-wrap items-center gap-2" aria-label="Active filters">
+            {chips.map((c) => (
+              <span key={c.key} className="inline-flex items-center gap-1.5 rounded-full border bg-white/70 px-3 py-1 text-xs font-medium">
+                {c.label}
+                <button
+                  type="button"
+                  onClick={c.onRemove}
+                  aria-label={`Remove ${c.label} filter`}
+                  className="grid size-4 place-items-center rounded-full text-muted-foreground hover:bg-black/10 hover:text-foreground"
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        );
+      })()}
 
       {featured.length > 0 && (
         <section className="mt-8">
