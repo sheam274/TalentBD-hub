@@ -669,7 +669,7 @@ function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => v
     <article className="lift glass rounded-xl p-4 sm:p-5 h-full flex flex-col">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="font-semibold hover:underline break-words line-clamp-2">{j.job_title}</Link>
+          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="font-semibold hover:underline break-words line-clamp-2"><HighlightedTitle text={j.job_title} tokens={highlightTokens} /></Link>
           <p className="text-sm text-muted-foreground truncate">{j.company}</p>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
