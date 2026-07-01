@@ -348,14 +348,19 @@
 }
 
 @media print {
-  body { background: white !important; }
-  .orb-bg, .no-print { display: none !important; }
-  /* Hide everything, then re-show only the CV preview */
-  body * { visibility: hidden !important; }
-  .cv-print-area, .cv-print-area * { visibility: visible !important; }
+  html, body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  /* Collapse everything so only the CV area contributes to the printed flow */
+  body * { display: none !important; }
+  .cv-print-area, .cv-print-area * { display: revert !important; }
   .cv-print-area {
-    position: absolute !important;
-    inset: 0 !important;
+    display: block !important;
+    position: static !important;
     width: 100% !important;
     max-width: 100% !important;
     box-shadow: none !important;
