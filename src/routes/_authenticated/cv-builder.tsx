@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
+import { suggestCvField } from "@/lib/cv-ai.functions";
 import { toast } from "sonner";
-import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding, Award, BadgeCheck, Code2, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding, Award, BadgeCheck, Code2, CheckCircle2, AlertCircle, Sparkles, Wand2, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-builder")({
   head: () => ({ meta: [{ title: "CV Builder — TalentBD" }, { name: "description", content: "Build a professional, print-ready CV with standard or premium layouts." }] }),
@@ -237,15 +238,18 @@ function CvBuilder() {
 
           <Section title="Summary">
             <Textarea value={data.summary} onChange={(v) => set("summary", v)} rows={3} placeholder="2-3 sentence professional summary" />
+            <AiAssist field="summary" ctx={{ name: data.name, title: data.title, skills: data.skills }} mode="replace" onPick={(t) => set("summary", t)} />
           </Section>
 
           <Section title="Skills & Languages">
             <Textarea label="Skills (comma separated)" value={data.skills} onChange={(v) => set("skills", v)} placeholder="React, Node.js, SQL, AWS" />
             <SuggestionPicker label="Suggested skills for CSE / big-tech" groups={SKILL_GROUPS} value={data.skills} onAdd={(t) => set("skills", appendCsv(data.skills, t))} />
+            <AiAssist field="skills" ctx={{ title: data.title, summary: data.summary, existing: data.skills }} onPick={(t) => set("skills", appendCsv(data.skills, t))} />
             <Textarea label="Languages" value={data.languages} onChange={(v) => set("languages", v)} placeholder="English (fluent), Bengali (native)" />
             <SuggestionPicker label="Suggested languages" groups={LANGUAGE_GROUPS} value={data.languages} onAdd={(t) => set("languages", appendCsv(data.languages, t))} />
             <Textarea label="Relevant Coursework" value={data.coursework} onChange={(v) => set("coursework", v)} placeholder="Data Structures, Algorithms, Operating Systems, Distributed Systems, Machine Learning" />
             <SuggestionPicker label="Suggested coursework" groups={COURSEWORK_GROUPS} value={data.coursework} onAdd={(t) => set("coursework", appendCsv(data.coursework, t))} />
+            <AiAssist field="coursework" ctx={{ title: data.title, existing: data.coursework }} onPick={(t) => set("coursework", appendCsv(data.coursework, t))} />
           </Section>
 
           <Repeater
@@ -262,6 +266,8 @@ function CvBuilder() {
                 <Input label="Period (e.g. 2022 - Present)" value={item.period} onChange={(v) => update({ ...item, period: v })} />
                 <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Bullets (one per line)" value={item.bullets} onChange={(v) => update({ ...item, bullets: v })} rows={4} />
+                <AiAssist field="experience_bullets" ctx={{ role: item.role, company: item.company, tech: item.tech, existing: item.bullets }} onPick={(t) => update({ ...item, bullets: (item.bullets ? item.bullets + "\n" : "") + t })} />
+                <AiAssist field="metrics" label="Add metrics" ctx={{ role: item.role, bullets: item.bullets }} onPick={(t) => update({ ...item, bullets: (item.bullets ? item.bullets + "\n" : "") + t })} />
               </>
             )}
           />
@@ -299,6 +305,7 @@ function CvBuilder() {
                 </div>
                 <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Description" value={item.description} onChange={(v) => update({ ...item, description: v })} rows={2} />
+                <AiAssist field="project_description" ctx={{ name: item.name, tech: item.tech, existing: item.description }} mode="replace" onPick={(t) => update({ ...item, description: t })} />
               </>
             )}
           />
@@ -910,6 +917,64 @@ function SuggestionPicker({ label, groups, value, onAdd }: { label: string; grou
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* --- AI assist --- */
+type AiField = "skills" | "coursework" | "summary" | "experience_bullets" | "project_description" | "awards" | "certifications" | "metrics";
+
+function AiAssist({ field, ctx, onPick, label, mode = "append" }: { field: AiField; ctx: Record<string, any>; onPick: (t: string) => void; label?: string; mode?: "append" | "replace" }) {
+  const fn = useServerFn(suggestCvField);
+  const [items, setItems] = useState<string[]>([]);
+  const [used, setUsed] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function run() {
+    setLoading(true); setError(null);
+    try {
+      const r = await fn({ data: { field, context: ctx } as any });
+      setItems((r as any).suggestions ?? []);
+      setUsed(new Set());
+      if ((r as any).error) setError((r as any).error);
+    } catch (e: any) {
+      setError(e?.message ?? "AI request failed.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="rounded-md border border-dashed border-primary/30 bg-primary/5 p-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+          <Sparkles className="size-3" /> AI suggests · {label ?? field.replace(/_/g, " ")}
+        </span>
+        <button type="button" onClick={run} disabled={loading} className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground disabled:opacity-60">
+          {loading ? <Loader2 className="size-3 animate-spin" /> : <Wand2 className="size-3" />}
+          {loading ? "Thinking…" : items.length ? "Regenerate" : "Suggest"}
+        </button>
+      </div>
+      {error && <p className="mt-1.5 text-[11px] text-destructive">{error}</p>}
+      {items.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {items.map((it, i) => {
+            const on = used.has(it);
+            return (
+              <button
+                key={i}
+                type="button"
+                disabled={on}
+                onClick={() => { onPick(it); if (mode === "append") setUsed((s) => new Set(s).add(it)); }}
+                className={`text-left rounded-md border px-2 py-1 text-[11px] leading-snug max-w-full transition ${on ? "border-emerald-300 bg-emerald-50 text-emerald-700 cursor-default" : "border-border bg-white hover:border-primary hover:text-primary"}`}
+              >
+                {on ? "✓ " : "+ "}{it}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
