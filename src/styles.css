@@ -351,7 +351,46 @@
 @media print {
   html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
   .no-print { display: none !important; }
-  @page { margin: 12mm; }
+  @page { size: A4; margin: 10mm; }
+
+  /* Hide everything except the CV print area */
+  body * { visibility: hidden !important; }
+  .cv-print-area, .cv-print-area * { visibility: visible !important; }
+
+  /* Position the CV as the sole page content */
+  .cv-print-area {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 10mm !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    overflow: visible !important;
+    max-width: none !important;
+  }
+
+  /* Preserve template colors (peach headers, backgrounds, icon badges) */
+  .cv-print-area, .cv-print-area * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Avoid ugly breaks inside sections/cards and image blocks */
+  .cv-print-area section,
+  .cv-print-area .rounded-lg,
+  .cv-print-area li,
+  .cv-print-area img { break-inside: avoid; page-break-inside: avoid; }
+  .cv-print-area h1, .cv-print-area h2, .cv-print-area h3 {
+    break-after: avoid; page-break-after: avoid;
+  }
+
+  /* Make sure links render as plain text (no giant URL suffix) */
+  .cv-print-area a { color: inherit !important; text-decoration: none !important; }
 }
 
 @layer utilities {
