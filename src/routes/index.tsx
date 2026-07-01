@@ -245,7 +245,7 @@ function Landing() {
             <p className="mb-4 sm:mb-6 md:mb-8 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
-            <div className="mx-auto grid max-w-5xl grid-cols-2 place-items-center gap-x-8 gap-y-6 sm:grid-cols-4 sm:gap-x-10 md:gap-x-14 lg:gap-x-16">
+            <div className="mx-auto grid max-w-3xl grid-cols-2 place-items-center gap-x-4 gap-y-4 sm:grid-cols-4 sm:gap-x-6 md:gap-x-8">
               {PARTNER_LOGOS.map((logo) => (
                 <img
                   key={logo.name}
@@ -254,10 +254,10 @@ function Landing() {
                   loading="lazy"
                   decoding="async"
                   fetchPriority="low"
-                  sizes="(min-width: 1024px) 240px, (min-width: 768px) 200px, (min-width: 640px) 170px, 140px"
-                  width={240}
-                  height={88}
-                  className="h-16 w-auto max-w-full object-contain opacity-90 transition duration-300 hover:opacity-100 hover:scale-105 sm:h-20 md:h-24 lg:h-24"
+                  sizes="(min-width: 1024px) 160px, (min-width: 768px) 140px, (min-width: 640px) 120px, 110px"
+                  width={160}
+                  height={64}
+                  className="h-12 w-auto max-w-full object-contain opacity-90 transition duration-300 hover:opacity-100 hover:scale-105 sm:h-14 md:h-16"
                 />
               ))}
             </div>
