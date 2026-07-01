@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Award, Filter, RefreshCw, CheckCircle2, XCircle } from "lucide-react";
+import { Award, Filter, RefreshCw, CheckCircle2, XCircle, BookOpen, ArrowRight } from "lucide-react";
 
 type ExamId = "bb-ad-it" | "govt-it" | "big-tech" | "all";
 
@@ -81,6 +81,8 @@ function ExamPrep() {
 
   const score = questions.reduce((s, qq) => s + (answers[qq.id] === qq.correct_answer ? 1 : 0), 0);
   const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
+  const incorrect = submitted ? questions.filter((qq) => answers[qq.id] !== qq.correct_answer) : [];
+  const unanswered = submitted ? questions.filter((qq) => !answers[qq.id]) : [];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 page-enter">
@@ -153,9 +155,46 @@ function ExamPrep() {
       </div>
 
       <div className="mt-4 grid gap-4">
+        {submitted && (
+          <Card className={`p-5 border-2 ${pct >= 80 ? "border-emerald-300 bg-emerald-50/50" : "border-amber-300 bg-amber-50/50"}`}>
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Exam review</div>
+                <h2 className="mt-1 text-xl font-bold">
+                  {pct >= 80 ? "Passed" : "Keep practising"} — {score}/{questions.length} ({pct}%)
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {questions.length - incorrect.length} correct · {incorrect.length - unanswered.length} wrong · {unanswered.length} skipped
+                </p>
+              </div>
+              <Button size="sm" variant="outline" onClick={() => { setAnswers({}); setSubmitted(false); setSeed((s) => s + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+                <RefreshCw className="size-4" /> Retake with new set
+              </Button>
+            </div>
+            {incorrect.length > 0 && (
+              <div className="mt-4">
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Review these modules</div>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from(new Set(incorrect.map((q) => q.module_slug))).filter(Boolean).map((slug) => (
+                    <Link
+                      key={slug}
+                      to="/learn/$discipline/$topic"
+                      params={{ discipline: "Computer Science", topic: slug }}
+                      className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                    >
+                      <BookOpen className="size-3.5" /> {slug} <ArrowRight className="size-3" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Card>
+        )}
         {questions.map((qq, idx) => {
           const chosen = answers[qq.id];
           const correct = qq.correct_answer;
+          const isRight = submitted && chosen === correct;
+          const isSkipped = submitted && !chosen;
           return (
             <Card key={qq.id} className="p-5">
               <div className="flex items-start justify-between gap-3">
@@ -165,6 +204,13 @@ function ExamPrep() {
                   </div>
                   <div className="mt-1 font-medium">{qq.question}</div>
                 </div>
+                {submitted && (
+                  <span className={`shrink-0 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                    isRight ? "bg-emerald-100 text-emerald-700" : isSkipped ? "bg-muted text-muted-foreground" : "bg-rose-100 text-rose-700"
+                  }`}>
+                    {isRight ? <><CheckCircle2 className="size-3" /> Correct</> : isSkipped ? "Skipped" : <><XCircle className="size-3" /> Incorrect</>}
+                  </span>
+                )}
               </div>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {(qq.choices as string[]).map((c: string) => {
@@ -194,6 +240,25 @@ function ExamPrep() {
                   );
                 })}
               </div>
+              {submitted && (
+                <div className="mt-4 rounded-lg border bg-muted/40 p-3 text-sm">
+                  <div className="font-semibold text-foreground">Explanation</div>
+                  <p className="mt-1 text-muted-foreground">
+                    The correct answer is <span className="font-medium text-foreground">{correct}</span>.
+                    {isRight ? " Nice — you got this one." : isSkipped ? " You skipped this question." : ` You picked "${chosen}".`}
+                    {" "}Revisit the module for deeper context and worked examples.
+                  </p>
+                  {qq.module_slug && (
+                    <Link
+                      to="/learn/$discipline/$topic"
+                      params={{ discipline: "Computer Science", topic: qq.module_slug }}
+                      className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-[var(--color-primary)] hover:underline"
+                    >
+                      Open {qq.module_title} <ArrowRight className="size-3.5" />
+                    </Link>
+                  )}
+                </div>
+              )}
             </Card>
           );
         })}
