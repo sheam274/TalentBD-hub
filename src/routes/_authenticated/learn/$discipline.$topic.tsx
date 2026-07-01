@@ -38,6 +38,10 @@ function Topic() {
   const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null);
   const [practice, setPractice] = useState<Record<number, number>>({});
   const [practiceResult, setPracticeResult] = useState<{ score: number; correct: number; total: number } | null>(null);
+  const cseSiblings = useMemo(
+    () => (siblings.data ?? []).filter((x: any) => isCseDiscipline(x.discipline)),
+    [siblings.data],
+  );
   const submit = useMutation({
     mutationFn: (vars: { moduleId: string }) => subFn({ data: { moduleId: vars.moduleId, answers } }),
     onSuccess: (r) => {
@@ -51,10 +55,6 @@ function Topic() {
   if (!q.data) return <div className="p-10 text-center">Not found. <Link to="/learn">Back</Link></div>;
   const { module: m, quizzes } = q.data;
   const tutorial = isCse ? CSE_TUTORIALS[topic] : undefined;
-  const cseSiblings = useMemo(
-    () => (siblings.data ?? []).filter((x: any) => isCseDiscipline(x.discipline)),
-    [siblings.data],
-  );
 
   function scorePractice() {
     if (!tutorial) return;
