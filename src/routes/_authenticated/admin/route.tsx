@@ -60,6 +60,7 @@ function AdminLayout() {
         </Link>
         <Link to="/admin/credentials" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Credentials</Link>
         <Link to="/admin/database" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Database</Link>
+        <Link to="/admin/audit" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Audit logs</Link>
       </nav>
       <Outlet />
     </div>

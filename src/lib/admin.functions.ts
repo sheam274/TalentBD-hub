@@ -337,3 +337,63 @@ export const adminBrowseTable = createServerFn({ method: "GET" })
       rows: rows ?? [],
     };
   });
+
+const AUDIT_TABLES = [
+  "job_marketplace",
+  "job_applications",
+  "interview_sessions",
+  "appointment_letters",
+] as const;
+
+export const adminListAuditLogs = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z.object({
+      table: z.enum(["all", ...AUDIT_TABLES] as unknown as [string, ...string[]]).default("all"),
+      operation: z.enum(["all", "INSERT", "UPDATE", "DELETE"]).default("all"),
+      actorEmail: z.string().trim().toLowerCase().optional(),
+      rowId: z.string().trim().optional(),
+      limit: z.number().int().min(1).max(500).default(100),
+    }).parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Optional email → user_id resolution
+    let actorId: string | undefined;
+    if (data.actorEmail) {
+      for (let page = 1; page <= 10 && !actorId; page++) {
+        const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+        const found = list?.users.find((u) => (u.email ?? "").toLowerCase() === data.actorEmail);
+        if (found) actorId = found.id;
+        if (!list?.users.length || list.users.length < 200) break;
+      }
+      if (!actorId) return { rows: [], emailMap: {} as Record<string, string> };
+    }
+
+    let q: any = (supabaseAdmin as any)
+      .from("audit_logs")
+      .select("id, occurred_at, actor_id, table_name, row_pk, operation, changed_fields, old_data, new_data")
+      .order("occurred_at", { ascending: false })
+      .limit(data.limit);
+    if (data.table !== "all") q = q.eq("table_name", data.table);
+    if (data.operation !== "all") q = q.eq("operation", data.operation);
+    if (actorId) q = q.eq("actor_id", actorId);
+    if (data.rowId) q = q.eq("row_pk", data.rowId);
+
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+
+    // Map actor_ids to emails for display
+    const emailMap: Record<string, string> = {};
+    const actorIds = Array.from(new Set((rows ?? []).map((r: any) => r.actor_id).filter(Boolean)));
+    if (actorIds.length) {
+      // Best-effort: page through auth users once
+      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+      for (const u of list?.users ?? []) {
+        if (u.email && actorIds.includes(u.id)) emailMap[u.id] = u.email;
+      }
+    }
+    return { rows: rows ?? [], emailMap };
+  });
