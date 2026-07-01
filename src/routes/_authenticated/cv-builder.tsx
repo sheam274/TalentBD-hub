@@ -418,73 +418,111 @@ function StandardCv({ d }: { d: Payload }) {
 
 function PremiumCv({ d }: { d: Payload }) {
   return (
-    <div className="grid grid-cols-3 gap-4 text-[12.5px] leading-snug text-black">
-      <aside className="col-span-1 rounded-md p-4 text-white" style={{ background: "var(--color-primary)" }}>
-        {d.photo && <img src={d.photo} alt="" className="mb-3 size-24 rounded-full object-cover ring-2 ring-white/30" />}
-        <h2 className="text-lg font-bold leading-tight">{d.name || "Your Name"}</h2>
-        {d.title && <p className="mt-0.5 text-xs opacity-90">{d.title}</p>}
-        <div className="mt-3 space-y-1.5 text-[11px]">
-          {d.email && <p className="flex items-start gap-1.5"><Mail className="size-3 mt-0.5 shrink-0" />{d.email}</p>}
-          {d.phone && <p className="flex items-start gap-1.5"><Phone className="size-3 mt-0.5 shrink-0" />{d.phone}</p>}
-          {d.location && <p className="flex items-start gap-1.5"><MapPin className="size-3 mt-0.5 shrink-0" />{d.location}</p>}
-          {d.website && <p className="flex items-start gap-1.5"><Globe className="size-3 mt-0.5 shrink-0" />{d.website}</p>}
-          {d.linkedin && <p className="flex items-start gap-1.5"><Linkedin className="size-3 mt-0.5 shrink-0" />{d.linkedin}</p>}
-          {d.github && <p className="flex items-start gap-1.5"><Github className="size-3 mt-0.5 shrink-0" />{d.github}</p>}
+    <div className="text-black text-[12.5px] leading-snug" style={{ background: "#fdf3ec" }}>
+      <div className="p-5 sm:p-6">
+        {/* Header */}
+        <div className="flex items-center gap-5">
+          <div className="shrink-0">
+            {d.photo ? (
+              <img src={d.photo} alt="" className="size-28 rounded-full object-cover ring-4 ring-white shadow" />
+            ) : (
+              <div className="size-28 rounded-full bg-white/70 ring-4 ring-white shadow" />
+            )}
+          </div>
+          <div className="flex-1 border-b border-black/60 pb-2">
+            <h2 className="text-3xl font-extrabold uppercase tracking-wide text-center">{d.name || "Your Name"}</h2>
+            {d.title && <p className="mt-1 text-center text-sm text-black/70">{d.title}</p>}
+          </div>
         </div>
-        {d.skills && (
-          <div className="mt-4">
-            <h3 className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--color-accent)" }}>Skills</h3>
-            <div className="mt-1 flex flex-wrap gap-1">
-              {d.skills.split(",").map((s) => s.trim()).filter(Boolean).map((s) => (
-                <span key={s} className="rounded bg-white/15 px-1.5 py-0.5 text-[10px]">{s}</span>
-              ))}
-            </div>
+
+        {/* Body grid */}
+        <div className="mt-5 grid grid-cols-3 gap-4">
+          {/* Left column */}
+          <div className="col-span-1 space-y-4">
+            <TopcvCard>
+              <ul className="space-y-1.5 text-[12px]">
+                {d.email && <li className="flex items-start gap-2"><Mail className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.email}</li>}
+                {d.phone && <li className="flex items-start gap-2"><Phone className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.phone}</li>}
+                {d.website && <li className="flex items-start gap-2"><Globe className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.website}</li>}
+                {d.location && <li className="flex items-start gap-2"><MapPin className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.location}</li>}
+                {d.linkedin && <li className="flex items-start gap-2"><Linkedin className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.linkedin}</li>}
+                {d.github && <li className="flex items-start gap-2"><Github className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.github}</li>}
+              </ul>
+            </TopcvCard>
+
+            {d.summary && (
+              <TopcvCard header="OBJECTIVE"><p>{d.summary}</p></TopcvCard>
+            )}
+
+            {d.skills && (
+              <TopcvCard header="SKILLS">
+                <p className="whitespace-pre-line">{d.skills}</p>
+              </TopcvCard>
+            )}
+
+            {d.languages && (
+              <TopcvCard header="INTERESTS"><p>{d.languages}</p></TopcvCard>
+            )}
           </div>
-        )}
-        {d.languages && (
-          <div className="mt-3">
-            <h3 className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--color-accent)" }}>Languages</h3>
-            <p className="mt-1 text-[11px]">{d.languages}</p>
+
+          {/* Right column */}
+          <div className="col-span-2 space-y-4">
+            {d.education.length > 0 && (
+              <TopcvCard header="EDUCATION">
+                {d.education.map((e) => (
+                  <div key={e.id} className="mb-2 last:mb-0">
+                    <div className="font-semibold"><span style={{ color: "#f0895a" }}>❖ </span>{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}</div>
+                    {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
+                    {e.details && <div className="text-[12px]">{e.details}</div>}
+                  </div>
+                ))}
+              </TopcvCard>
+            )}
+
+            {d.experience.length > 0 && (
+              <TopcvCard header="WORK EXPERIENCE">
+                {d.experience.map((e) => (
+                  <div key={e.id} className="mb-3 last:mb-0">
+                    <div className="font-semibold"><span style={{ color: "#f0895a" }}>❖ </span>{e.company}{e.role && <span className="font-normal">, {e.role}</span>}</div>
+                    {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
+                    {e.bullets && (
+                      <ul className="mt-1 space-y-0.5 text-[12px]">
+                        {e.bullets.split("\n").filter(Boolean).map((b, i) => (
+                          <li key={i}>- {b.replace(/^[-•*]\s*/, "")}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </TopcvCard>
+            )}
+
+            {d.projects.length > 0 && (
+              <TopcvCard header="ACTIVITIES">
+                {d.projects.map((p) => (
+                  <div key={p.id} className="mb-2 last:mb-0">
+                    <div className="font-semibold"><span style={{ color: "#f0895a" }}>❖ </span>{p.name}{p.link && <span className="ml-2 font-normal text-[11px] text-black/70">{p.link}</span>}</div>
+                    {p.description && <p className="text-[12px]">{p.description}</p>}
+                  </div>
+                ))}
+              </TopcvCard>
+            )}
           </div>
-        )}
-      </aside>
-      <main className="col-span-2 space-y-3">
-        {d.summary && <CvSection h="Summary"><p>{d.summary}</p></CvSection>}
-        {d.experience.length > 0 && (
-          <CvSection h="Experience">
-            {d.experience.map((e) => (
-              <div key={e.id} className="mb-2.5">
-                <div className="flex justify-between font-semibold"><span>{e.role}{e.company && ` · ${e.company}`}</span><span className="text-xs font-normal">{e.period}</span></div>
-                {e.bullets && (
-                  <ul className="ml-4 list-disc">
-                    {e.bullets.split("\n").filter(Boolean).map((b, i) => <li key={i}>{b.replace(/^[-•*]\s*/, "")}</li>)}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </CvSection>
-        )}
-        {d.projects.length > 0 && (
-          <CvSection h="Projects">
-            {d.projects.map((p) => (
-              <div key={p.id} className="mb-1.5">
-                <div className="font-semibold">{p.name}{p.link && <span className="ml-2 font-normal text-xs">{p.link}</span>}</div>
-                {p.description && <p>{p.description}</p>}
-              </div>
-            ))}
-          </CvSection>
-        )}
-        {d.education.length > 0 && (
-          <CvSection h="Education">
-            {d.education.map((e) => (
-              <div key={e.id} className="mb-1.5">
-                <div className="flex justify-between font-semibold"><span>{e.degree}{e.school && ` · ${e.school}`}</span><span className="text-xs font-normal">{e.period}</span></div>
-                {e.details && <p>{e.details}</p>}
-              </div>
-            ))}
-          </CvSection>
-        )}
-      </main>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TopcvCard({ header, children }: { header?: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-md bg-white shadow-sm overflow-hidden">
+      {header && (
+        <div className="px-3 py-2 text-[13px] font-bold tracking-wide text-black" style={{ background: "#f6b088" }}>
+          {header}
+        </div>
+      )}
+      <div className="px-3 py-3">{children}</div>
     </div>
   );
 }
