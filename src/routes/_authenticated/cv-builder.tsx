@@ -850,12 +850,13 @@ function CvSheet({ children, bg = "#ffffff" }: { children: React.ReactNode; bg?:
   return (
     <div ref={wrapRef} className="cv-sheet-wrap w-full" style={{ height: A4_H * scale }}>
       <div
-        className="cv-print-area bg-white shadow-sm border rounded-xl overflow-hidden"
+        className="cv-print-area shadow-sm border rounded-xl overflow-hidden"
         style={{
           width: A4_W,
           minHeight: A4_H,
           transform: `scale(${scale})`,
           transformOrigin: "top left",
+          background: bg,
         }}
       >
         {children}
