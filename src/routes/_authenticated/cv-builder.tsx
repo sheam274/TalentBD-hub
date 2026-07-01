@@ -225,14 +225,14 @@ function CvBuilder() {
           <BigTechChecklist d={data} />
           <Section title="Personal">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Input label="Full name" value={data.name} onChange={(v) => set("name", v)} />
-              <Input label="Title / Role" value={data.title} onChange={(v) => set("title", v)} />
-              <Input label="Email" value={data.email} onChange={(v) => set("email", v)} />
-              <Input label="Phone" value={data.phone} onChange={(v) => set("phone", v)} />
-              <Input label="Location" value={data.location} onChange={(v) => set("location", v)} />
-              <Input label="Website" value={data.website} onChange={(v) => set("website", v)} />
-              <Input label="LinkedIn" value={data.linkedin} onChange={(v) => set("linkedin", v)} />
-              <Input label="GitHub" value={data.github} onChange={(v) => set("github", v)} />
+              <Input label="Full name" placeholder="e.g. Sheam Rahman" value={data.name} onChange={(v) => set("name", v)} />
+              <Input label="Title / Role" placeholder="e.g. Software Engineer" value={data.title} onChange={(v) => set("title", v)} />
+              <Input label="Email" placeholder="e.g. sheam@example.com" value={data.email} onChange={(v) => set("email", v)} />
+              <Input label="Phone" placeholder="e.g. +880 1XXX-XXXXXX" value={data.phone} onChange={(v) => set("phone", v)} />
+              <Input label="Location" placeholder="e.g. Dhaka, Bangladesh" value={data.location} onChange={(v) => set("location", v)} />
+              <Input label="Website" placeholder="e.g. https://sheam.dev" value={data.website} onChange={(v) => set("website", v)} />
+              <Input label="LinkedIn" placeholder="e.g. linkedin.com/in/sheam" value={data.linkedin} onChange={(v) => set("linkedin", v)} />
+              <Input label="GitHub" placeholder="e.g. github.com/sheam" value={data.github} onChange={(v) => set("github", v)} />
             </div>
           </Section>
 
@@ -260,11 +260,11 @@ function CvBuilder() {
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Role" value={item.role} onChange={(v) => update({ ...item, role: v })} />
-                  <Input label="Company" value={item.company} onChange={(v) => update({ ...item, company: v })} />
+                  <Input label="Role" placeholder="e.g. Software Engineer Intern" value={item.role} onChange={(v) => update({ ...item, role: v })} />
+                  <Input label="Company" placeholder="e.g. Google" value={item.company} onChange={(v) => update({ ...item, company: v })} />
                 </div>
-                <Input label="Period (e.g. 2022 - Present)" value={item.period} onChange={(v) => update({ ...item, period: v })} />
-                <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
+                <Input label="Period (e.g. 2022 - Present)" placeholder="e.g. Jun 2024 - Present" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                <Input label="Tech stack" placeholder="e.g. React, Node.js, PostgreSQL" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Bullets (one per line)" value={item.bullets} onChange={(v) => update({ ...item, bullets: v })} rows={4} />
                 <AiAssist field="experience_bullets" ctx={{ role: item.role, company: item.company, tech: item.tech, existing: item.bullets }} onPick={(t) => update({ ...item, bullets: (item.bullets ? item.bullets + "\n" : "") + t })} />
                 <AiAssist field="metrics" label="Add metrics" ctx={{ role: item.role, bullets: item.bullets }} onPick={(t) => update({ ...item, bullets: (item.bullets ? item.bullets + "\n" : "") + t })} />
@@ -280,12 +280,12 @@ function CvBuilder() {
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Degree" value={item.degree} onChange={(v) => update({ ...item, degree: v })} />
-                  <Input label="School" value={item.school} onChange={(v) => update({ ...item, school: v })} />
+                  <Input label="Degree" placeholder="e.g. BSc in Computer Science" value={item.degree} onChange={(v) => update({ ...item, degree: v })} />
+                  <Input label="School" placeholder="e.g. BUET" value={item.school} onChange={(v) => update({ ...item, school: v })} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Period" value={item.period} onChange={(v) => update({ ...item, period: v })} />
-                  <Input label="CGPA / GPA" value={item.gpa ?? ""} onChange={(v) => update({ ...item, gpa: v })} />
+                  <Input label="Period" placeholder="e.g. 2021 - 2025" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                  <Input label="CGPA / GPA" placeholder="e.g. 3.85 / 4.00" value={item.gpa ?? ""} onChange={(v) => update({ ...item, gpa: v })} />
                 </div>
                 <Textarea label="Details" value={item.details} onChange={(v) => update({ ...item, details: v })} rows={2} />
               </>
@@ -300,10 +300,10 @@ function CvBuilder() {
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Name" value={item.name} onChange={(v) => update({ ...item, name: v })} />
-                  <Input label="Link" value={item.link} onChange={(v) => update({ ...item, link: v })} />
+                  <Input label="Name" placeholder="e.g. TalentBD - AI Career Platform" value={item.name} onChange={(v) => update({ ...item, name: v })} />
+                  <Input label="Link" placeholder="e.g. https://github.com/sheam/talentbd" value={item.link} onChange={(v) => update({ ...item, link: v })} />
                 </div>
-                <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
+                <Input label="Tech stack" placeholder="e.g. TypeScript, TanStack Start, Supabase" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Description" value={item.description} onChange={(v) => update({ ...item, description: v })} rows={2} />
                 <AiAssist field="project_description" ctx={{ name: item.name, tech: item.tech, existing: item.description }} mode="replace" onPick={(t) => update({ ...item, description: t })} />
               </>
@@ -318,10 +318,10 @@ function CvBuilder() {
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Name" value={item.name} onChange={(v) => update({ ...item, name: v })} />
-                  <Input label="Issuer" value={item.issuer} onChange={(v) => update({ ...item, issuer: v })} />
+                  <Input label="Name" placeholder="e.g. AWS Certified Cloud Practitioner" value={item.name} onChange={(v) => update({ ...item, name: v })} />
+                  <Input label="Issuer" placeholder="e.g. Amazon Web Services" value={item.issuer} onChange={(v) => update({ ...item, issuer: v })} />
                 </div>
-                <Input label="Year" value={item.year} onChange={(v) => update({ ...item, year: v })} />
+                <Input label="Year" placeholder="e.g. 2024" value={item.year} onChange={(v) => update({ ...item, year: v })} />
               </>
             )}
           />
@@ -334,8 +334,8 @@ function CvBuilder() {
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Title" value={item.title} onChange={(v) => update({ ...item, title: v })} />
-                  <Input label="Year" value={item.year} onChange={(v) => update({ ...item, year: v })} />
+                  <Input label="Title" placeholder="e.g. ICPC Regional Finalist" value={item.title} onChange={(v) => update({ ...item, title: v })} />
+                  <Input label="Year" placeholder="e.g. 2024" value={item.year} onChange={(v) => update({ ...item, year: v })} />
                 </div>
                 <Textarea label="Detail" value={item.detail} onChange={(v) => update({ ...item, detail: v })} rows={2} />
               </>
@@ -350,12 +350,12 @@ function CvBuilder() {
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Platform (LeetCode, Codeforces, HackerRank…)" value={item.platform} onChange={(v) => update({ ...item, platform: v })} />
-                  <Input label="Handle / Username" value={item.handle} onChange={(v) => update({ ...item, handle: v })} />
+                  <Input label="Platform (LeetCode, Codeforces, HackerRank…)" placeholder="e.g. LeetCode" value={item.platform} onChange={(v) => update({ ...item, platform: v })} />
+                  <Input label="Handle / Username" placeholder="e.g. sheam_dev" value={item.handle} onChange={(v) => update({ ...item, handle: v })} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <Input label="Profile link" value={item.link} onChange={(v) => update({ ...item, link: v })} />
-                  <Input label="Rating / Rank (optional)" value={item.rating} onChange={(v) => update({ ...item, rating: v })} />
+                  <Input label="Profile link" placeholder="e.g. https://leetcode.com/sheam_dev" value={item.link} onChange={(v) => update({ ...item, link: v })} />
+                  <Input label="Rating / Rank (optional)" placeholder="e.g. 2100 (Knight)" value={item.rating} onChange={(v) => update({ ...item, rating: v })} />
                 </div>
               </>
             )}
