@@ -31,6 +31,8 @@ function EmployerLayout() {
         <Link to="/employer/company" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Company</Link>
         <Link to="/employer/jobs" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Jobs</Link>
         <Link to="/employer/applicants" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Applicants</Link>
+        <Link to="/employer/interviews" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Interviews</Link>
+        <Link to="/employer/letters" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Appointment letters</Link>
       </nav>
       <Outlet />
     </div>
