@@ -5,6 +5,13 @@ import { z } from "zod";
 async function assertAdmin(supabase: any, userId: string) {
   const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
   if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
+  // Defense-in-depth: main-admin CRUD is locked to the email allowlist even
+  // if the admin role was granted by another means.
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: u } = await supabaseAdmin.auth.admin.getUserById(userId);
+  const email = (u?.user?.email ?? "").toLowerCase();
+  const ALLOWED = ["sheam.rahman99@gmail.com", "sheam.rahman@outlook.com"];
+  if (!ALLOWED.includes(email)) throw new Error("Forbidden");
 }
 
 export const adminListUsers = createServerFn({ method: "GET" })
