@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getModulePublic, listModulesPublic } from "@/lib/learning.functions";
 import { submitQuiz } from "@/lib/assessments.functions";
 import { youtubeEmbed, youtubeThumb } from "@/lib/youtube";
 import { YouTubeThumb } from "@/components/YouTubeThumb";
 import { toast } from "sonner";
 import { CSE_TUTORIALS, isCseDiscipline } from "@/lib/cse-tutorials";
-import { BookOpen, ChevronRight, GraduationCap, ListTree } from "lucide-react";
+import { BookOpen, ChevronRight, GraduationCap, ListTree, CheckCircle2, Circle, Sparkles, Clock, Award } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/learn/$discipline/$topic")({
   head: ({ params }) => ({
@@ -38,6 +38,14 @@ function Topic() {
   const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null);
   const [practice, setPractice] = useState<Record<number, number>>({});
   const [practiceResult, setPracticeResult] = useState<{ score: number; correct: number; total: number } | null>(null);
+  const progressKey = `learn:progress:${discipline}:${topic}`;
+  const [done, setDone] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    try { const raw = localStorage.getItem(progressKey); if (raw) setDone(JSON.parse(raw)); } catch {}
+  }, [progressKey]);
+  useEffect(() => {
+    try { localStorage.setItem(progressKey, JSON.stringify(done)); } catch {}
+  }, [progressKey, done]);
   const cseSiblings = useMemo(
     () => (siblings.data ?? []).filter((x: any) => isCseDiscipline(x.discipline)),
     [siblings.data],
@@ -55,6 +63,9 @@ function Topic() {
   if (!q.data) return <div className="p-10 text-center">Not found. <Link to="/learn">Back</Link></div>;
   const { module: m, quizzes } = q.data;
   const tutorial = isCse ? CSE_TUTORIALS[topic] : undefined;
+  const syllabus = tutorial?.sections ?? [];
+  const completedCount = syllabus.filter((s) => done[s.id]).length;
+  const pct = syllabus.length ? Math.round((completedCount / syllabus.length) * 100) : 0;
 
   function scorePractice() {
     if (!tutorial) return;
@@ -69,6 +80,63 @@ function Topic() {
       <Link to="/learn" className="text-sm" style={{ color: "var(--color-primary)" }}>← All tracks</Link>
       <h1 className="mt-2 text-2xl sm:text-3xl font-bold break-words">{m.title}</h1>
       <p className="mt-1 text-muted-foreground text-sm sm:text-base">{tutorial?.intro ?? m.description}</p>
+
+      {tutorial && (
+        <section aria-label="Module overview" className="mt-6 overflow-hidden rounded-2xl border bg-gradient-to-br from-white via-white to-[color-mix(in_oklab,var(--color-primary)_10%,white)] shadow-[0_10px_40px_-20px_rgba(15,23,42,0.25)]">
+          <div className="grid gap-6 p-5 sm:p-7 md:grid-cols-[1.4fr_1fr]">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border bg-white/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                <Sparkles className="size-3" /> Module landing
+              </span>
+              <h2 className="mt-3 text-xl sm:text-2xl font-bold tracking-tight">Overview</h2>
+              <p className="mt-1.5 text-sm sm:text-[15px] leading-relaxed text-foreground/80">{tutorial.intro}</p>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-full border bg-white px-2.5 py-1"><ListTree className="size-3.5" /> {syllabus.length} lessons</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border bg-white px-2.5 py-1"><Clock className="size-3.5" /> ~{Math.max(15, syllabus.length * 8)} min</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border bg-white px-2.5 py-1"><GraduationCap className="size-3.5" /> {tutorial.practice.length} practice Q</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border bg-white px-2.5 py-1"><Award className="size-3.5" /> Certifiable · 80%</span>
+              </div>
+              <div className="mt-5">
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <span className="text-muted-foreground">Your progress</span>
+                  <span style={{ color: "var(--color-primary)" }}>{completedCount}/{syllabus.length} · {pct}%</span>
+                </div>
+                <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${pct}%`, background: "var(--color-primary)" }} />
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a href={`#${syllabus[0]?.id ?? ""}`} className="rounded-md px-3 py-1.5 text-xs font-semibold text-white" style={{ background: "var(--color-primary)" }}>Start learning</a>
+                  <button onClick={() => setDone({})} className="rounded-md border px-3 py-1.5 text-xs font-semibold hover:bg-muted">Reset progress</button>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-xl border bg-white p-4">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Syllabus</h3>
+              <ol className="mt-3 space-y-1.5 text-sm">
+                {syllabus.map((sec, i) => {
+                  const isDone = !!done[sec.id];
+                  return (
+                    <li key={sec.id} className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        aria-label={isDone ? `Mark ${sec.title} incomplete` : `Mark ${sec.title} complete`}
+                        onClick={() => setDone((d) => ({ ...d, [sec.id]: !d[sec.id] }))}
+                        className="shrink-0"
+                      >
+                        {isDone ? <CheckCircle2 className="size-4" style={{ color: "var(--color-primary)" }} /> : <Circle className="size-4 text-muted-foreground" />}
+                      </button>
+                      <a href={`#${sec.id}`} className={`flex-1 truncate rounded px-1.5 py-1 hover:bg-muted ${isDone ? "line-through text-muted-foreground" : ""}`}>
+                        <span className="mr-1.5 text-xs font-semibold text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+                        {sec.title}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </div>
+        </section>
+      )}
 
       {m.video_url && (() => {
         const embed = youtubeEmbed(m.video_url);
