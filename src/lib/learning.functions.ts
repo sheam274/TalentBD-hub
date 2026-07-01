@@ -68,3 +68,27 @@ export const adminDeleteModule = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const getExamQuiz = createServerFn({ method: "GET" })
+  .inputValidator((i: { slugs: string[] }) => i)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: mods } = await supabaseAdmin
+      .from("learning_modules")
+      .select("id, section_slug, title")
+      .eq("discipline", "Computer Science")
+      .in("section_slug", data.slugs);
+    const modIds = (mods ?? []).map((m) => m.id);
+    if (modIds.length === 0) return { modules: [], questions: [] };
+    const { data: qs } = await supabaseAdmin
+      .from("skill_quizzes")
+      .select("id, module_id, question, choices, correct_answer")
+      .in("module_id", modIds);
+    const byId = new Map((mods ?? []).map((m) => [m.id, m]));
+    const questions = (qs ?? []).map((q) => ({
+      ...q,
+      module_slug: byId.get(q.module_id)?.section_slug ?? "",
+      module_title: byId.get(q.module_id)?.title ?? "",
+    }));
+    return { modules: mods ?? [], questions };
+  });
