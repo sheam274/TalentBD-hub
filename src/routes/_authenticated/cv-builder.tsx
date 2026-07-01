@@ -78,10 +78,14 @@ function CvBuilder() {
 
   const save = useMutation({
     mutationFn: () => saveFn({ data: { selected_style: style, builder_payload: data as any } }),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("CV saved");
-      qc.invalidateQueries({ queryKey: ["me"] });
-      qc.invalidateQueries({ queryKey: ["my-cv"] });
+      // Force immediate refetch so the dashboard shows the updated profile
+      // even if realtime is delayed or the tab isn't focused.
+      await Promise.all([
+        qc.refetchQueries({ queryKey: ["me"], type: "all" }),
+        qc.refetchQueries({ queryKey: ["my-cv"], type: "all" }),
+      ]);
     },
     onError: (e: any) => toast.error(e.message),
   });
