@@ -85,7 +85,7 @@ function Landing() {
     <div className="page-enter bg-background">
       {/* Hero — Ink Ambient Glow (premium dark) */}
       <section
-        className="relative flex min-h-[calc(100svh-var(--header-h,4rem))] w-full flex-col justify-center overflow-hidden px-5 pt-6 pb-6 sm:px-6 sm:pt-8 sm:pb-8 md:pt-8 md:pb-8 lg:pt-10 lg:pb-10"
+        className="relative flex min-h-[calc(100svh-var(--header-h,4rem))] w-full flex-col overflow-hidden px-5 pt-6 pb-6 sm:px-6 sm:pt-8 sm:pb-8 md:pt-8 md:pb-8 lg:pt-10 lg:pb-10"
         style={{
           background:
             "radial-gradient(1200px 600px at 12% 0%, rgba(255,182,6,0.22), transparent 60%)," +
@@ -115,7 +115,7 @@ function Landing() {
           style={{ background: "var(--eduma-gold)", opacity: 0.28 }}
         />
 
-        <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center">
           <div className="grid grid-cols-1 items-stretch gap-3 sm:gap-4 lg:grid-cols-2 lg:gap-8">
             {/* Left card — text + CTAs */}
             <div className="flex flex-col justify-center rounded-3xl px-2 pt-0 pb-2 sm:px-4 sm:pt-1 sm:pb-3 md:px-6 md:pt-3 md:pb-5 lg:pr-8 text-center lg:text-left">
