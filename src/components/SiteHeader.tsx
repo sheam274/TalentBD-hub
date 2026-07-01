@@ -88,8 +88,19 @@ export function SiteHeader() {
   });
   const currentPath = useRouterState({ select: (s) => s.location.pathname });
   const isChildActive = (to: string) => {
-    if (to.includes("?")) return currentHref === to;
-    return currentPath === to;
+    if (to.includes("?")) {
+      const [path, query] = to.split("?");
+      if (currentPath !== path) return false;
+      const wanted = new URLSearchParams(query);
+      const current = new URLSearchParams(
+        currentHref.includes("?") ? currentHref.split("?")[1] : "",
+      );
+      for (const [k, v] of wanted) {
+        if (current.get(k) !== v) return false;
+      }
+      return true;
+    }
+    return currentPath === to || currentPath.startsWith(to + "/");
   };
   const isParentActive = (children?: { to: string }[]) =>
     !!children?.some((c) => isChildActive(c.to));
