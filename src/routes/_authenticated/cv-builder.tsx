@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
 import { toast } from "sonner";
-import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-builder")({
   head: () => ({ meta: [{ title: "CV Builder — TalentBD" }, { name: "description", content: "Build a professional, print-ready CV with standard or premium layouts." }] }),
@@ -90,6 +90,16 @@ function CvBuilder() {
     setData((d) => ({ ...d, [k]: v }));
   }
 
+  function onPhotoFile(file: File | null) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { toast.error("Please choose an image file"); return; }
+    if (file.size > 2 * 1024 * 1024) { toast.error("Image must be under 2 MB"); return; }
+    const reader = new FileReader();
+    reader.onload = () => set("photo", String(reader.result || ""));
+    reader.onerror = () => toast.error("Could not read file");
+    reader.readAsDataURL(file);
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
       <div className="no-print flex flex-wrap items-start justify-between gap-3">
@@ -113,6 +123,24 @@ function CvBuilder() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div className="no-print space-y-5 rounded-xl border bg-white p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3">
+              {data.photo ? (
+                <img src={data.photo} alt="Profile" className="size-14 rounded-full object-cover ring-2 ring-black/5" />
+              ) : (
+                <div className="size-14 rounded-full bg-muted flex items-center justify-center text-[10px] text-muted-foreground">No photo</div>
+              )}
+              {data.photo && (
+                <button type="button" onClick={() => set("photo", "")} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive">
+                  <X className="size-3" /> Remove
+                </button>
+              )}
+            </div>
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border bg-white px-3 py-2 text-xs font-semibold hover:bg-muted">
+              <Upload className="size-3.5" /> Add photo
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => onPhotoFile(e.target.files?.[0] ?? null)} />
+            </label>
+          </div>
           <Section title="Personal">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Full name" value={data.name} onChange={(v) => set("name", v)} />
