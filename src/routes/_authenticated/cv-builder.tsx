@@ -80,6 +80,7 @@ function CvBuilder() {
   const router = useRouter();
   const q = useQuery({ queryKey: ["my-cv"], queryFn: () => getFn() });
   const [style, setStyle] = useState<"standard" | "premium">("premium");
+  const [theme, setTheme] = useState<PremiumThemeKey>("peach");
   const [data, setData] = useState<Payload>(empty);
 
   useEffect(() => {
@@ -190,6 +191,28 @@ function CvBuilder() {
             <option value="standard">Standard (single column)</option>
             <option value="premium">Premium (two-column)</option>
           </select>
+          {style === "premium" && (
+            <div className="flex items-center gap-1 rounded-md border bg-white p-1" role="radiogroup" aria-label="Premium theme">
+              {(Object.keys(PREMIUM_THEMES) as PremiumThemeKey[]).map((k) => {
+                const t = PREMIUM_THEMES[k];
+                const active = theme === k;
+                return (
+                  <button
+                    key={k}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    title={t.label}
+                    onClick={() => setTheme(k)}
+                    className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium ${active ? "bg-muted" : "hover:bg-muted/60"}`}
+                  >
+                    <span className="size-3 rounded-full ring-1 ring-black/10" style={{ background: t.accent }} />
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ background: "var(--color-primary)" }}>
             <Save className="size-4" /> Save
           </button>
@@ -364,7 +387,7 @@ function CvBuilder() {
 
         <div className="lg:sticky lg:top-20 lg:self-start">
           <CvSheet>
-            {style === "standard" ? <StandardCv d={data} /> : <PremiumCv d={data} />}
+            {style === "standard" ? <StandardCv d={data} /> : <PremiumCv d={data} theme={theme} />}
           </CvSheet>
         </div>
       </div>
@@ -536,12 +559,23 @@ function StandardCv({ d }: { d: Payload }) {
   );
 }
 
-function PremiumCv({ d }: { d: Payload }) {
-  const PEACH = "#f6b088";
-  const PEACH_SOFT = "#fbe3d1";
-  const BG = "#fdf3ec";
-  const ACCENT = "#f0895a";
-  const INK = "#1f2937";
+type PremiumThemeKey = "peach" | "sapphire" | "emerald" | "graphite" | "rose";
+type PremiumTheme = { label: string; peach: string; peachSoft: string; bg: string; accent: string; ink: string };
+const PREMIUM_THEMES: Record<PremiumThemeKey, PremiumTheme> = {
+  peach:    { label: "Peach",    peach: "#f6b088", peachSoft: "#fbe3d1", bg: "#fdf3ec", accent: "#f0895a", ink: "#1f2937" },
+  sapphire: { label: "Sapphire", peach: "#7dd3fc", peachSoft: "#dbeafe", bg: "#eff6ff", accent: "#2563eb", ink: "#0f172a" },
+  emerald:  { label: "Emerald",  peach: "#86efac", peachSoft: "#d1fae5", bg: "#ecfdf5", accent: "#059669", ink: "#022c22" },
+  graphite: { label: "Graphite", peach: "#9ca3af", peachSoft: "#e5e7eb", bg: "#f3f4f6", accent: "#111827", ink: "#111827" },
+  rose:     { label: "Rose",     peach: "#fda4af", peachSoft: "#ffe4e6", bg: "#fff1f2", accent: "#e11d48", ink: "#3f1d2b" },
+};
+
+function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey }) {
+  const t = PREMIUM_THEMES[theme] ?? PREMIUM_THEMES.peach;
+  const PEACH = t.peach;
+  const PEACH_SOFT = t.peachSoft;
+  const BG = t.bg;
+  const ACCENT = t.accent;
+  const INK = t.ink;
   const splitList = (s: string) =>
     s.split(/[,\n]/).map((x) => x.trim()).filter(Boolean);
   return (
