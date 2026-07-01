@@ -70,11 +70,6 @@ export const saveMyCv = createServerFn({ method: "POST" })
     return {
       ok: true,
       profile,
-      cv: {
-        user_id: userId,
-        selected_style: data.selected_style,
-        builder_payload: data.builder_payload,
-        updated_at: now,
-      },
+      cvUpdatedAt: now,
     };
   });
