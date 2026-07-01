@@ -144,6 +144,10 @@ function LearnIndex() {
                       to="/learn/$discipline/$topic"
                       params={{ discipline: m.discipline, topic: m.section_slug }}
                       className="group flex items-center justify-between gap-2 border-b border-border/40 px-4 py-2.5 last:border-b-0 hover:bg-muted transition-colors"
+                      activeProps={{
+                        className: "group flex items-center justify-between gap-2 border-b border-border/40 px-4 py-2.5 last:border-b-0 font-semibold bg-[color-mix(in_oklab,var(--color-primary)_12%,white)] text-[var(--color-primary)] border-l-4 border-l-[var(--color-primary)]",
+                      }}
+                      activeOptions={{ exact: true }}
                     >
                       <span className="truncate font-medium group-hover:text-[var(--color-primary)]">{m.title}</span>
                       <ChevronRight className="size-3.5 shrink-0 opacity-40 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100" />
