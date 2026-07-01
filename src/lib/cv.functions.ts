@@ -25,6 +25,7 @@ export const saveMyCv = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => cvSchema.parse(i))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const now = new Date().toISOString();
     const { error } = await supabase
       .from("cv_records")
       .upsert(
@@ -32,7 +33,7 @@ export const saveMyCv = createServerFn({ method: "POST" })
           user_id: userId,
           selected_style: data.selected_style,
           builder_payload: data.builder_payload as any,
-          updated_at: new Date().toISOString(),
+          updated_at: now,
         },
         { onConflict: "user_id" },
       );
@@ -49,16 +50,26 @@ export const saveMyCv = createServerFn({ method: "POST" })
         : Array.isArray(p.skills)
           ? (p.skills as unknown[]).map(String)
           : [];
-    await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .update({
-        name: name || null,
-        discipline: discipline || null,
-        avatar_url: photo || null,
-        skills,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", userId);
+      .upsert(
+        {
+          id: userId,
+          name: name || null,
+          discipline: discipline || null,
+          avatar_url: photo || null,
+          skills,
+          updated_at: now,
+        },
+        { onConflict: "id" },
+      )
+      .select("*")
+      .single();
+    if (profileError) throw new Error(profileError.message);
 
-    return { ok: true };
+    return {
+      ok: true,
+      profile,
+      cvUpdatedAt: now,
+    };
   });

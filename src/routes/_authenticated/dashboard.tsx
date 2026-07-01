@@ -30,6 +30,14 @@ function Dashboard() {
   const p = profile.data?.profile;
   const isAdmin = profile.data?.isAdmin;
   const hasCv = !!cv.data;
+  const cvPayload = (cv.data?.builder_payload ?? {}) as Record<string, unknown>;
+  const cvName = typeof cvPayload.name === "string" ? cvPayload.name.trim() : "";
+  const cvTitle = typeof cvPayload.title === "string" ? cvPayload.title.trim() : "";
+  const cvPhoto = typeof cvPayload.photo === "string" ? cvPayload.photo.trim() : "";
+  const displayedName = p?.name || cvName || "Engineer";
+  const displayedDiscipline = p?.discipline || cvTitle;
+  const displayedAvatar = p?.avatar_url || cvPhoto;
+  const displayedSkills = (p?.skills?.length ?? 0) > 0 ? p?.skills ?? [] : parseSkillList(cvPayload.skills);
 
   useEffect(() => {
     const uid = profile.data?.profile?.id;
@@ -53,11 +61,11 @@ function Dashboard() {
         <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:px-6">
           <div className="glass-dark rounded-2xl p-4 sm:p-6">
             <p className="text-sm text-white">Welcome back</p>
-            <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-white break-words">{p?.name ?? "Engineer"}</h1>
-            <p className="mt-1 text-sm text-white">{p?.discipline ? `Discipline: ${p.discipline}` : "Set your discipline in CV Builder"}</p>
+            <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-white break-words">{displayedName}</h1>
+            <p className="mt-1 text-sm text-white">{displayedDiscipline ? `Discipline: ${displayedDiscipline}` : "Set your discipline in CV Builder"}</p>
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <Metric label="Credentials" value={creds.data?.length ?? 0} />
-              <Metric label="Skills" value={p?.skills?.length ?? 0} />
+              <Metric label="Skills" value={displayedSkills.length} />
               <Metric label="Applications" value={apps.data?.length ?? 0} />
               <Metric label="Live jobs" value={jobs.data?.length ?? 0} />
             </div>
@@ -79,20 +87,27 @@ function Dashboard() {
         <div className="mb-6 grid gap-4 lg:grid-cols-2">
           <div className="rounded-xl border bg-white p-5">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="inline-flex items-center gap-2 font-semibold">
-                <User className="size-4" /> My profile
-              </h2>
+              <div className="flex items-center gap-3">
+                {displayedAvatar ? (
+                  <img src={displayedAvatar} alt="Profile" className="size-11 rounded-full object-cover ring-2 ring-primary/10" />
+                ) : (
+                  <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                    <User className="size-5" />
+                  </div>
+                )}
+                <h2 className="font-semibold">My profile</h2>
+              </div>
               <Link to="/cv-builder" className="inline-flex items-center gap-1 text-sm underline" style={{ color: "var(--color-primary)" }}>
                 <Pencil className="size-3.5" /> Edit
               </Link>
             </div>
             <dl className="mt-3 space-y-1.5 text-sm">
-              <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Name</dt><dd className="font-medium break-words">{p?.name ?? "—"}</dd></div>
-              <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Discipline</dt><dd className="break-words">{p?.discipline ?? "—"}</dd></div>
+              <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Name</dt><dd className="font-medium break-words">{displayedName}</dd></div>
+              <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Discipline</dt><dd className="break-words">{displayedDiscipline || "—"}</dd></div>
               <div className="flex gap-2"><dt className="w-24 text-muted-foreground">Skills</dt>
                 <dd className="flex flex-wrap gap-1">
-                  {(p?.skills?.length ?? 0) > 0
-                    ? p!.skills!.map((s: string) => <span key={s} className="rounded-full border px-2 py-0.5 text-xs">{s}</span>)
+                  {displayedSkills.length > 0
+                    ? displayedSkills.map((s: string) => <span key={s} className="rounded-full border px-2 py-0.5 text-xs">{s}</span>)
                     : <span className="text-muted-foreground">—</span>}
                 </dd>
               </div>
@@ -226,4 +241,10 @@ function appColor(s: string) {
   if (s === "rejected") return "badge-danger";
   if (s === "reviewing") return "badge-warning";
   return "badge-neutral";
+}
+
+function parseSkillList(value: unknown) {
+  if (typeof value === "string") return value.split(",").map((skill) => skill.trim()).filter(Boolean);
+  if (Array.isArray(value)) return value.map(String).map((skill) => skill.trim()).filter(Boolean);
+  return [];
 }
