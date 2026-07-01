@@ -920,3 +920,61 @@ function SuggestionPicker({ label, groups, value, onAdd }: { label: string; grou
     </div>
   );
 }
+
+/* --- AI assist --- */
+type AiField = "skills" | "coursework" | "summary" | "experience_bullets" | "project_description" | "awards" | "certifications" | "metrics";
+
+function AiAssist({ field, ctx, onPick, label, mode = "append" }: { field: AiField; ctx: Record<string, any>; onPick: (t: string) => void; label?: string; mode?: "append" | "replace" }) {
+  const fn = useServerFn(suggestCvField);
+  const [items, setItems] = useState<string[]>([]);
+  const [used, setUsed] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function run() {
+    setLoading(true); setError(null);
+    try {
+      const r = await fn({ data: { field, context: ctx } as any });
+      setItems((r as any).suggestions ?? []);
+      setUsed(new Set());
+      if ((r as any).error) setError((r as any).error);
+    } catch (e: any) {
+      setError(e?.message ?? "AI request failed.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="rounded-md border border-dashed border-primary/30 bg-primary/5 p-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+          <Sparkles className="size-3" /> AI suggests · {label ?? field.replace(/_/g, " ")}
+        </span>
+        <button type="button" onClick={run} disabled={loading} className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground disabled:opacity-60">
+          {loading ? <Loader2 className="size-3 animate-spin" /> : <Wand2 className="size-3" />}
+          {loading ? "Thinking…" : items.length ? "Regenerate" : "Suggest"}
+        </button>
+      </div>
+      {error && <p className="mt-1.5 text-[11px] text-destructive">{error}</p>}
+      {items.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {items.map((it, i) => {
+            const on = used.has(it);
+            return (
+              <button
+                key={i}
+                type="button"
+                disabled={on}
+                onClick={() => { onPick(it); if (mode === "append") setUsed((s) => new Set(s).add(it)); }}
+                className={`text-left rounded-md border px-2 py-1 text-[11px] leading-snug max-w-full transition ${on ? "border-emerald-300 bg-emerald-50 text-emerald-700 cursor-default" : "border-border bg-white hover:border-primary hover:text-primary"}`}
+              >
+                {on ? "✓ " : "+ "}{it}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
