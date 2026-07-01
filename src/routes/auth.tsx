@@ -43,6 +43,24 @@ function AuthPage() {
     return () => clearInterval(t);
   }, [cooldown]);
 
+  // Surface OAuth callback errors that Supabase returns via URL params/hash.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search);
+    const h = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const err = q.get("error") ?? h.get("error");
+    if (!err) return;
+    const desc = q.get("error_description") ?? h.get("error_description") ?? "";
+    const code = q.get("error_code") ?? h.get("error_code") ?? "";
+    console.group("[auth] OAuth callback error");
+    console.error("error:", err);
+    if (code) console.error("error_code:", code);
+    if (desc) console.error("error_description:", desc);
+    console.log("full URL:", window.location.href);
+    console.groupEnd();
+    toast.error(desc || err);
+  }, []);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
