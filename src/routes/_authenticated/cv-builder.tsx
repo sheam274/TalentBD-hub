@@ -620,11 +620,12 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
               </h2>
               {d.title && (
                 <p
-                  className="mt-1.5 font-semibold uppercase"
+                  className="mt-2 font-semibold uppercase leading-tight break-words"
                   style={{
                     color: PEACH_SOFT,
-                    fontSize: "clamp(12px, 1.3vw, 14.5px)",
-                    letterSpacing: "0.18em",
+                    fontSize: "clamp(11px, 1.05vw, 13px)",
+                    letterSpacing: "0.22em",
+                    marginRight: "-0.22em", // compensate trailing tracking so text stays left-aligned with the name
                     textShadow: "0 1px 2px rgba(0,0,0,0.3)",
                   }}
                 >
