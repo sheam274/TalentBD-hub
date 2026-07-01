@@ -265,7 +265,7 @@ function Landing() {
         </div>
       </section>
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 md:px-6 md:py-20">
+      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 pt-12 pb-6 md:px-6 md:pt-20 md:pb-10">
 
         {/* Stats band */}
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
