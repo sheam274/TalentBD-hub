@@ -33,8 +33,15 @@ function AuthPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => { if (user) nav({ to: "/dashboard" }); }, [user, nav]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setInterval(() => setCooldown((s) => (s <= 1 ? 0 : s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [cooldown]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,6 +73,7 @@ function AuthPage() {
         });
         if (error) throw error;
         setOtpSent(true);
+        setCooldown(60);
         toast.success("We sent a 6-digit code to your email.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -111,11 +119,13 @@ function AuthPage() {
   }
 
   async function resendOtp() {
+    if (cooldown > 0) return;
     setBusy(true);
     setOtpError(null);
     try {
       const { error } = await supabase.auth.resend({ type: "signup", email });
       if (error) throw error;
+      setCooldown(60);
       toast.success("New code sent");
     } catch (err: any) {
       toast.error(err?.message ?? "Could not resend code");
@@ -211,7 +221,14 @@ function AuthPage() {
                 className={`w-full rounded-md border px-3 py-2 text-sm tracking-widest ${otpError ? "border-red-500 placeholder:text-red-500" : ""}`}
               />
               <div className="mt-2 flex items-center justify-between text-xs">
-                <button type="button" onClick={resendOtp} disabled={busy} className="underline text-muted-foreground">Resend code</button>
+                <button
+                  type="button"
+                  onClick={resendOtp}
+                  disabled={busy || cooldown > 0}
+                  className="underline text-muted-foreground disabled:no-underline disabled:opacity-60"
+                >
+                  {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+                </button>
                 <button type="button" onClick={() => { setOtpSent(false); setOtp(""); setOtpError(null); }} className="underline text-muted-foreground">Use a different email</button>
               </div>
             </div>
