@@ -870,8 +870,14 @@ function IconBadge({ children, color }: { children: React.ReactNode; color: stri
 function CvSheet({ children, bg = "#ffffff", paper = "a4" }: { children: React.ReactNode; bg?: string; paper?: "a4" | "letter" }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const A4_W = 794;
-  const A4_H = 1123;
+  // 96dpi pixel dimensions: A4 = 210×297mm, US Letter = 216×279mm.
+  // Keeping identical 10mm print margins on both, the on-screen scale ratio
+  // matches the printed page so the two-column split spacing is identical.
+  const PAPER = paper === "letter"
+    ? { w: 816, h: 1056 }  // 8.5in × 11in @ 96dpi
+    : { w: 794, h: 1123 }; // 210mm × 297mm @ 96dpi
+  const A4_W = PAPER.w;
+  const A4_H = PAPER.h;
 
   useLayoutEffect(() => {
     const el = wrapRef.current;
@@ -889,7 +895,7 @@ function CvSheet({ children, bg = "#ffffff", paper = "a4" }: { children: React.R
   return (
     <div ref={wrapRef} className="cv-sheet-wrap w-full" style={{ height: A4_H * scale }}>
       <div
-        className="cv-print-area shadow-sm border rounded-xl overflow-hidden"
+        className={`cv-print-area cv-paper-${paper} shadow-sm border rounded-xl overflow-hidden`}
         style={{
           width: A4_W,
           minHeight: A4_H,
