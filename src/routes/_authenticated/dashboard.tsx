@@ -58,7 +58,7 @@ function Dashboard() {
   return (
     <div className="page-enter">
       <section style={{ background: "var(--color-primary)" }} className="text-white">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 md:px-6">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:py-14 md:px-6">
           <div className="glass-dark rounded-2xl p-4 sm:p-6">
             <p className="text-sm text-white">Welcome back</p>
             <h1 className="mt-1 text-2xl sm:text-3xl font-bold text-white break-words">{displayedName}</h1>
@@ -73,7 +73,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 md:px-6 mt-4">
+      <section className="mx-auto max-w-7xl px-4 md:px-6 mt-4 sm:mt-0">
         <div className="crossover grid grid-cols-2 gap-3 rounded-2xl border bg-white p-4 shadow-sm md:grid-cols-4">
           <QuickAction to="/learn" label="Start learning" />
           <QuickAction to="/assessments" label="Take assessment" />
@@ -82,7 +82,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6">
+      <section className="mx-auto max-w-7xl px-4 pt-6 pb-10 sm:pt-8 md:pt-10 md:px-6">
         {/* Profile & CV */}
         <div className="mb-6 grid gap-4 lg:grid-cols-2">
           <div className="rounded-xl border bg-white p-5">
