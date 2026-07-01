@@ -541,179 +541,222 @@ function PremiumCv({ d }: { d: Payload }) {
   const PEACH_SOFT = "#fbe3d1";
   const BG = "#fdf3ec";
   const ACCENT = "#f0895a";
+  const INK = "#1f2937";
+  const splitList = (s: string) =>
+    s.split(/[,\n]/).map((x) => x.trim()).filter(Boolean);
   return (
     <div className="relative text-black text-[12.5px] leading-snug overflow-hidden" style={{ background: BG }}>
-      {/* Decorative angled peach shapes (like the template) */}
+      {/* Decorative angled peach shapes */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-16 top-40 h-64 w-64 rotate-12" style={{ background: PEACH_SOFT, opacity: 0.55, borderRadius: 12 }} />
-        <div className="absolute -right-24 bottom-24 h-72 w-72 -rotate-12" style={{ background: PEACH_SOFT, opacity: 0.55, borderRadius: 12 }} />
+        <div className="absolute -left-20 top-52 h-72 w-72 rotate-12" style={{ background: PEACH_SOFT, opacity: 0.45, borderRadius: 16 }} />
+        <div className="absolute -right-24 bottom-24 h-80 w-80 -rotate-12" style={{ background: PEACH_SOFT, opacity: 0.4, borderRadius: 16 }} />
       </div>
-      {/* Grey angled banner behind header */}
-      <div aria-hidden className="absolute top-0 right-0 h-40 w-2/3" style={{ background: "linear-gradient(135deg,#eef1f4 0%,#e6ebef 60%,transparent 100%)", clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0 100%)" }} />
 
-      <div className="relative p-8">
-        {/* Header */}
-        <div className="grid grid-cols-[auto,1fr] items-center gap-6">
-          <div className="shrink-0">
-            {d.photo ? (
-              <img src={d.photo} alt="" className="size-32 rounded-full object-cover ring-4 ring-white shadow-md" />
-            ) : (
-              <div className="size-32 rounded-full ring-4 ring-white shadow-md" style={{ background: "#dfe4ea" }} />
-            )}
-          </div>
-          <div className="pt-4 min-w-0">
-            <h2 className="text-[34px] font-extrabold uppercase tracking-[0.06em] text-center leading-tight">{d.name || "Your Name"}</h2>
-            <div className="mx-auto mt-1 h-[2px] w-[85%] bg-black/80" />
-            {d.title && <p className="mt-2 text-center text-[15px] text-black/70">{d.title}</p>}
+      <div className="relative p-7 space-y-4">
+        {/* Hero header card */}
+        <div
+          className="relative overflow-hidden rounded-2xl p-6 text-white shadow-[0_10px_30px_-12px_rgba(31,41,55,0.45)]"
+          style={{ background: `linear-gradient(135deg, ${INK} 0%, #374151 55%, ${ACCENT} 140%)` }}
+        >
+          <div aria-hidden className="absolute -right-16 -top-16 h-56 w-56 rounded-full" style={{ background: PEACH, opacity: 0.25 }} />
+          <div aria-hidden className="absolute -right-8 bottom-0 h-24 w-72 rotate-[-8deg]" style={{ background: PEACH_SOFT, opacity: 0.18, borderRadius: 12 }} />
+          <div className="relative grid grid-cols-[auto,1fr] items-center gap-5">
+            <div className="shrink-0">
+              {d.photo ? (
+                <img src={d.photo} alt="" className="size-28 rounded-full object-cover ring-4 ring-white/90 shadow-lg" />
+              ) : (
+                <div className="size-28 rounded-full ring-4 ring-white/90 shadow-lg" style={{ background: "#e5e7eb" }} />
+              )}
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-[30px] font-extrabold uppercase tracking-[0.08em] leading-tight">{d.name || "Your Name"}</h2>
+              {d.title && (
+                <p className="mt-1 text-[14px] font-medium" style={{ color: PEACH_SOFT }}>{d.title}</p>
+              )}
+              <div className="mt-3 h-[2px] w-24" style={{ background: PEACH }} />
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11.5px] text-white/90">
+                {d.email && <span className="inline-flex items-center gap-1.5 break-all"><Mail className="size-3" />{d.email}</span>}
+                {d.phone && <span className="inline-flex items-center gap-1.5"><Phone className="size-3" />{d.phone}</span>}
+                {d.location && <span className="inline-flex items-center gap-1.5"><MapPin className="size-3" />{d.location}</span>}
+                {d.website && <span className="inline-flex items-center gap-1.5 break-all"><Globe className="size-3" />{d.website}</span>}
+                {d.linkedin && <span className="inline-flex items-center gap-1.5 break-all"><Linkedin className="size-3" />{d.linkedin}</span>}
+                {d.github && <span className="inline-flex items-center gap-1.5 break-all"><Github className="size-3" />{d.github}</span>}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Body grid */}
-        <div className="mt-6 grid grid-cols-3 gap-4">
-          {/* Left column */}
-          <div className="col-span-1 space-y-4 min-w-0">
-            <TopcvCard>
-              <ul className="space-y-2 text-[12.5px] break-words">
-                {d.email && <li className="flex items-start gap-2.5"><IconBadge color={ACCENT}><Mail className="size-3" /></IconBadge><span className="min-w-0 break-all">{d.email}</span></li>}
-                {d.phone && <li className="flex items-start gap-2.5"><IconBadge color={ACCENT}><Phone className="size-3" /></IconBadge><span className="min-w-0 break-all">{d.phone}</span></li>}
-                {d.website && <li className="flex items-start gap-2.5"><IconBadge color={ACCENT}><Globe className="size-3" /></IconBadge><span className="min-w-0 break-all">{d.website}</span></li>}
-                {d.location && <li className="flex items-start gap-2.5"><IconBadge color={ACCENT}><MapPin className="size-3" /></IconBadge><span className="min-w-0 break-words">{d.location}</span></li>}
-                {d.linkedin && <li className="flex items-start gap-2.5"><IconBadge color={ACCENT}><Linkedin className="size-3" /></IconBadge><span className="min-w-0 break-all">{d.linkedin}</span></li>}
-                {d.github && <li className="flex items-start gap-2.5"><IconBadge color={ACCENT}><Github className="size-3" /></IconBadge><span className="min-w-0 break-all">{d.github}</span></li>}
-              </ul>
-            </TopcvCard>
+        {/* Objective */}
+        {d.summary && (
+          <TopcvCard header="PROFILE" accent={ACCENT} icon={<Sparkles className="size-3.5" />}>
+            <p className="text-[12.5px] leading-relaxed">{d.summary}</p>
+          </TopcvCard>
+        )}
 
-            {d.summary && (
-              <TopcvCard header="OBJECTIVE"><p>{d.summary}</p></TopcvCard>
+        {/* Skills — full width chips */}
+        {d.skills && (
+          <TopcvCard header="TECHNICAL SKILLS" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
+            <div className="flex flex-wrap gap-1.5">
+              {splitList(d.skills).map((s, i) => (
+                <span key={i} className="rounded-full px-2.5 py-0.5 text-[11.5px] font-medium" style={{ background: PEACH_SOFT, color: INK }}>{s}</span>
+              ))}
+            </div>
+          </TopcvCard>
+        )}
+
+        {/* Two column body — Experience/Projects (2/3) | Education/etc (1/3) */}
+        <div className="grid grid-cols-3 gap-4">
+          {/* Main column */}
+          <div className="col-span-2 space-y-4 min-w-0">
+            {d.experience.length > 0 && (
+              <TopcvCard header="WORK EXPERIENCE" accent={ACCENT} icon={<Briefcase className="size-3.5" />}>
+                <div className="space-y-3">
+                  {d.experience.map((e) => (
+                    <div key={e.id} className="rounded-md border-l-2 pl-3" style={{ borderColor: ACCENT }}>
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+                        <div className="font-semibold text-[13px]">{e.role}{e.company && <span className="font-normal text-black/70"> · {e.company}</span>}</div>
+                        {e.period && <div className="text-[11.5px] text-black/60">{e.period}</div>}
+                      </div>
+                      {e.tech && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {splitList(e.tech).map((t, i) => (
+                            <span key={i} className="rounded px-1.5 py-0.5 text-[10.5px]" style={{ background: PEACH_SOFT, color: INK }}>{t}</span>
+                          ))}
+                        </div>
+                      )}
+                      {e.bullets && (
+                        <ul className="mt-1.5 space-y-0.5 text-[12px] list-disc pl-4 marker:text-[color:var(--accent)]" style={{ ["--accent" as any]: ACCENT }}>
+                          {e.bullets.split("\n").filter(Boolean).map((b, i) => (
+                            <li key={i}>{b.replace(/^[-•*]\s*/, "")}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </TopcvCard>
             )}
 
-            {d.skills && (
-              <TopcvCard header="SKILLS">
-                <p className="whitespace-pre-line">{d.skills}</p>
+            {d.projects.length > 0 && (
+              <TopcvCard header="PROJECT SHOWCASE" accent={ACCENT} icon={<PersonStanding className="size-3.5" />}>
+                <div className="grid grid-cols-1 gap-2.5">
+                  {d.projects.map((p) => (
+                    <div key={p.id} className="rounded-md p-2.5" style={{ background: "#fff7f0", border: `1px solid ${PEACH_SOFT}` }}>
+                      <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+                        <div className="font-semibold text-[13px]">{p.name}</div>
+                        {p.link && (
+                          <a href={p.link} target="_blank" rel="noreferrer" className="text-[11px] underline underline-offset-2" style={{ color: ACCENT }}>
+                            {p.link}
+                          </a>
+                        )}
+                      </div>
+                      {p.tech && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {splitList(p.tech).map((t, i) => (
+                            <span key={i} className="rounded px-1.5 py-0.5 text-[10.5px] font-medium" style={{ background: "#fff", color: INK, border: `1px solid ${PEACH_SOFT}` }}>{t}</span>
+                          ))}
+                        </div>
+                      )}
+                      {p.description && <p className="mt-1 text-[12px] leading-snug">{p.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              </TopcvCard>
+            )}
+
+            {d.awards.length > 0 && (
+              <TopcvCard header="AWARDS & ACHIEVEMENTS" accent={ACCENT} icon={<Award className="size-3.5" />}>
+                <div className="space-y-1.5">
+                  {d.awards.map((a) => (
+                    <div key={a.id} className="flex items-start gap-2">
+                      <Award className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <div className="flex-1">
+                        <div className="flex justify-between gap-2">
+                          <span className="font-semibold text-[12.5px]">{a.title}</span>
+                          {a.year && <span className="text-[11.5px] text-black/60">{a.year}</span>}
+                        </div>
+                        {a.detail && <div className="text-[12px] text-black/75">{a.detail}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </TopcvCard>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="col-span-1 space-y-4 min-w-0">
+            {d.education.length > 0 && (
+              <TopcvCard header="EDUCATION" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
+                <div className="space-y-2.5">
+                  {d.education.map((e) => (
+                    <div key={e.id}>
+                      <div className="font-semibold text-[12.5px]">{e.school}</div>
+                      {e.degree && <div className="text-[11.5px] text-black/75">{e.degree}</div>}
+                      <div className="flex justify-between gap-2 text-[11px] text-black/60">
+                        {e.period && <span>{e.period}</span>}
+                        {e.gpa && <span className="font-semibold" style={{ color: ACCENT }}>CGPA {e.gpa}</span>}
+                      </div>
+                      {e.details && <div className="text-[11.5px] mt-0.5">{e.details}</div>}
+                    </div>
+                  ))}
+                </div>
               </TopcvCard>
             )}
 
             {d.coursework && (
-              <TopcvCard header="COURSEWORK">
-                <p className="whitespace-pre-line">{d.coursework}</p>
+              <TopcvCard header="COURSEWORK" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
+                <div className="flex flex-wrap gap-1">
+                  {splitList(d.coursework).map((c, i) => (
+                    <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: "#fff", border: `1px solid ${PEACH_SOFT}`, color: INK }}>{c}</span>
+                  ))}
+                </div>
               </TopcvCard>
             )}
 
             {d.coding.length > 0 && (
-              <TopcvCard header="CODING PROFILES">
-                <ul className="space-y-1.5 text-[12px]">
+              <TopcvCard header="CODING PROFILES" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
+                <ul className="space-y-1.5">
                   {d.coding.map((c) => (
-                    <li key={c.id} className="flex items-start gap-2">
-                      <Code2 className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                      <span className="min-w-0 break-words">
-                        <span className="font-semibold">{c.platform}</span>
-                        {c.handle && <> — {c.handle}</>}
-                        {c.rating && <> ({c.rating})</>}
-                        {c.link && <div className="text-[11px] text-black/60 break-all">{c.link}</div>}
-                      </span>
+                    <li key={c.id} className="rounded-md p-1.5" style={{ background: "#fff7f0" }}>
+                      <div className="flex justify-between gap-2">
+                        <span className="font-semibold text-[12px]">{c.platform}</span>
+                        {c.rating && <span className="text-[11px] font-semibold" style={{ color: ACCENT }}>{c.rating}</span>}
+                      </div>
+                      {c.handle && <div className="text-[11px] text-black/70">@{c.handle}</div>}
+                      {c.link && <div className="text-[10.5px] text-black/60 break-all">{c.link}</div>}
                     </li>
                   ))}
                 </ul>
               </TopcvCard>
             )}
 
-            {d.languages && (
-              <TopcvCard header="INTERESTS"><p>{d.languages}</p></TopcvCard>
-            )}
-          </div>
-
-          {/* Right column */}
-          <div className="col-span-2 space-y-4 min-w-0">
-            {d.education.length > 0 && (
-              <TopcvCard header="EDUCATION">
-                {d.education.map((e) => (
-                  <div key={e.id} className="mb-3 last:mb-0 flex gap-2.5">
-                    <GraduationCap className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                    <div className="flex-1">
-                      <div className="font-semibold">{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}{e.gpa && <span className="font-normal"> · CGPA {e.gpa}</span>}</div>
-                      {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
-                      {e.details && <div className="text-[12px]">{e.details}</div>}
-                    </div>
-                  </div>
-                ))}
-              </TopcvCard>
-            )}
-
-            {d.experience.length > 0 && (
-              <TopcvCard header="WORK EXPERIENCE">
-                {d.experience.map((e) => (
-                  <div key={e.id} className="mb-4 last:mb-0 flex gap-2.5">
-                    <Briefcase className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                    <div className="flex-1">
-                      <div className="font-semibold">{e.company}{e.role && <span className="font-normal">, {e.role}</span>}</div>
-                      {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
-                      {e.tech && <div className="text-[12px] italic text-black/70">Tech: {e.tech}</div>}
-                      {e.bullets && (
-                        <ul className="mt-1 space-y-0.5 text-[12px]">
-                          {e.bullets.split("\n").filter(Boolean).map((b, i) => (
-                            <li key={i}>- {b.replace(/^[-•*]\s*/, "")}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </TopcvCard>
-            )}
-
-            {d.projects.length > 0 && (
-              <TopcvCard header="PROJECT SHOWCASE">
-                {d.projects.map((p) => (
-                  <div key={p.id} className="mb-3 last:mb-0 flex gap-2.5">
-                    <PersonStanding className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                    <div className="flex-1">
-                      <div className="font-semibold">
-                        {p.name}
-                        {p.link && (
-                          <a href={p.link} target="_blank" rel="noreferrer" className="ml-2 font-normal text-[11px] text-black/70 underline underline-offset-2">
-                            {p.link}
-                          </a>
-                        )}
-                      </div>
-                      {p.tech && <div className="text-[12px] italic text-black/70">Tech: {p.tech}</div>}
-                      {p.description && <p className="text-[12px]">{p.description}</p>}
-                    </div>
-                  </div>
-                ))}
-              </TopcvCard>
-            )}
-
             {d.certifications.length > 0 && (
-              <TopcvCard header="CERTIFICATIONS">
-                {d.certifications.map((c) => (
-                  <div key={c.id} className="mb-2 last:mb-0 flex gap-2.5">
-                    <BadgeCheck className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                    <div className="flex-1 flex justify-between gap-2">
-                      <div>
-                        <span className="font-semibold">{c.name}</span>
-                        {c.issuer && <span className="text-[12px] text-black/70"> · {c.issuer}</span>}
+              <TopcvCard header="CERTIFICATIONS" accent={ACCENT} icon={<BadgeCheck className="size-3.5" />}>
+                <div className="space-y-1.5">
+                  {d.certifications.map((c) => (
+                    <div key={c.id} className="flex items-start gap-2">
+                      <BadgeCheck className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                      <div className="flex-1">
+                        <div className="font-semibold text-[12px]">{c.name}</div>
+                        <div className="flex justify-between text-[11px] text-black/60">
+                          {c.issuer && <span>{c.issuer}</span>}
+                          {c.year && <span>{c.year}</span>}
+                        </div>
                       </div>
-                      {c.year && <div className="text-[12px] text-black/70 shrink-0">{c.year}</div>}
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </TopcvCard>
             )}
 
-            {d.awards.length > 0 && (
-              <TopcvCard header="AWARDS & ACHIEVEMENTS">
-                {d.awards.map((a) => (
-                  <div key={a.id} className="mb-2 last:mb-0 flex gap-2.5">
-                    <Award className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
-                    <div className="flex-1">
-                      <div className="flex justify-between gap-2">
-                        <span className="font-semibold">{a.title}</span>
-                        {a.year && <span className="text-[12px] text-black/70">{a.year}</span>}
-                      </div>
-                      {a.detail && <div className="text-[12px]">{a.detail}</div>}
-                    </div>
-                  </div>
-                ))}
+            {d.languages && (
+              <TopcvCard header="LANGUAGES" accent={ACCENT} icon={<Globe className="size-3.5" />}>
+                <div className="flex flex-wrap gap-1">
+                  {splitList(d.languages).map((l, i) => (
+                    <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: PEACH_SOFT, color: INK }}>{l}</span>
+                  ))}
+                </div>
               </TopcvCard>
             )}
           </div>
@@ -723,12 +766,13 @@ function PremiumCv({ d }: { d: Payload }) {
   );
 }
 
-function TopcvCard({ header, children }: { header?: string; children: React.ReactNode }) {
+function TopcvCard({ header, children, accent = "#f6b088", icon }: { header?: string; children: React.ReactNode; accent?: string; icon?: React.ReactNode }) {
   return (
-    <div className="rounded-lg bg-white shadow-[0_2px_10px_rgba(0,0,0,0.06)] overflow-hidden">
+    <div className="rounded-xl bg-white shadow-[0_4px_18px_rgba(31,41,55,0.08)] overflow-hidden ring-1 ring-black/[0.04]">
       {header && (
-        <div className="px-4 py-2 text-[13px] font-bold tracking-wide text-black" style={{ background: "#f6b088" }}>
-          {header}
+        <div className="flex items-center gap-2 px-4 py-2 text-[12.5px] font-bold tracking-[0.1em] text-white" style={{ background: `linear-gradient(90deg, ${accent} 0%, #f6b088 100%)` }}>
+          {icon && <span className="inline-flex size-5 items-center justify-center rounded-full bg-white/25">{icon}</span>}
+          <span>{header}</span>
         </div>
       )}
       <div className="px-4 py-3">{children}</div>
