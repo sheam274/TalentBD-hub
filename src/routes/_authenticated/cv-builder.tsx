@@ -664,9 +664,9 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
         )}
 
         {/* Two column body — Experience/Projects (2/3) | Education/etc (1/3) */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-5 gap-4">
           {/* Main column */}
-          <div className="col-span-2 space-y-4 min-w-0">
+          <div className="col-span-3 space-y-4 min-w-0">
             {d.experience.length > 0 && (
               <TopcvCard header="WORK EXPERIENCE" accent={ACCENT} icon={<Briefcase className="size-3.5" />}>
                 <div className="space-y-3">
@@ -744,7 +744,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
           </div>
 
           {/* Sidebar */}
-          <div className="col-span-1 space-y-4 min-w-0">
+          <div className="col-span-2 space-y-4 min-w-0">
             {d.education.length > 0 && (
               <TopcvCard header="EDUCATION" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
                 <div className="space-y-2.5">
