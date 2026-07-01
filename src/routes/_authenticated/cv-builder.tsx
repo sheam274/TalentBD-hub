@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
 import { toast } from "sonner";
-import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-builder")({
   head: () => ({ meta: [{ title: "CV Builder — TalentBD" }, { name: "description", content: "Build a professional, print-ready CV with standard or premium layouts." }] }),
@@ -134,6 +134,29 @@ function CvBuilder() {
     setTimeout(() => { w.print(); w.close(); }, 400);
   }
 
+  async function downloadPdf() {
+    const node = document.querySelector(".cv-print-area") as HTMLElement | null;
+    if (!node) return;
+    try {
+      const mod: any = await import("html2pdf.js");
+      const html2pdf = mod.default ?? mod;
+      const filename = `${(data.name || "cv").replace(/\s+/g, "_")}.pdf`;
+      await html2pdf()
+        .set({
+          margin: [10, 10, 10, 10],
+          filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] },
+        })
+        .from(node)
+        .save();
+    } catch (e: any) {
+      toast.error(e?.message || "Could not generate PDF");
+    }
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:py-10 md:px-6 page-enter">
       <div className="no-print flex flex-wrap items-start justify-between gap-3">
@@ -151,6 +174,9 @@ function CvBuilder() {
           </button>
           <button onClick={printCv} className="inline-flex items-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-semibold">
             <Printer className="size-4" /> Print / PDF
+          </button>
+          <button onClick={downloadPdf} className="inline-flex items-center gap-2 rounded-md border bg-white px-4 py-2 text-sm font-semibold">
+            <FileDown className="size-4" /> Download PDF
           </button>
         </div>
       </div>
