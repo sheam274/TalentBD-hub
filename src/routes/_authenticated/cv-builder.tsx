@@ -438,27 +438,27 @@ function PremiumCv({ d }: { d: Payload }) {
       {/* Grey angled banner behind header */}
       <div aria-hidden className="absolute top-0 right-0 h-40 w-2/3" style={{ background: "linear-gradient(135deg,#eef1f4 0%,#e6ebef 60%,transparent 100%)", clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0 100%)" }} />
 
-      <div className="relative p-4 sm:p-6 md:p-8">
+      <div className="relative p-8">
         {/* Header */}
-        <div className="grid grid-cols-1 sm:grid-cols-[auto,1fr] items-center gap-4 sm:gap-6">
+        <div className="grid grid-cols-[auto,1fr] items-center gap-6">
           <div className="shrink-0">
             {d.photo ? (
-              <img src={d.photo} alt="" className="size-24 sm:size-32 rounded-full object-cover ring-4 ring-white shadow-md mx-auto sm:mx-0" />
+              <img src={d.photo} alt="" className="size-32 rounded-full object-cover ring-4 ring-white shadow-md" />
             ) : (
-              <div className="size-24 sm:size-32 rounded-full ring-4 ring-white shadow-md mx-auto sm:mx-0" style={{ background: "#dfe4ea" }} />
+              <div className="size-32 rounded-full ring-4 ring-white shadow-md" style={{ background: "#dfe4ea" }} />
             )}
           </div>
-          <div className="sm:pt-4 min-w-0">
-            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold uppercase tracking-[0.06em] text-center leading-tight break-words">{d.name || "Your Name"}</h2>
+          <div className="pt-4 min-w-0">
+            <h2 className="text-[34px] font-extrabold uppercase tracking-[0.06em] text-center leading-tight">{d.name || "Your Name"}</h2>
             <div className="mx-auto mt-1 h-[2px] w-[85%] bg-black/80" />
-            {d.title && <p className="mt-2 text-center text-sm sm:text-[15px] text-black/70">{d.title}</p>}
+            {d.title && <p className="mt-2 text-center text-[15px] text-black/70">{d.title}</p>}
           </div>
         </div>
 
         {/* Body grid */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-6 grid grid-cols-3 gap-4">
           {/* Left column */}
-          <div className="md:col-span-1 space-y-4 min-w-0">
+          <div className="col-span-1 space-y-4 min-w-0">
             <TopcvCard>
               <ul className="space-y-2 text-[12.5px] break-words">
                 {d.email && <li className="flex items-start gap-2.5"><IconBadge color={ACCENT}><Mail className="size-3" /></IconBadge><span className="min-w-0 break-all">{d.email}</span></li>}
@@ -486,7 +486,7 @@ function PremiumCv({ d }: { d: Payload }) {
           </div>
 
           {/* Right column */}
-          <div className="md:col-span-2 space-y-4 min-w-0">
+          <div className="col-span-2 space-y-4 min-w-0">
             {d.education.length > 0 && (
               <TopcvCard header="EDUCATION">
                 {d.education.map((e) => (
