@@ -26,12 +26,18 @@ function AuthPage() {
   const [companyName, setCompanyName] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
   const [busy, setBusy] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<React.ReactNode>(null);
 
   useEffect(() => { if (user) nav({ to: "/dashboard" }); }, [user, nav]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+    setEmailError(null);
+    setPasswordError(null);
+    setFormError(null);
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
@@ -56,7 +62,31 @@ function AuthPage() {
         toast.success("Welcome back");
       }
     } catch (err: any) {
-      toast.error(err.message);
+      const msg: string = err?.message ?? "Sign-in failed";
+      const lower = msg.toLowerCase();
+      if (mode === "signin" && (lower.includes("invalid login") || lower.includes("invalid credentials"))) {
+        setEmailError("Incorrect email or password");
+        setPasswordError("Incorrect email or password");
+        setFormError(
+          <>
+            No account found for this email.{" "}
+            <button type="button" onClick={() => setMode("signup")} className="underline font-semibold">
+              Create an account
+            </button>
+          </>,
+        );
+      } else if (lower.includes("email not confirmed")) {
+        setEmailError("Please confirm your email before signing in");
+      } else if (lower.includes("user already registered") || lower.includes("already registered")) {
+        setEmailError("An account with this email already exists");
+      } else if (lower.includes("password")) {
+        setPasswordError(msg);
+      } else if (lower.includes("email")) {
+        setEmailError(msg);
+      } else {
+        setFormError(msg);
+      }
+      toast.error(msg);
     } finally {
       setBusy(false);
     }
@@ -109,11 +139,35 @@ function AuthPage() {
               <input value={companyWebsite} onChange={(e) => setCompanyWebsite(e.target.value)} type="url" placeholder="Company website (optional)" className="w-full rounded-md border px-3 py-2 text-sm" />
             </>
           )}
-          <input value={email} onChange={(e) => setEmail(e.target.value)} required type="email" placeholder="Email" className="w-full rounded-md border px-3 py-2 text-sm" />
-          <input value={password} onChange={(e) => setPassword(e.target.value)} required type="password" minLength={6} placeholder="Password" className="w-full rounded-md border px-3 py-2 text-sm" />
+          <div>
+            <input
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setEmailError(null); setFormError(null); }}
+              required
+              type="email"
+              placeholder={emailError ?? "Email"}
+              aria-invalid={!!emailError}
+              className={`w-full rounded-md border px-3 py-2 text-sm ${emailError ? "border-red-500 placeholder:text-red-500" : ""}`}
+            />
+          </div>
+          <div>
+            <input
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setPasswordError(null); setFormError(null); }}
+              required
+              type="password"
+              minLength={6}
+              placeholder={passwordError ?? "Password"}
+              aria-invalid={!!passwordError}
+              className={`w-full rounded-md border px-3 py-2 text-sm ${passwordError ? "border-red-500 placeholder:text-red-500" : ""}`}
+            />
+          </div>
           <button disabled={busy} className="w-full rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60" style={{ background: "var(--color-primary)", color: "var(--color-primary-foreground)" }}>
             {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
           </button>
+          {formError && (
+            <p role="alert" className="text-center text-sm text-red-600 font-medium">{formError}</p>
+          )}
         </form>
 
         <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="mt-4 w-full text-sm" style={{ color: "var(--color-primary)" }}>
