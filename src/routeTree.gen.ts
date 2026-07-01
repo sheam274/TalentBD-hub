@@ -40,6 +40,7 @@ import { Route as JobsJobIdAppliedRouteImport } from './routes/jobs.$jobId.appli
 import { Route as AuthenticatedMyApplicationsAppIdRouteImport } from './routes/_authenticated/my-applications.$appId'
 import { Route as AuthenticatedInterviewSetupRouteImport } from './routes/_authenticated/interview/setup'
 import { Route as AuthenticatedInterviewHistoryRouteImport } from './routes/_authenticated/interview/history'
+import { Route as AuthenticatedEmployerLettersRouteImport } from './routes/_authenticated/employer/letters'
 import { Route as AuthenticatedEmployerJobsRouteImport } from './routes/_authenticated/employer/jobs'
 import { Route as AuthenticatedEmployerInterviewsRouteImport } from './routes/_authenticated/employer/interviews'
 import { Route as AuthenticatedEmployerDashboardRouteImport } from './routes/_authenticated/employer/dashboard'
@@ -224,6 +225,12 @@ const AuthenticatedInterviewHistoryRoute =
     path: '/interview/history',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedEmployerLettersRoute =
+  AuthenticatedEmployerLettersRouteImport.update({
+    id: '/letters',
+    path: '/letters',
+    getParentRoute: () => AuthenticatedEmployerRouteRoute,
+  } as any)
 const AuthenticatedEmployerJobsRoute =
   AuthenticatedEmployerJobsRouteImport.update({
     id: '/jobs',
@@ -396,6 +403,7 @@ export interface FileRoutesByFullPath {
   '/employer/dashboard': typeof AuthenticatedEmployerDashboardRoute
   '/employer/interviews': typeof AuthenticatedEmployerInterviewsRoute
   '/employer/jobs': typeof AuthenticatedEmployerJobsRoute
+  '/employer/letters': typeof AuthenticatedEmployerLettersRoute
   '/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/interview/setup': typeof AuthenticatedInterviewSetupRoute
   '/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
@@ -450,6 +458,7 @@ export interface FileRoutesByTo {
   '/employer/dashboard': typeof AuthenticatedEmployerDashboardRoute
   '/employer/interviews': typeof AuthenticatedEmployerInterviewsRoute
   '/employer/jobs': typeof AuthenticatedEmployerJobsRoute
+  '/employer/letters': typeof AuthenticatedEmployerLettersRoute
   '/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/interview/setup': typeof AuthenticatedInterviewSetupRoute
   '/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
@@ -506,6 +515,7 @@ export interface FileRoutesById {
   '/_authenticated/employer/dashboard': typeof AuthenticatedEmployerDashboardRoute
   '/_authenticated/employer/interviews': typeof AuthenticatedEmployerInterviewsRoute
   '/_authenticated/employer/jobs': typeof AuthenticatedEmployerJobsRoute
+  '/_authenticated/employer/letters': typeof AuthenticatedEmployerLettersRoute
   '/_authenticated/interview/history': typeof AuthenticatedInterviewHistoryRoute
   '/_authenticated/interview/setup': typeof AuthenticatedInterviewSetupRoute
   '/_authenticated/my-applications/$appId': typeof AuthenticatedMyApplicationsAppIdRoute
@@ -562,6 +572,7 @@ export interface FileRouteTypes {
     | '/employer/dashboard'
     | '/employer/interviews'
     | '/employer/jobs'
+    | '/employer/letters'
     | '/interview/history'
     | '/interview/setup'
     | '/my-applications/$appId'
@@ -616,6 +627,7 @@ export interface FileRouteTypes {
     | '/employer/dashboard'
     | '/employer/interviews'
     | '/employer/jobs'
+    | '/employer/letters'
     | '/interview/history'
     | '/interview/setup'
     | '/my-applications/$appId'
@@ -671,6 +683,7 @@ export interface FileRouteTypes {
     | '/_authenticated/employer/dashboard'
     | '/_authenticated/employer/interviews'
     | '/_authenticated/employer/jobs'
+    | '/_authenticated/employer/letters'
     | '/_authenticated/interview/history'
     | '/_authenticated/interview/setup'
     | '/_authenticated/my-applications/$appId'
@@ -922,6 +935,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInterviewHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/employer/letters': {
+      id: '/_authenticated/employer/letters'
+      path: '/letters'
+      fullPath: '/employer/letters'
+      preLoaderRoute: typeof AuthenticatedEmployerLettersRouteImport
+      parentRoute: typeof AuthenticatedEmployerRouteRoute
+    }
     '/_authenticated/employer/jobs': {
       id: '/_authenticated/employer/jobs'
       path: '/jobs'
@@ -1134,6 +1154,7 @@ interface AuthenticatedEmployerRouteRouteChildren {
   AuthenticatedEmployerDashboardRoute: typeof AuthenticatedEmployerDashboardRoute
   AuthenticatedEmployerInterviewsRoute: typeof AuthenticatedEmployerInterviewsRoute
   AuthenticatedEmployerJobsRoute: typeof AuthenticatedEmployerJobsRoute
+  AuthenticatedEmployerLettersRoute: typeof AuthenticatedEmployerLettersRoute
 }
 
 const AuthenticatedEmployerRouteRouteChildren: AuthenticatedEmployerRouteRouteChildren =
@@ -1144,6 +1165,7 @@ const AuthenticatedEmployerRouteRouteChildren: AuthenticatedEmployerRouteRouteCh
     AuthenticatedEmployerDashboardRoute: AuthenticatedEmployerDashboardRoute,
     AuthenticatedEmployerInterviewsRoute: AuthenticatedEmployerInterviewsRoute,
     AuthenticatedEmployerJobsRoute: AuthenticatedEmployerJobsRoute,
+    AuthenticatedEmployerLettersRoute: AuthenticatedEmployerLettersRoute,
   }
 
 const AuthenticatedEmployerRouteRouteWithChildren =
