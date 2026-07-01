@@ -606,7 +606,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
             </div>
             <div className="min-w-0">
               <h2
-                className="font-black uppercase leading-[1.05] break-words"
+                className="cv-hero-name font-black uppercase leading-[1.05] break-words"
                 style={{
                   color: "#ffffff",
                   fontSize: "clamp(22px, 3.4vw, 34px)",
