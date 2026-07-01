@@ -522,6 +522,15 @@ function Jobs() {
                 </button>
               </span>
             ))}
+            <button
+              type="button"
+              onClick={clearFilters}
+              aria-label="Clear all filters"
+              className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white"
+              style={{ background: "var(--color-primary)" }}
+            >
+              <X className="size-3" /> Clear all
+            </button>
           </div>
         );
       })()}
