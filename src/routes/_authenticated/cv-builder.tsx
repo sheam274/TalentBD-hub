@@ -653,36 +653,30 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
           </TopcvCard>
         )}
 
-        {(d.skills || d.languages) && (
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {d.skills && (
-              <div className="md:col-span-3 min-w-0">
-                <TopcvCard header="TECHNICAL SKILLS" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
-                  <div className="flex flex-wrap gap-1.5">
-                    {splitList(d.skills).map((s, i) => (
-                      <span key={i} className="rounded-full px-2.5 py-0.5 text-[11.5px] font-medium" style={{ background: PEACH_SOFT, color: INK }}>{s}</span>
-                    ))}
-                  </div>
-                </TopcvCard>
-              </div>
-            )}
-            {d.languages && (
-              <div className="md:col-span-2 min-w-0">
-                <TopcvCard header="LANGUAGES" accent={ACCENT} icon={<Globe className="size-3.5" />}>
-                  <div className="flex flex-wrap gap-1">
-                    {splitList(d.languages).map((l, i) => (
-                      <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: PEACH_SOFT, color: INK }}>{l}</span>
-                    ))}
-                  </div>
-                </TopcvCard>
-              </div>
-            )}
-          </div>
+        {/* After Career Objective: split into two masonry-style columns */}
+        <div className="md:columns-2 md:gap-4 [&>*]:mb-4 [&>*]:break-inside-avoid">
+        {d.skills && (
+          <TopcvCard header="TECHNICAL SKILLS" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
+            <div className="flex flex-wrap gap-1.5">
+              {splitList(d.skills).map((s, i) => (
+                <span key={i} className="rounded-full px-2.5 py-0.5 text-[11.5px] font-medium" style={{ background: PEACH_SOFT, color: INK }}>{s}</span>
+              ))}
+            </div>
+          </TopcvCard>
+        )}
+        {d.languages && (
+          <TopcvCard header="LANGUAGES" accent={ACCENT} icon={<Globe className="size-3.5" />}>
+            <div className="flex flex-wrap gap-1">
+              {splitList(d.languages).map((l, i) => (
+                <span key={i} className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: PEACH_SOFT, color: INK }}>{l}</span>
+              ))}
+            </div>
+          </TopcvCard>
         )}
 
         {d.education.length > 0 && (
           <TopcvCard header="EDUCATION" accent={ACCENT} icon={<GraduationCap className="size-3.5" />}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-3">
               {d.education.map((e) => (
                 <div key={e.id} className="rounded-md border-l-2 pl-3" style={{ borderColor: ACCENT }}>
                   <div className="font-semibold text-[12.5px]">{e.school}</div>
@@ -710,7 +704,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
 
         {d.projects.length > 0 && (
           <TopcvCard header="PROJECT SHOWCASE" accent={ACCENT} icon={<PersonStanding className="size-3.5" />}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            <div className="space-y-2.5">
               {d.projects.map((p) => (
                 <div key={p.id} className="rounded-md p-2.5" style={{ background: "#fff7f0", border: `1px solid ${PEACH_SOFT}` }}>
                   <div className="flex flex-wrap items-baseline justify-between gap-x-2">
@@ -737,7 +731,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
 
         {d.certifications.length > 0 && (
           <TopcvCard header="CERTIFICATIONS" accent={ACCENT} icon={<BadgeCheck className="size-3.5" />}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="space-y-2">
               {d.certifications.map((c) => (
                 <div key={c.id} className="flex items-start gap-2">
                   <BadgeCheck className="size-3.5 mt-0.5 shrink-0" style={{ color: ACCENT }} />
@@ -754,10 +748,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
           </TopcvCard>
         )}
 
-        {/* Supporting content — experience, coding profiles, awards */}
-        <div className="grid grid-cols-5 gap-4">
-          <div className="col-span-3 space-y-4 min-w-0">
-            {d.experience.length > 0 && (
+        {d.experience.length > 0 && (
               <TopcvCard header="WORK EXPERIENCE" accent={ACCENT} icon={<Briefcase className="size-3.5" />}>
                 <div className="space-y-3">
                   {d.experience.map((e) => (
@@ -786,7 +777,7 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
               </TopcvCard>
             )}
 
-            {d.awards.length > 0 && (
+        {d.awards.length > 0 && (
               <TopcvCard header="AWARDS & ACHIEVEMENTS" accent={ACCENT} icon={<Award className="size-3.5" />}>
                 <div className="space-y-1.5">
                   {d.awards.map((a) => (
@@ -804,10 +795,8 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
                 </div>
               </TopcvCard>
             )}
-          </div>
 
-          <div className="col-span-2 space-y-4 min-w-0">
-            {d.coding.length > 0 && (
+        {d.coding.length > 0 && (
               <TopcvCard header="CODING PROFILES" accent={ACCENT} icon={<Code2 className="size-3.5" />}>
                 <ul className="space-y-1.5">
                   {d.coding.map((c) => (
@@ -823,7 +812,6 @@ function PremiumCv({ d, theme = "peach" }: { d: Payload; theme?: PremiumThemeKey
                 </ul>
               </TopcvCard>
             )}
-          </div>
         </div>
       </div>
     </div>
