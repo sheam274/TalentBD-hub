@@ -243,11 +243,21 @@ export const applyToJob = createServerFn({ method: "POST" })
     const body = (data.coverNote ?? "").trim();
     const note =
       `${prefix}${body}\n\n---APPLICANT_SNAPSHOT---\n${JSON.stringify(snapshot)}`.trim() || null;
+    // Upsert so re-applying always attaches the applicant's LATEST CV/profile
+    // snapshot to the employer's view of the application.
     const { error } = await context.supabase
       .from("job_applications")
-      .insert({ job_id: data.jobId, user_id: context.userId, cover_note: note });
-    if (error && !error.message.toLowerCase().includes("duplicate")) throw new Error(error.message);
-    return { ok: true, method };
+      .upsert(
+        {
+          job_id: data.jobId,
+          user_id: context.userId,
+          cover_note: note,
+          stage_updated_at: new Date().toISOString(),
+        },
+        { onConflict: "job_id,user_id" },
+      );
+    if (error) throw new Error(error.message);
+    return { ok: true, method, resubmitted: true };
   });
 
 export const listMyApplications = createServerFn({ method: "GET" })
