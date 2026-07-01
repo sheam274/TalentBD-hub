@@ -221,7 +221,14 @@ function AuthPage() {
                 className={`w-full rounded-md border px-3 py-2 text-sm tracking-widest ${otpError ? "border-red-500 placeholder:text-red-500" : ""}`}
               />
               <div className="mt-2 flex items-center justify-between text-xs">
-                <button type="button" onClick={resendOtp} disabled={busy} className="underline text-muted-foreground">Resend code</button>
+                <button
+                  type="button"
+                  onClick={resendOtp}
+                  disabled={busy || cooldown > 0}
+                  className="underline text-muted-foreground disabled:no-underline disabled:opacity-60"
+                >
+                  {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+                </button>
                 <button type="button" onClick={() => { setOtpSent(false); setOtp(""); setOtpError(null); }} className="underline text-muted-foreground">Use a different email</button>
               </div>
             </div>
