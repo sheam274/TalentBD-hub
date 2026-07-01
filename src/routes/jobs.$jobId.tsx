@@ -43,6 +43,23 @@ function statusColor(s: string) {
   return "badge-neutral";
 }
 
+const URL_RE = /(https?:\/\/[^\s)]+)/g;
+function externalApplyUrl(text?: string | null): string | null {
+  if (!text) return null;
+  const m = text.match(URL_RE);
+  return m && m.length ? m[0] : null;
+}
+function linkify(text: string) {
+  const parts = text.split(URL_RE);
+  return parts.map((p, i) =>
+    URL_RE.test(p) ? (
+      <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="underline text-primary break-all">{p}</a>
+    ) : (
+      <span key={i}>{p}</span>
+    )
+  );
+}
+
 function JobDetails() {
   const { jobId } = Route.useParams();
   const { user } = useAuth();
