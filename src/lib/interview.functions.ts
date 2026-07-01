@@ -4,23 +4,34 @@ import { z } from "zod";
 import type { Json } from "@/integrations/supabase/types";
 import { loggedFetch } from "./server-logger";
 
-const MODEL = "google/gemini-2.5-flash";
-const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const LOVABLE_MODEL = "google/gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-2.5-flash";
+const LOVABLE_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
 async function callAI(system: string, user: string): Promise<string> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("AI is not configured (missing LOVABLE_API_KEY).");
-  const res = await loggedFetch(GATEWAY, {
+  const geminiKey = process.env.GOOGLE_GEMINI_API_KEY;
+  const lovableKey = process.env.LOVABLE_API_KEY;
+  const useDirect = !!geminiKey;
+  if (!useDirect && !lovableKey) {
+    throw new Error("AI is not configured (set GOOGLE_GEMINI_API_KEY for localhost or LOVABLE_API_KEY on Cloud).");
+  }
+  const url = useDirect ? GEMINI_URL : LOVABLE_URL;
+  const model = useDirect ? GEMINI_MODEL : LOVABLE_MODEL;
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (useDirect) headers.Authorization = `Bearer ${geminiKey}`;
+  else headers.Authorization = `Bearer ${lovableKey}`;
+  const res = await loggedFetch(url, {
     method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({
-      model: MODEL,
+      model,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },
       ],
     }),
-  }, { kind: "ai", op: "interview.callAI", provider: "lovable-ai-gateway", model: MODEL });
+  }, { kind: "ai", op: "interview.callAI", provider: useDirect ? "gemini-direct" : "lovable-ai-gateway", model });
   if (res.status === 429) throw new Error("AI rate limit. Please retry shortly.");
   if (res.status === 402) throw new Error("AI credits exhausted. Please contact support.");
   if (!res.ok) throw new Error(`AI error ${res.status}`);
