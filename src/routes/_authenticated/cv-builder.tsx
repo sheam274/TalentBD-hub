@@ -445,11 +445,13 @@ function StandardCv({ d }: { d: Payload }) {
       </header>
       {d.summary && <CvSection h="Professional Summary"><p>{d.summary}</p></CvSection>}
       {d.skills && <CvSection h="Skills"><p>{d.skills}</p></CvSection>}
+      {d.coursework && <CvSection h="Relevant Coursework"><p>{d.coursework}</p></CvSection>}
       {d.experience.length > 0 && (
         <CvSection h="Experience">
           {d.experience.map((e) => (
             <div key={e.id} className="mb-2.5">
               <div className="flex justify-between font-semibold"><span>{e.role}{e.company && ` · ${e.company}`}</span><span className="text-xs font-normal">{e.period}</span></div>
+              {e.tech && <div className="text-[12px] italic text-black/70">Tech: {e.tech}</div>}
               {e.bullets && (
                 <ul className="ml-4 list-disc text-[12.5px]">
                   {e.bullets.split("\n").filter(Boolean).map((b, i) => <li key={i}>{b.replace(/^[-•*]\s*/, "")}</li>)}
@@ -471,6 +473,7 @@ function StandardCv({ d }: { d: Payload }) {
                   </a>
                 )}
               </div>
+              {p.tech && <div className="text-[12px] italic text-black/70">Tech: {p.tech}</div>}
               {p.description && <p className="text-[12.5px]">{p.description}</p>}
             </div>
           ))}
@@ -480,10 +483,41 @@ function StandardCv({ d }: { d: Payload }) {
         <CvSection h="Education">
           {d.education.map((e) => (
             <div key={e.id} className="mb-1.5">
-              <div className="flex justify-between font-semibold"><span>{e.degree}{e.school && ` · ${e.school}`}</span><span className="text-xs font-normal">{e.period}</span></div>
+              <div className="flex justify-between font-semibold"><span>{e.degree}{e.school && ` · ${e.school}`}{e.gpa && <span className="font-normal"> · CGPA {e.gpa}</span>}</span><span className="text-xs font-normal">{e.period}</span></div>
               {e.details && <p className="text-[12.5px]">{e.details}</p>}
             </div>
           ))}
+        </CvSection>
+      )}
+      {d.certifications.length > 0 && (
+        <CvSection h="Certifications">
+          {d.certifications.map((c) => (
+            <div key={c.id} className="flex justify-between text-[12.5px]"><span><span className="font-semibold">{c.name}</span>{c.issuer && ` · ${c.issuer}`}</span><span className="text-xs">{c.year}</span></div>
+          ))}
+        </CvSection>
+      )}
+      {d.awards.length > 0 && (
+        <CvSection h="Awards & Achievements">
+          {d.awards.map((a) => (
+            <div key={a.id} className="mb-1 text-[12.5px]">
+              <div className="flex justify-between font-semibold"><span>{a.title}</span><span className="text-xs font-normal">{a.year}</span></div>
+              {a.detail && <p>{a.detail}</p>}
+            </div>
+          ))}
+        </CvSection>
+      )}
+      {d.coding.length > 0 && (
+        <CvSection h="Coding Profiles">
+          <ul className="text-[12.5px] space-y-0.5">
+            {d.coding.map((c) => (
+              <li key={c.id}>
+                <span className="font-semibold">{c.platform}</span>
+                {c.handle && ` — ${c.handle}`}
+                {c.rating && ` (${c.rating})`}
+                {c.link && <a href={c.link} target="_blank" rel="noreferrer" className="ml-2 text-xs underline">{c.link}</a>}
+              </li>
+            ))}
+          </ul>
         </CvSection>
       )}
       {d.languages && <CvSection h="Languages"><p>{d.languages}</p></CvSection>}
