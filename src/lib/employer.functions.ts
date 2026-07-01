@@ -53,6 +53,34 @@ export const updateMyCompany = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/* Employer-wide interview invitations across their company's applications */
+export const employerListInterviews = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { companyId } = await myCompany(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("interview_invitations")
+      .select("*, application:job_applications!inner(id, user_id, job:job_marketplace!inner(id, job_title, company_id), applicant:profiles(name))")
+      .eq("application.job.company_id", companyId)
+      .order("scheduled_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+/* Employer-wide appointment letters across their company's applications */
+export const employerListLetters = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { companyId } = await myCompany(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("appointment_letters")
+      .select("*, application:job_applications!inner(id, user_id, job:job_marketplace!inner(id, job_title, company_id), applicant:profiles(name))")
+      .eq("application.job.company_id", companyId)
+      .order("issued_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
 export const createCompanyForMe = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
