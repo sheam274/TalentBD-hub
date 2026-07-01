@@ -27,6 +27,42 @@ const CATEGORIES = [
   "Design", "Customer Service", "Healthcare", "Education", "General",
 ];
 
+// Highlight matched query tokens inside a job title so users can immediately
+// see why the result matched. Uses whole-word boundaries to stay in sync
+// with the strict filter above and falls back to the raw title when no
+// tokens are active.
+function HighlightedTitle({ text, tokens }: { text: string; tokens: string[] }) {
+  const safe = text ?? "";
+  const active = tokens.filter((t) => t && t.length >= 2);
+  if (!active.length) return <>{safe}</>;
+  const escaped = active
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .sort((a, b) => b.length - a.length);
+  const re = new RegExp(`\\b(${escaped.join("|")})`, "gi");
+  const parts: Array<{ v: string; hit: boolean }> = [];
+  let last = 0;
+  for (const m of safe.matchAll(re)) {
+    const start = m.index ?? 0;
+    if (start > last) parts.push({ v: safe.slice(last, start), hit: false });
+    parts.push({ v: m[0], hit: true });
+    last = start + m[0].length;
+  }
+  if (last < safe.length) parts.push({ v: safe.slice(last), hit: false });
+  return (
+    <>
+      {parts.map((p, i) =>
+        p.hit ? (
+          <mark key={i} className="rounded-sm bg-primary/20 text-foreground px-0.5">
+            {p.v}
+          </mark>
+        ) : (
+          <span key={i}>{p.v}</span>
+        ),
+      )}
+    </>
+  );
+}
+
 // Map our UI categories to Remotive's category slugs so the live feed
 // reacts to the same filter chips as local jobs.
 const REMOTIVE_CATEGORY: Record<string, string | undefined> = {
@@ -220,6 +256,15 @@ function Jobs() {
       .map((x) => x.j);
   }, [all, debouncedSearch, category, location, exp, type, remote]);
 
+  // Tokens used for on-screen match highlighting. We highlight both the raw
+  // token and its stem so "engineers" in the query still marks "engineer" in
+  // a title, matching the filter behavior above.
+  const highlightTokens = useMemo(() => {
+    const raw = debouncedSearch.trim().toLowerCase();
+    const base = raw.split(/[\s,]+/).filter((t) => t.length >= 2);
+    return Array.from(new Set([...base, ...base.map(stem)])).filter((t) => t.length >= 2);
+  }, [debouncedSearch]);
+
   const featured = filtered.filter((j: any) => j.is_featured);
   const rest = filtered.filter((j: any) => !j.is_featured);
   const counts: Record<string, number> = {};
@@ -402,7 +447,7 @@ function Jobs() {
           <h2 className="text-lg font-semibold flex items-center gap-2"><Star className="size-4 text-amber-500" /> Featured / Hot jobs</h2>
           <div className="mt-3 grid gap-4 grid-cols-1 md:grid-cols-2">
             {featured.map((j: any, i: number) => (
-              <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
+              <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} highlightTokens={highlightTokens} /></ScrollReveal>
             ))}
           </div>
         </section>
@@ -419,11 +464,11 @@ function Jobs() {
         </h2>
         <div className="mt-3 grid gap-4 grid-cols-1 md:grid-cols-2">
           {rest.map((j: any, i: number) => (
-            <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} /></ScrollReveal>
+            <ScrollReveal key={j.id} delay={(i % 4) * 60}><JobCard j={j} onApply={() => setOpenId(j.id)} onPreview={() => setPreviewId(j.id)} canApply={!!user} highlightTokens={highlightTokens} /></ScrollReveal>
           ))}
           {liveForOpenPositions.map((j: any, i: number) => (
             <ScrollReveal key={`live-${j.id}`} delay={(i % 4) * 60}>
-              <LiveJobCard j={j} onOpen={openExternalJob} />
+              <LiveJobCard j={j} onOpen={openExternalJob} highlightTokens={highlightTokens} />
             </ScrollReveal>
           ))}
           {filtered.length === 0 && liveForOpenPositions.length === 0 && (
@@ -509,7 +554,7 @@ function Jobs() {
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold leading-tight line-clamp-2 break-words">{j.title}</h3>
+                    <h3 className="font-semibold leading-tight line-clamp-2 break-words"><HighlightedTitle text={j.title} tokens={highlightTokens} /></h3>
                     <p className="text-xs text-muted-foreground truncate">{j.company}</p>
                   </div>
                   <ExternalLink className="size-4 shrink-0 text-muted-foreground" />
@@ -568,7 +613,7 @@ function Jobs() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-xl font-bold">{j.job_title}</h3>
+                    <h3 className="text-xl font-bold"><HighlightedTitle text={j.job_title} tokens={highlightTokens} /></h3>
                     {j.is_featured && <span className="badge-featured">Hot</span>}
                     {j.is_live && <span className="badge-live">Live</span>}
                   </div>
@@ -617,14 +662,14 @@ function Jobs() {
   );
 }
 
-function JobCard({ j, onApply, onPreview, canApply }: { j: any; onApply: () => void; onPreview: () => void; canApply: boolean }) {
+function JobCard({ j, onApply, onPreview, canApply, highlightTokens = [] }: { j: any; onApply: () => void; onPreview: () => void; canApply: boolean; highlightTokens?: string[] }) {
   const deadline = j.application_deadline ? new Date(j.application_deadline) : null;
   const daysLeft = deadline ? Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
   return (
     <article className="lift glass rounded-xl p-4 sm:p-5 h-full flex flex-col">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="font-semibold hover:underline break-words line-clamp-2">{j.job_title}</Link>
+          <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="font-semibold hover:underline break-words line-clamp-2"><HighlightedTitle text={j.job_title} tokens={highlightTokens} /></Link>
           <p className="text-sm text-muted-foreground truncate">{j.company}</p>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
@@ -688,7 +733,7 @@ const InfiniteSentinel = forwardRef<HTMLDivElement, { onHit: () => void; visible
   },
 );
 
-function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => void }) {
+function LiveJobCard({ j, onOpen, highlightTokens = [] }: { j: any; onOpen: (url?: string | null) => void; highlightTokens?: string[] }) {
   return (
     <button
       type="button"
@@ -704,7 +749,7 @@ function LiveJobCard({ j, onOpen }: { j: any; onOpen: (url?: string | null) => v
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold leading-tight line-clamp-2 break-words">{j.title}</h3>
+          <h3 className="font-semibold leading-tight line-clamp-2 break-words"><HighlightedTitle text={j.title} tokens={highlightTokens} /></h3>
           <p className="text-xs text-muted-foreground truncate">{j.company}</p>
         </div>
         <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-success">
