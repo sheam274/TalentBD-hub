@@ -78,13 +78,3 @@ export const saveMyCv = createServerFn({ method: "POST" })
       },
     };
   });
-        name: name || null,
-        discipline: discipline || null,
-        avatar_url: photo || null,
-        skills,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", userId);
-
-    return { ok: true };
-  });
