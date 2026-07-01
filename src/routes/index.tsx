@@ -118,7 +118,7 @@ function Landing() {
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-8">
             {/* Left card — text + CTAs */}
-            <div className="flex flex-col rounded-3xl px-6 pt-4 pb-7 sm:px-10 sm:pt-6 sm:pb-10 md:px-12 md:pt-8 md:pb-12 text-center lg:text-left">
+            <div className="flex flex-col justify-center rounded-3xl px-2 pt-2 pb-6 sm:px-4 sm:pt-4 sm:pb-8 md:px-6 md:pt-6 md:pb-10 lg:pr-8 text-center lg:text-left">
               <div className="mb-5 inline-flex items-center gap-2 self-center rounded-full border border-[var(--eduma-ink)]/10 bg-white/70 px-4 py-2 shadow-sm backdrop-blur lg:self-start">
                 <span className="relative flex size-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
@@ -241,7 +241,7 @@ function Landing() {
           </div>
 
           {/* Trust */}
-          <div className="mt-16 w-full border-t border-[var(--eduma-ink)]/10 pt-8 text-center">
+          <div className="mt-10 md:mt-12 w-full border-t border-[var(--eduma-ink)]/10 pt-6 md:pt-8 text-center">
             <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--eduma-ink)]">
               Trusted by innovators worldwide
             </p>
