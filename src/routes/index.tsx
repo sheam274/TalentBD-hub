@@ -85,7 +85,7 @@ function Landing() {
     <div className="page-enter bg-background">
       {/* Hero — Ink Ambient Glow (premium dark) */}
       <section
-        className="relative flex min-h-[calc(100svh-var(--header-h,4rem))] w-full flex-col justify-center overflow-hidden px-5 pt-8 pb-14 sm:px-6 sm:pt-10 sm:pb-16 md:pt-12 md:pb-20 lg:pt-16 lg:pb-24"
+        className="relative flex min-h-[calc(100svh-var(--header-h,4rem))] w-full flex-col justify-center overflow-hidden px-5 pt-6 pb-10 sm:px-6 sm:pt-8 sm:pb-12 md:pt-8 md:pb-12 lg:pt-10 lg:pb-14"
         style={{
           background:
             "radial-gradient(1200px 600px at 12% 0%, rgba(255,182,6,0.22), transparent 60%)," +
