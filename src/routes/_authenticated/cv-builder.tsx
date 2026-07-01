@@ -241,13 +241,14 @@ function CvBuilder() {
           <Section title="Skills & Languages">
             <Textarea label="Skills (comma separated)" value={data.skills} onChange={(v) => set("skills", v)} placeholder="React, Node.js, SQL, AWS" />
             <Textarea label="Languages" value={data.languages} onChange={(v) => set("languages", v)} placeholder="English (fluent), Bengali (native)" />
+            <Textarea label="Relevant Coursework" value={data.coursework} onChange={(v) => set("coursework", v)} placeholder="Data Structures, Algorithms, Operating Systems, Distributed Systems, Machine Learning" />
           </Section>
 
           <Repeater
             title="Experience"
             items={data.experience}
             onChange={(items) => set("experience", items)}
-            create={() => ({ id: uid(), role: "", company: "", period: "", bullets: "" })}
+            create={() => ({ id: uid(), role: "", company: "", period: "", bullets: "", tech: "" })}
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -255,6 +256,7 @@ function CvBuilder() {
                   <Input label="Company" value={item.company} onChange={(v) => update({ ...item, company: v })} />
                 </div>
                 <Input label="Period (e.g. 2022 - Present)" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Bullets (one per line)" value={item.bullets} onChange={(v) => update({ ...item, bullets: v })} rows={4} />
               </>
             )}
@@ -264,14 +266,17 @@ function CvBuilder() {
             title="Education"
             items={data.education}
             onChange={(items) => set("education", items)}
-            create={() => ({ id: uid(), degree: "", school: "", period: "", details: "" })}
+            create={() => ({ id: uid(), degree: "", school: "", period: "", details: "", gpa: "" })}
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input label="Degree" value={item.degree} onChange={(v) => update({ ...item, degree: v })} />
                   <Input label="School" value={item.school} onChange={(v) => update({ ...item, school: v })} />
                 </div>
-                <Input label="Period" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Period" value={item.period} onChange={(v) => update({ ...item, period: v })} />
+                  <Input label="CGPA / GPA" value={item.gpa ?? ""} onChange={(v) => update({ ...item, gpa: v })} />
+                </div>
                 <Textarea label="Details" value={item.details} onChange={(v) => update({ ...item, details: v })} rows={2} />
               </>
             )}
@@ -281,14 +286,66 @@ function CvBuilder() {
             title="Project Showcase"
             items={data.projects}
             onChange={(items) => set("projects", items)}
-            create={() => ({ id: uid(), name: "", link: "", description: "" })}
+            create={() => ({ id: uid(), name: "", link: "", description: "", tech: "" })}
             render={(item, update) => (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input label="Name" value={item.name} onChange={(v) => update({ ...item, name: v })} />
                   <Input label="Link" value={item.link} onChange={(v) => update({ ...item, link: v })} />
                 </div>
+                <Input label="Tech stack" value={item.tech ?? ""} onChange={(v) => update({ ...item, tech: v })} />
                 <Textarea label="Description" value={item.description} onChange={(v) => update({ ...item, description: v })} rows={2} />
+              </>
+            )}
+          />
+
+          <Repeater
+            title="Certifications"
+            items={data.certifications}
+            onChange={(items) => set("certifications", items)}
+            create={() => ({ id: uid(), name: "", issuer: "", year: "" })}
+            render={(item, update) => (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Name" value={item.name} onChange={(v) => update({ ...item, name: v })} />
+                  <Input label="Issuer" value={item.issuer} onChange={(v) => update({ ...item, issuer: v })} />
+                </div>
+                <Input label="Year" value={item.year} onChange={(v) => update({ ...item, year: v })} />
+              </>
+            )}
+          />
+
+          <Repeater
+            title="Awards & Achievements"
+            items={data.awards}
+            onChange={(items) => set("awards", items)}
+            create={() => ({ id: uid(), title: "", detail: "", year: "" })}
+            render={(item, update) => (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Title" value={item.title} onChange={(v) => update({ ...item, title: v })} />
+                  <Input label="Year" value={item.year} onChange={(v) => update({ ...item, year: v })} />
+                </div>
+                <Textarea label="Detail" value={item.detail} onChange={(v) => update({ ...item, detail: v })} rows={2} />
+              </>
+            )}
+          />
+
+          <Repeater
+            title="Coding Profiles"
+            items={data.coding}
+            onChange={(items) => set("coding", items)}
+            create={() => ({ id: uid(), platform: "", handle: "", link: "", rating: "" })}
+            render={(item, update) => (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Platform (LeetCode, Codeforces, HackerRank…)" value={item.platform} onChange={(v) => update({ ...item, platform: v })} />
+                  <Input label="Handle / Username" value={item.handle} onChange={(v) => update({ ...item, handle: v })} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <Input label="Profile link" value={item.link} onChange={(v) => update({ ...item, link: v })} />
+                  <Input label="Rating / Rank (optional)" value={item.rating} onChange={(v) => update({ ...item, rating: v })} />
+                </div>
               </>
             )}
           />
