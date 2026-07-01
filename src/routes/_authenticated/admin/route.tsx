@@ -37,6 +37,7 @@ function AdminLayout() {
         <Link to="/admin/interviews" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Interviews</Link>
         <Link to="/admin/letters" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Appointment letters</Link>
         <Link to="/admin/modules" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Modules</Link>
+        <Link to="/learn/exam-prep" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Exam prep</Link>
         <Link to="/admin/credentials" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Credentials</Link>
         <Link to="/admin/database" className="rounded-md border px-3 py-1.5" activeProps={{ style: { background: "var(--color-primary)", color: "white" } }}>Database</Link>
       </nav>
