@@ -417,36 +417,49 @@ function StandardCv({ d }: { d: Payload }) {
 }
 
 function PremiumCv({ d }: { d: Payload }) {
+  const PEACH = "#f6b088";
+  const PEACH_SOFT = "#fbe3d1";
+  const BG = "#fdf3ec";
+  const ACCENT = "#f0895a";
   return (
-    <div className="text-black text-[12.5px] leading-snug" style={{ background: "#fdf3ec" }}>
-      <div className="p-5 sm:p-6">
+    <div className="relative text-black text-[12.5px] leading-snug overflow-hidden" style={{ background: BG }}>
+      {/* Decorative angled peach shapes (like the template) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-16 top-40 h-64 w-64 rotate-12" style={{ background: PEACH_SOFT, opacity: 0.55, borderRadius: 12 }} />
+        <div className="absolute -right-24 bottom-24 h-72 w-72 -rotate-12" style={{ background: PEACH_SOFT, opacity: 0.55, borderRadius: 12 }} />
+      </div>
+      {/* Grey angled banner behind header */}
+      <div aria-hidden className="absolute top-0 right-0 h-40 w-2/3" style={{ background: "linear-gradient(135deg,#eef1f4 0%,#e6ebef 60%,transparent 100%)", clipPath: "polygon(15% 0, 100% 0, 100% 100%, 0 100%)" }} />
+
+      <div className="relative p-6 sm:p-8">
         {/* Header */}
-        <div className="flex items-center gap-5">
+        <div className="grid grid-cols-[auto,1fr] items-center gap-6">
           <div className="shrink-0">
             {d.photo ? (
-              <img src={d.photo} alt="" className="size-28 rounded-full object-cover ring-4 ring-white shadow" />
+              <img src={d.photo} alt="" className="size-32 rounded-full object-cover ring-4 ring-white shadow-md" />
             ) : (
-              <div className="size-28 rounded-full bg-white/70 ring-4 ring-white shadow" />
+              <div className="size-32 rounded-full ring-4 ring-white shadow-md" style={{ background: "#dfe4ea" }} />
             )}
           </div>
-          <div className="flex-1 border-b border-black/60 pb-2">
-            <h2 className="text-3xl font-extrabold uppercase tracking-wide text-center">{d.name || "Your Name"}</h2>
-            {d.title && <p className="mt-1 text-center text-sm text-black/70">{d.title}</p>}
+          <div className="pt-4">
+            <h2 className="text-[34px] font-extrabold uppercase tracking-[0.06em] text-center leading-tight">{d.name || "Your Name"}</h2>
+            <div className="mx-auto mt-1 h-[2px] w-[85%] bg-black/80" />
+            {d.title && <p className="mt-2 text-center text-[15px] text-black/70">{d.title}</p>}
           </div>
         </div>
 
         {/* Body grid */}
-        <div className="mt-5 grid grid-cols-3 gap-4">
+        <div className="mt-6 grid grid-cols-3 gap-4">
           {/* Left column */}
           <div className="col-span-1 space-y-4">
             <TopcvCard>
-              <ul className="space-y-1.5 text-[12px]">
-                {d.email && <li className="flex items-start gap-2"><Mail className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.email}</li>}
-                {d.phone && <li className="flex items-start gap-2"><Phone className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.phone}</li>}
-                {d.website && <li className="flex items-start gap-2"><Globe className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.website}</li>}
-                {d.location && <li className="flex items-start gap-2"><MapPin className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.location}</li>}
-                {d.linkedin && <li className="flex items-start gap-2"><Linkedin className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.linkedin}</li>}
-                {d.github && <li className="flex items-start gap-2"><Github className="size-3.5 mt-0.5 shrink-0" style={{ color: "#f6a172" }} />{d.github}</li>}
+              <ul className="space-y-2 text-[12.5px]">
+                {d.email && <li className="flex items-center gap-2.5"><IconBadge color={ACCENT}><Mail className="size-3" /></IconBadge>{d.email}</li>}
+                {d.phone && <li className="flex items-center gap-2.5"><IconBadge color={ACCENT}><Phone className="size-3" /></IconBadge>{d.phone}</li>}
+                {d.website && <li className="flex items-center gap-2.5"><IconBadge color={ACCENT}><Globe className="size-3" /></IconBadge>{d.website}</li>}
+                {d.location && <li className="flex items-center gap-2.5"><IconBadge color={ACCENT}><MapPin className="size-3" /></IconBadge>{d.location}</li>}
+                {d.linkedin && <li className="flex items-center gap-2.5"><IconBadge color={ACCENT}><Linkedin className="size-3" /></IconBadge>{d.linkedin}</li>}
+                {d.github && <li className="flex items-center gap-2.5"><IconBadge color={ACCENT}><Github className="size-3" /></IconBadge>{d.github}</li>}
               </ul>
             </TopcvCard>
 
@@ -470,10 +483,13 @@ function PremiumCv({ d }: { d: Payload }) {
             {d.education.length > 0 && (
               <TopcvCard header="EDUCATION">
                 {d.education.map((e) => (
-                  <div key={e.id} className="mb-2 last:mb-0">
-                    <div className="font-semibold"><span style={{ color: "#f0895a" }}>❖ </span>{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}</div>
-                    {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
-                    {e.details && <div className="text-[12px]">{e.details}</div>}
+                  <div key={e.id} className="mb-3 last:mb-0 flex gap-2.5">
+                    <GraduationCap className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <div className="flex-1">
+                      <div className="font-semibold">{e.school}{e.degree && <span className="font-normal">, {e.degree}</span>}</div>
+                      {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
+                      {e.details && <div className="text-[12px]">{e.details}</div>}
+                    </div>
                   </div>
                 ))}
               </TopcvCard>
@@ -482,16 +498,19 @@ function PremiumCv({ d }: { d: Payload }) {
             {d.experience.length > 0 && (
               <TopcvCard header="WORK EXPERIENCE">
                 {d.experience.map((e) => (
-                  <div key={e.id} className="mb-3 last:mb-0">
-                    <div className="font-semibold"><span style={{ color: "#f0895a" }}>❖ </span>{e.company}{e.role && <span className="font-normal">, {e.role}</span>}</div>
-                    {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
-                    {e.bullets && (
-                      <ul className="mt-1 space-y-0.5 text-[12px]">
-                        {e.bullets.split("\n").filter(Boolean).map((b, i) => (
-                          <li key={i}>- {b.replace(/^[-•*]\s*/, "")}</li>
-                        ))}
-                      </ul>
-                    )}
+                  <div key={e.id} className="mb-4 last:mb-0 flex gap-2.5">
+                    <Briefcase className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <div className="flex-1">
+                      <div className="font-semibold">{e.company}{e.role && <span className="font-normal">, {e.role}</span>}</div>
+                      {e.period && <div className="text-[12px] text-black/70">{e.period}</div>}
+                      {e.bullets && (
+                        <ul className="mt-1 space-y-0.5 text-[12px]">
+                          {e.bullets.split("\n").filter(Boolean).map((b, i) => (
+                            <li key={i}>- {b.replace(/^[-•*]\s*/, "")}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                   </div>
                 ))}
               </TopcvCard>
@@ -500,9 +519,12 @@ function PremiumCv({ d }: { d: Payload }) {
             {d.projects.length > 0 && (
               <TopcvCard header="ACTIVITIES">
                 {d.projects.map((p) => (
-                  <div key={p.id} className="mb-2 last:mb-0">
-                    <div className="font-semibold"><span style={{ color: "#f0895a" }}>❖ </span>{p.name}{p.link && <span className="ml-2 font-normal text-[11px] text-black/70">{p.link}</span>}</div>
-                    {p.description && <p className="text-[12px]">{p.description}</p>}
+                  <div key={p.id} className="mb-3 last:mb-0 flex gap-2.5">
+                    <PersonStanding className="size-4 mt-0.5 shrink-0" style={{ color: ACCENT }} />
+                    <div className="flex-1">
+                      <div className="font-semibold">{p.name}{p.link && <span className="ml-2 font-normal text-[11px] text-black/70">{p.link}</span>}</div>
+                      {p.description && <p className="text-[12px]">{p.description}</p>}
+                    </div>
                   </div>
                 ))}
               </TopcvCard>
@@ -516,14 +538,22 @@ function PremiumCv({ d }: { d: Payload }) {
 
 function TopcvCard({ header, children }: { header?: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-md bg-white shadow-sm overflow-hidden">
+    <div className="rounded-lg bg-white shadow-[0_2px_10px_rgba(0,0,0,0.06)] overflow-hidden">
       {header && (
-        <div className="px-3 py-2 text-[13px] font-bold tracking-wide text-black" style={{ background: "#f6b088" }}>
+        <div className="px-4 py-2 text-[13px] font-bold tracking-wide text-black" style={{ background: "#f6b088" }}>
           {header}
         </div>
       )}
-      <div className="px-3 py-3">{children}</div>
+      <div className="px-4 py-3">{children}</div>
     </div>
+  );
+}
+
+function IconBadge({ children, color }: { children: React.ReactNode; color: string }) {
+  return (
+    <span className="inline-flex size-5 shrink-0 items-center justify-center rounded-full text-white" style={{ background: color }}>
+      {children}
+    </span>
   );
 }
 
