@@ -27,8 +27,12 @@ function Dashboard() {
   const apps = useQuery({ queryKey: ["my-apps"], queryFn: () => appsFn() });
   const cv = useQuery({ queryKey: ["my-cv"], queryFn: () => cvFn() });
 
+  const p = profile.data?.profile;
+  const isAdmin = profile.data?.isAdmin;
+  const hasCv = !!cv.data;
+
   useEffect(() => {
-    const uid = p?.id ?? profile.data?.profile?.id;
+    const uid = profile.data?.profile?.id;
     if (!uid) return;
     const channel = supabase
       .channel(`dashboard-${uid}`)
@@ -41,11 +45,7 @@ function Dashboard() {
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [qc, profile.data?.profile?.id, p?.id]);
-
-  const p = profile.data?.profile;
-  const isAdmin = profile.data?.isAdmin;
-  const hasCv = !!cv.data;
+  }, [qc, profile.data?.profile?.id]);
 
   return (
     <div className="page-enter">
