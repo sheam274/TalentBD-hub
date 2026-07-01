@@ -1,17 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listJobsPublic } from "@/lib/jobs.functions";
 import { analyzeCvForJob } from "@/lib/cv-ai.functions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2, CheckCircle2, XCircle, Target } from "lucide-react";
+import { Sparkles, Loader2, CheckCircle2, XCircle, Target, History, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-parser")({
   head: () => ({ meta: [{ title: "ATS CV Parser — Learn & Earn" }, { name: "description", content: "Parse a resume to find engineering sector matches." }] }),
   component: Parser,
 });
+
+type Analysis = {
+  matchScore: number; atsScore: number; verdict: string;
+  matchedKeywords: string[]; missingKeywords: string[];
+  strengths: string[]; gaps: string[]; improvements: string[]; tailoredSummary: string;
+};
+type HistoryEntry = {
+  id: string; createdAt: number;
+  jobId: string; jobTitle: string; jobCompany: string | null;
+  cvText: string; analysis: Analysis;
+};
+const HISTORY_KEY = "talentbd:cv-analysis-history";
+function loadHistory(): HistoryEntry[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) ?? "[]"); } catch { return []; }
+}
+function saveHistory(h: HistoryEntry[]) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0, 25))); } catch { /* ignore */ }
+}
 
 const SECTOR_KEYWORDS: Record<string, string[]> = {
   "Web Development": ["react", "javascript", "typescript", "css", "html", "node", "next", "tailwind", "redux", "vite"],
@@ -40,6 +59,10 @@ function Parser() {
   const [text, setText] = useState("");
   const [results, setResults] = useState<ReturnType<typeof score>>([]);
   const [selectedJobId, setSelectedJobId] = useState<string>("");
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [viewing, setViewing] = useState<HistoryEntry | null>(null);
+
+  useEffect(() => { setHistory(loadHistory()); }, []);
 
   const listJobs = useServerFn(listJobsPublic);
   const jobsQ = useQuery({ queryKey: ["parser-jobs"], queryFn: () => listJobs(), staleTime: 60_000 });
@@ -54,9 +77,38 @@ function Parser() {
       jobCompany: selectedJob?.company ?? null,
       jobDescription: [selectedJob?.description, selectedJob?.requirements?.join("\n")].filter(Boolean).join("\n\n") || null,
     } }),
+    onSuccess: (res) => {
+      if (!res?.ok || !selectedJob) return;
+      const entry: HistoryEntry = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        createdAt: Date.now(),
+        jobId: selectedJob.id,
+        jobTitle: selectedJob.job_title,
+        jobCompany: selectedJob.company ?? null,
+        cvText: text,
+        analysis: res.analysis,
+      };
+      const next = [entry, ...history].slice(0, 25);
+      setHistory(next); saveHistory(next); setViewing(null);
+    },
   });
-  const analysis = analyze.data?.ok ? analyze.data.analysis : null;
+  const liveAnalysis = analyze.data?.ok ? analyze.data.analysis : null;
+  const analysis: Analysis | null = viewing?.analysis ?? liveAnalysis;
   const analyzeError = analyze.data && !analyze.data.ok ? analyze.data.error : null;
+
+  function openHistory(h: HistoryEntry) {
+    setViewing(h);
+    setSelectedJobId(h.jobId);
+    setText(h.cvText);
+    setResults(score(h.cvText));
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function removeHistory(id: string) {
+    const next = history.filter((h) => h.id !== id);
+    setHistory(next); saveHistory(next);
+    if (viewing?.id === id) setViewing(null);
+  }
+  function clearHistory() { setHistory([]); saveHistory([]); setViewing(null); }
 
   async function onFile(f: File) {
     const t = await f.text();
@@ -123,6 +175,12 @@ function Parser() {
 
         {analysis && (
           <div className="mt-5 grid gap-4">
+            {viewing && (
+              <div className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                <span>Viewing saved analysis for <b>{viewing.jobTitle}</b>{viewing.jobCompany ? ` · ${viewing.jobCompany}` : ""} — {new Date(viewing.createdAt).toLocaleString()}</span>
+                <Button size="sm" variant="ghost" onClick={() => setViewing(null)}>Close</Button>
+              </div>
+            )}
             <div className="grid gap-3 sm:grid-cols-2">
               <ScoreCard label="Job match" value={analysis.matchScore} />
               <ScoreCard label="ATS parse quality" value={analysis.atsScore} />
@@ -144,6 +202,43 @@ function Parser() {
               </div>
             )}
           </div>
+        )}
+      </div>
+
+      <div className="mt-6 rounded-xl border bg-white p-5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <History className="size-4 text-[var(--color-primary)]" />
+            <h2 className="text-lg font-semibold">Analysis history</h2>
+          </div>
+          {history.length > 0 && (
+            <Button size="sm" variant="ghost" onClick={clearHistory} className="gap-1 text-xs">
+              <Trash2 className="size-3.5" /> Clear all
+            </Button>
+          )}
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">Your past CV analyses are saved on this device. Click one to reopen the results.</p>
+        {history.length === 0 ? (
+          <p className="mt-3 text-sm text-muted-foreground">No analyses yet — run one above and it will appear here.</p>
+        ) : (
+          <ul className="mt-3 divide-y">
+            {history.map((h) => (
+              <li key={h.id} className="flex items-center justify-between gap-3 py-2">
+                <button onClick={() => openHistory(h)} className="min-w-0 flex-1 text-left">
+                  <div className="truncate text-sm font-medium">{h.jobTitle}{h.jobCompany ? ` · ${h.jobCompany}` : ""}</div>
+                  <div className="text-xs text-muted-foreground">
+                    Match {h.analysis.matchScore}% · ATS {h.analysis.atsScore}% · {new Date(h.createdAt).toLocaleString()}
+                  </div>
+                </button>
+                <div className="flex items-center gap-1">
+                  <Button size="sm" variant="outline" onClick={() => openHistory(h)}>Reopen</Button>
+                  <Button size="sm" variant="ghost" onClick={() => removeHistory(h.id)} aria-label="Delete analysis">
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
