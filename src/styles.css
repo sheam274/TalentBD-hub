@@ -348,28 +348,8 @@
 }
 
 @media print {
-  html, body {
-    background: white !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-  /* Collapse everything so only the CV area contributes to the printed flow */
-  body * { display: none !important; }
-  .cv-print-area, .cv-print-area * { display: revert !important; }
-  .cv-print-area {
-    display: block !important;
-    position: static !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-shadow: none !important;
-    border: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-    overflow: visible !important;
-  }
+  html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+  .no-print { display: none !important; }
   @page { margin: 12mm; }
 }
 
