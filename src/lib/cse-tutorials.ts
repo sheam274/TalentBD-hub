@@ -1,0 +1,158 @@
+// W3Schools-style tutorial content for the CSE track. All text is original —
+// short, plain-English explanations written for this project — with runnable
+// snippets and an extended practice-exam bank used to certify learners.
+
+export type Section = { id: string; title: string; body: string; code?: { lang: string; source: string } };
+export type PracticeQ = { q: string; choices: string[]; answer: number };
+export type Tutorial = { intro: string; sections: Section[]; practice: PracticeQ[] };
+
+const s = (id: string, title: string, body: string, code?: Section["code"]): Section => ({ id, title, body, code });
+
+export const CSE_TUTORIALS: Record<string, Tutorial> = {
+  "web-development": {
+    intro: "Modern web development covers HTML for structure, CSS for style, and JavaScript for behaviour, plus tooling and frameworks that assemble them into fast, accessible apps.",
+    sections: [
+      s("html-basics", "HTML basics", "HTML uses tags such as <h1>, <p>, and <a> to describe page structure. Every document starts with <!DOCTYPE html> and contains a <head> for metadata and a <body> for content.", { lang: "html", source: "<!doctype html>\n<html>\n  <head><title>Hello</title></head>\n  <body>\n    <h1>Hello, world!</h1>\n    <p>This is my first page.</p>\n  </body>\n</html>" }),
+      s("css-basics", "CSS basics", "CSS targets HTML with selectors and applies declarations. Prefer classes over IDs for reuse, and use CSS variables for theme tokens.", { lang: "css", source: ":root { --brand: #ff6b35; }\n.btn { background: var(--brand); color: white; padding: .5rem 1rem; border-radius: .5rem; }" }),
+      s("flexbox-grid", "Flexbox & Grid", "Flexbox lays items along one axis; Grid lays items along both. Reach for Grid whenever you need rows AND columns.", { lang: "css", source: ".row { display: flex; gap: 1rem; align-items: center; }\n.page { display: grid; grid-template-columns: 250px 1fr; gap: 1rem; }" }),
+      s("js-basics", "JavaScript basics", "JavaScript adds interactivity. Use let/const (never var), arrow functions, and template literals.", { lang: "js", source: "const greet = (name) => `Hello, ${name}!`;\nconsole.log(greet('Sheam'));" }),
+      s("dom", "The DOM", "The DOM is a live tree of your page. Query nodes with document.querySelector and listen to events with addEventListener.", { lang: "js", source: "document.querySelector('#save')\n  .addEventListener('click', () => alert('Saved'));" }),
+      s("fetch", "Fetching data", "Use fetch() with async/await to call APIs. Always handle non-2xx responses and network errors.", { lang: "js", source: "async function loadUser(id) {\n  const res = await fetch(`/api/users/${id}`);\n  if (!res.ok) throw new Error('Load failed');\n  return res.json();\n}" }),
+      s("react", "React components", "React apps are trees of components. State lives in useState, side effects in useEffect. Keep components small and pure.", { lang: "jsx", source: "function Counter() {\n  const [n, setN] = useState(0);\n  return <button onClick={() => setN(n + 1)}>Count {n}</button>;\n}" }),
+      s("routing", "Routing & data", "Client routers map URLs to components. TanStack Router uses file-based routes and loaders for pre-fetching data before render." ),
+      s("a11y", "Accessibility", "Use semantic HTML, label every input, keep colour contrast ≥ 4.5:1, and make everything reachable by keyboard." ),
+      s("perf", "Performance", "Ship less JavaScript, lazy-load routes, compress images, and cache network responses. Measure with Lighthouse before optimising." ),
+    ],
+    practice: [
+      { q: "Which tag defines the largest heading?", choices: ["<h6>", "<h1>", "<header>", "<big>"], answer: 1 },
+      { q: "Which attribute turns an anchor into an external link that opens in a new tab?", choices: ["target='_blank'", "external='true'", "newtab", "rel='new'"], answer: 0 },
+      { q: "Which CSS property controls horizontal + vertical layout at once?", choices: ["flex", "grid", "float", "position"], answer: 1 },
+      { q: "Which unit scales with the root font size?", choices: ["px", "em", "rem", "vh"], answer: 2 },
+      { q: "What does 'use strict' do in JavaScript?", choices: ["Enables JIT", "Enables ES6", "Enables stricter parsing/error handling", "Disables the DOM"], answer: 2 },
+      { q: "Which method removes the last element of an array and returns it?", choices: ["pop()", "shift()", "slice()", "splice()"], answer: 0 },
+      { q: "Which keyword prevents reassignment of a binding?", choices: ["var", "let", "const", "final"], answer: 2 },
+      { q: "Which HTTP status means 'Not Found'?", choices: ["200", "301", "404", "500"], answer: 2 },
+      { q: "Which React hook stores mutable state?", choices: ["useMemo", "useState", "useRef", "useEffect"], answer: 1 },
+      { q: "Which React hook runs code after render?", choices: ["useEffect", "useLayoutEffect", "useState", "useContext"], answer: 0 },
+      { q: "Which CSS selector has the highest specificity?", choices: [".btn", "#save", "button", "*"], answer: 1 },
+      { q: "What does CORS stand for?", choices: ["Cross-Origin Resource Sharing", "Cache-Origin Redirect Standard", "Client-Origin Request Signing", "Common Origin Response Spec"], answer: 0 },
+      { q: "Which file lists a Node project's dependencies?", choices: ["node.json", "package.json", "deps.lock", "modules.js"], answer: 1 },
+      { q: "Which storage persists after the browser tab closes?", choices: ["sessionStorage", "localStorage", "cookies with Max-Age", "Both localStorage and cookies"], answer: 3 },
+      { q: "Which is a valid semantic HTML5 element?", choices: ["<container>", "<section>", "<block>", "<panel>"], answer: 1 },
+      { q: "Which method converts a JS object to a JSON string?", choices: ["JSON.parse", "JSON.stringify", "Object.toJSON", "String(obj)"], answer: 1 },
+      { q: "Which flexbox rule centres children on both axes?", choices: ["align: center", "place-items: center", "justify-content:center; align-items:center", "flex-align: middle"], answer: 2 },
+      { q: "Which is NOT a JS primitive?", choices: ["string", "boolean", "object", "symbol"], answer: 2 },
+      { q: "Which HTTP method is idempotent?", choices: ["POST", "PATCH", "PUT", "CONNECT"], answer: 2 },
+      { q: "React keys should be…", choices: ["Array indices always", "Random UUIDs each render", "Stable, unique per item", "Optional"], answer: 2 },
+    ],
+  },
+  "data-structures": {
+    intro: "Data structures organise information so algorithms can operate on it efficiently. Choosing the right structure is often the difference between an O(n) and an O(n²) solution.",
+    sections: [
+      s("arrays", "Arrays", "Arrays store elements in contiguous memory. O(1) index access, O(n) insertion in the middle." ),
+      s("linked-lists", "Linked lists", "A linked list holds nodes that point to the next node. O(1) insertion at the head, O(n) search." , { lang: "js", source: "class Node { constructor(v){ this.v=v; this.next=null; } }" }),
+      s("stacks-queues", "Stacks & queues", "Stacks are LIFO (push/pop). Queues are FIFO (enqueue/dequeue). Both run in O(1) per operation.", { lang: "js", source: "const stack = []; stack.push(1); stack.pop();\nconst queue = []; queue.push(1); queue.shift();" }),
+      s("hash-tables", "Hash tables", "Hash maps give expected O(1) lookup by hashing keys into buckets. Collisions are handled with chaining or open addressing." ),
+      s("trees", "Trees", "Trees are hierarchical. Binary search trees keep values ordered so search runs in O(log n) when balanced." ),
+      s("heaps", "Heaps", "A binary heap is a complete tree where every parent is ≤ (min-heap) or ≥ (max-heap) its children. Powers priority queues." ),
+      s("graphs", "Graphs", "Graphs are vertices connected by edges. Represent them as adjacency lists for sparse graphs and matrices for dense ones." ),
+      s("big-o", "Big-O", "Big-O describes how time or memory scales with input size. O(1) < O(log n) < O(n) < O(n log n) < O(n²)." ),
+    ],
+    practice: [
+      { q: "Average lookup time of a hash table?", choices: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], answer: 0 },
+      { q: "Which structure is LIFO?", choices: ["Queue", "Stack", "Heap", "Deque"], answer: 1 },
+      { q: "Best case time of quicksort?", choices: ["O(n)", "O(n log n)", "O(n²)", "O(log n)"], answer: 1 },
+      { q: "Worst case time of quicksort?", choices: ["O(n)", "O(n log n)", "O(n²)", "O(log n)"], answer: 2 },
+      { q: "A balanced BST supports search in?", choices: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], answer: 1 },
+      { q: "Which traversal visits root, left, right?", choices: ["Preorder", "Inorder", "Postorder", "Level order"], answer: 0 },
+      { q: "Which structure powers Dijkstra's algorithm?", choices: ["Stack", "Queue", "Min-heap / priority queue", "Hash set"], answer: 2 },
+      { q: "BFS uses a…", choices: ["Stack", "Queue", "Heap", "Set"], answer: 1 },
+      { q: "DFS uses a…", choices: ["Stack (or recursion)", "Queue", "Heap", "Trie"], answer: 0 },
+      { q: "A trie is best for…", choices: ["Prefix search", "Range queries", "Sorting numbers", "Graph shortest paths"], answer: 0 },
+      { q: "Time to append to a dynamic array (amortised)?", choices: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], answer: 0 },
+      { q: "Linked list search time?", choices: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], answer: 2 },
+      { q: "Space of an adjacency matrix for V vertices?", choices: ["O(V)", "O(V log V)", "O(V²)", "O(E)"], answer: 2 },
+      { q: "Heap insert costs…", choices: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], answer: 1 },
+      { q: "Which is a stable sort?", choices: ["Quicksort", "Heapsort", "Merge sort", "Selection sort"], answer: 2 },
+      { q: "Merge sort time complexity?", choices: ["O(n)", "O(n log n)", "O(n²)", "O(log n)"], answer: 1 },
+      { q: "Which structure is FIFO?", choices: ["Stack", "Queue", "Heap", "Tree"], answer: 1 },
+      { q: "Best structure for LRU cache?", choices: ["Array", "HashMap + doubly-linked list", "BST", "Heap"], answer: 1 },
+      { q: "Big-O of binary search?", choices: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], answer: 1 },
+      { q: "Which is NOT a linear data structure?", choices: ["Array", "Linked list", "Tree", "Queue"], answer: 2 },
+    ],
+  },
+  "algorithms": {
+    intro: "Algorithms are step-by-step recipes for solving problems. Mastering the common patterns — sorting, searching, recursion, dynamic programming, and graph traversal — unlocks most interview questions.",
+    sections: [
+      s("sorting", "Sorting", "Comparison sorts (merge, quick, heap) run in O(n log n). Counting/radix sort can do O(n) when keys are bounded." ),
+      s("searching", "Searching", "Linear search scans; binary search halves a sorted range each step in O(log n)." ),
+      s("recursion", "Recursion", "A recursive function calls itself with a smaller input and a base case. Every recursion has a matching iterative form." ),
+      s("dp", "Dynamic programming", "DP solves overlapping sub-problems by memoising results. Identify state, transition, and base case." ),
+      s("greedy", "Greedy", "Greedy makes the locally optimal choice at each step. Works when a problem has the greedy-choice property (e.g. interval scheduling)." ),
+      s("graphs", "Graph algorithms", "BFS finds shortest paths in unweighted graphs; Dijkstra handles non-negative weights; Bellman-Ford handles negatives; Floyd-Warshall is all-pairs." ),
+      s("complexity", "Complexity", "Analyse both time and space. Prefer O(n) over O(n log n) only when constants are reasonable and input is huge." ),
+    ],
+    practice: [
+      { q: "Binary search requires the input to be…", choices: ["Sorted", "Unique", "Numeric", "Random"], answer: 0 },
+      { q: "Which paradigm is Fibonacci with memoisation?", choices: ["Greedy", "Divide & conquer", "Dynamic programming", "Backtracking"], answer: 2 },
+      { q: "Dijkstra works when weights are…", choices: ["Any real", "Non-negative", "Integer only", "Unit"], answer: 1 },
+      { q: "Which algorithm detects negative cycles?", choices: ["Dijkstra", "BFS", "Bellman-Ford", "Kruskal"], answer: 2 },
+      { q: "Kruskal's uses…", choices: ["Union-Find", "Heap only", "DFS only", "Adjacency matrix"], answer: 0 },
+      { q: "Which sort is in-place?", choices: ["Merge sort", "Counting sort", "Quicksort", "Radix sort"], answer: 2 },
+      { q: "BFS finds shortest paths in…", choices: ["Weighted graphs", "Unweighted graphs", "DAGs only", "Trees only"], answer: 1 },
+      { q: "Which is O(n log n) worst case?", choices: ["Quicksort", "Heapsort", "Bubble sort", "Insertion sort"], answer: 1 },
+      { q: "Two-pointer technique typically runs in…", choices: ["O(1)", "O(log n)", "O(n)", "O(n²)"], answer: 2 },
+      { q: "Which is a divide-and-conquer algorithm?", choices: ["Merge sort", "Bubble sort", "Insertion sort", "Selection sort"], answer: 0 },
+      { q: "Best-case of insertion sort?", choices: ["O(1)", "O(n)", "O(n log n)", "O(n²)"], answer: 1 },
+      { q: "Which structure powers backtracking?", choices: ["Queue", "Heap", "Stack (recursion)", "Trie"], answer: 2 },
+      { q: "Sliding window is best for…", choices: ["Tree DP", "Contiguous subarray problems", "Graph traversal", "Sorting"], answer: 1 },
+      { q: "Topological sort applies to…", choices: ["Any graph", "DAGs", "Trees", "Weighted graphs only"], answer: 1 },
+      { q: "Floyd-Warshall time complexity?", choices: ["O(V²)", "O(V³)", "O(E log V)", "O(V+E)"], answer: 1 },
+      { q: "Which is NOT a stable sort by default?", choices: ["Merge sort", "Insertion sort", "Quicksort", "Bubble sort"], answer: 2 },
+      { q: "Big-O of nested loop over n?", choices: ["O(n)", "O(log n)", "O(n²)", "O(n log n)"], answer: 2 },
+      { q: "Which problem is NP-complete?", choices: ["Sorting", "Shortest path", "3-SAT", "Binary search"], answer: 2 },
+      { q: "Memoisation trades…", choices: ["Time for space", "Space for time", "Neither", "CPU for GPU"], answer: 0 },
+      { q: "Greedy fails for…", choices: ["Interval scheduling", "0/1 knapsack", "Huffman coding", "Activity selection"], answer: 1 },
+    ],
+  },
+  "databases": {
+    intro: "Databases persist application data. Relational databases (SQL) enforce schemas and support ACID transactions; NoSQL trades some guarantees for flexibility and horizontal scale.",
+    sections: [
+      s("relational", "Relational model", "Tables have rows and typed columns. Relationships use primary + foreign keys." ),
+      s("select", "SELECT", "SELECT reads rows. Filter with WHERE, sort with ORDER BY, page with LIMIT.", { lang: "sql", source: "SELECT id, name, email\nFROM users\nWHERE country = 'BD'\nORDER BY name\nLIMIT 20;" }),
+      s("joins", "Joins", "INNER JOIN keeps matched rows only; LEFT JOIN keeps all rows from the left side.", { lang: "sql", source: "SELECT o.id, u.name\nFROM orders o\nLEFT JOIN users u ON u.id = o.user_id;" }),
+      s("indexes", "Indexes", "Indexes speed up reads and slow down writes. Add one for every column used in WHERE, JOIN, or ORDER BY." ),
+      s("transactions", "Transactions", "Wrap dependent statements in BEGIN … COMMIT. ROLLBACK on error keeps data consistent." ),
+      s("normalisation", "Normalisation", "Split repeated data into separate tables to remove update anomalies. 3NF is usually enough." ),
+      s("nosql", "NoSQL", "Document stores (MongoDB), key-value stores (Redis), and wide-column stores (Cassandra) trade joins for scale." ),
+    ],
+    practice: [
+      { q: "SQL clause that filters rows?", choices: ["ORDER BY", "GROUP BY", "WHERE", "HAVING"], answer: 2 },
+      { q: "Which JOIN keeps all left rows?", choices: ["INNER", "LEFT", "RIGHT", "CROSS"], answer: 1 },
+      { q: "Primary key must be…", choices: ["Numeric", "Nullable", "Unique and not-null", "Composite always"], answer: 2 },
+      { q: "Which is a NoSQL database?", choices: ["PostgreSQL", "MySQL", "MongoDB", "MariaDB"], answer: 2 },
+      { q: "ACID stands for?", choices: ["Atomicity, Consistency, Isolation, Durability", "Access, Cache, Index, Data", "Any, Check, Insert, Delete", "Async, Cluster, Isolation, Data"], answer: 0 },
+      { q: "Which command removes a table?", choices: ["DELETE", "DROP", "TRUNCATE", "REMOVE"], answer: 1 },
+      { q: "Which is fastest to empty a table (keeps schema)?", choices: ["DELETE", "DROP", "TRUNCATE", "PURGE"], answer: 2 },
+      { q: "GROUP BY is usually paired with…", choices: ["ORDER BY", "Aggregate functions", "JOIN", "LIMIT"], answer: 1 },
+      { q: "Which aggregate ignores NULLs?", choices: ["COUNT(*)", "COUNT(col)", "SUM(*)", "AVG(*)"], answer: 1 },
+      { q: "Which normal form removes transitive dependencies?", choices: ["1NF", "2NF", "3NF", "BCNF"], answer: 2 },
+      { q: "Which SQL clause filters groups?", choices: ["WHERE", "HAVING", "ORDER BY", "SELECT"], answer: 1 },
+      { q: "Which is NOT a SQL data type?", choices: ["VARCHAR", "INT", "OBJECT", "TIMESTAMP"], answer: 2 },
+      { q: "Foreign keys enforce…", choices: ["Uniqueness", "Referential integrity", "Sort order", "Index type"], answer: 1 },
+      { q: "Which command creates an index?", choices: ["CREATE INDEX", "ADD INDEX", "MAKE INDEX", "INDEX TABLE"], answer: 0 },
+      { q: "Redis is primarily a…", choices: ["Document DB", "Key-value store", "Graph DB", "Relational DB"], answer: 1 },
+      { q: "Which isolation level prevents dirty reads?", choices: ["Read Uncommitted", "Read Committed", "Repeatable Read", "Both B and C"], answer: 3 },
+      { q: "COUNT(*) returns…", choices: ["Non-null rows only", "All rows", "Distinct rows", "First row"], answer: 1 },
+      { q: "Which SQL keyword removes duplicates?", choices: ["UNIQUE", "DISTINCT", "SINGLE", "ONLY"], answer: 1 },
+      { q: "Wildcard for zero or more chars in LIKE?", choices: ["*", "?", "%", "#"], answer: 2 },
+      { q: "Which improves read speed most for large tables?", choices: ["Adding indexes on filtered columns", "Removing keys", "Turning off logging", "Renaming tables"], answer: 0 },
+    ],
+  },
+};
+
+export const CSE_DISCIPLINE_LABEL = "Computer Science";
+export function isCseDiscipline(d: string) {
+  const x = d.toLowerCase();
+  return x === "cse" || x.startsWith("computer");
+}
