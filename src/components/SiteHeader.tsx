@@ -270,7 +270,7 @@ export function SiteHeader() {
               <div key={item.label} className="border-t border-white/10 pt-2 mt-1">
                 <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/85">{item.label}</div>
                 {(item.children ?? [{ to: item.to, label: item.label }]).map((c) => (
-                  <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground">
+                  <a key={c.to + c.label} href={c.to} onClick={() => setOpen(false)} aria-current={isChildActive(c.to) ? "page" : undefined} className={`block rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground ${isChildActive(c.to) ? activeChildCls : ""}`}>
                     {c.label}
                   </a>
                 ))}
