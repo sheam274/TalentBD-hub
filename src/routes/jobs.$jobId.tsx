@@ -43,6 +43,23 @@ function statusColor(s: string) {
   return "badge-neutral";
 }
 
+const URL_RE = /(https?:\/\/[^\s)]+)/g;
+function externalApplyUrl(text?: string | null): string | null {
+  if (!text) return null;
+  const m = text.match(URL_RE);
+  return m && m.length ? m[0] : null;
+}
+function linkify(text: string) {
+  const parts = text.split(URL_RE);
+  return parts.map((p, i) =>
+    /^https?:\/\//.test(p) ? (
+      <a key={i} href={p} target="_blank" rel="noopener noreferrer" className="underline text-primary break-all">{p}</a>
+    ) : (
+      <span key={i}>{p}</span>
+    )
+  );
+}
+
 function JobDetails() {
   const { jobId } = Route.useParams();
   const { user } = useAuth();
@@ -177,7 +194,9 @@ function JobDetails() {
           <section className="glass rounded-xl p-6">
             <h2 className="text-lg font-semibold">Job description</h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground/90">
-              {j.description || "The hiring team hasn't added a full description yet. Reach out to learn more about this role."}
+              {j.description
+                ? linkify(j.description)
+                : "The hiring team hasn't added a full description yet. Reach out to learn more about this role."}
             </p>
           </section>
 
@@ -194,6 +213,17 @@ function JobDetails() {
         </div>
 
         <aside className="space-y-4">
+          {externalApplyUrl(j.description) && (
+            <a
+              href={externalApplyUrl(j.description)!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full rounded-md px-4 py-3 text-center text-sm font-semibold text-white shadow"
+              style={{ background: "var(--color-primary)" }}
+            >
+              Apply on company site ↗
+            </a>
+          )}
           <div className="glass rounded-xl p-5">
             <h3 className="text-sm font-semibold uppercase text-muted-foreground">At a glance</h3>
             <dl className="mt-3 space-y-2 text-sm">
