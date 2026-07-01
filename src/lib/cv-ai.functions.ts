@@ -62,3 +62,89 @@ export const suggestCvField = createServerFn({ method: "POST" })
       return { suggestions: [], error: "Could not parse suggestions." };
     }
   });
+
+const analyzeSchema = z.object({
+  cvText: z.string().min(20).max(30000),
+  jobTitle: z.string().min(1).max(200),
+  jobCompany: z.string().max(200).optional().nullable(),
+  jobDescription: z.string().max(30000).optional().nullable(),
+});
+
+export const analyzeCvForJob = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => analyzeSchema.parse(i))
+  .handler(async ({ data }) => {
+    const geminiKey = process.env.GOOGLE_GEMINI_API_KEY;
+    const lovableKey = process.env.LOVABLE_API_KEY;
+    const useDirect = !!geminiKey;
+    const url = useDirect
+      ? "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+      : "https://ai.gateway.lovable.dev/v1/chat/completions";
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (useDirect) headers.Authorization = `Bearer ${geminiKey}`;
+    else if (lovableKey) headers["Lovable-API-Key"] = lovableKey;
+    else return { ok: false as const, error: "AI not configured." };
+
+    const model = useDirect ? "gemini-2.5-flash" : "google/gemini-3-flash-preview";
+    const system = `You are an ATS resume screener for big-tech and BD IT roles. Reply ONLY with JSON matching this exact shape (no prose, no code fences):
+{
+  "matchScore": number,           // 0-100 overall fit
+  "atsScore": number,             // 0-100 ATS parse quality
+  "verdict": string,              // 1 short sentence overall verdict
+  "matchedKeywords": string[],    // job keywords found in CV
+  "missingKeywords": string[],    // job keywords missing from CV
+  "strengths": string[],          // 3-5 bullets
+  "gaps": string[],               // 3-5 bullets of what's missing / weak
+  "improvements": string[],       // 5 concrete rewrite/add suggestions
+  "tailoredSummary": string       // 2-sentence CV summary tailored to this job
+}`;
+    const user = `TARGET JOB
+Title: ${data.jobTitle}
+Company: ${data.jobCompany ?? "N/A"}
+Description:
+${(data.jobDescription ?? "").slice(0, 12000) || "(not provided)"}
+
+CANDIDATE CV
+${data.cvText.slice(0, 15000)}`;
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        response_format: { type: "json_object" },
+      }),
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      console.error("analyzeCvForJob error", res.status, t);
+      return { ok: false as const, error: res.status === 429 ? "Rate limited. Try again shortly." : res.status === 402 ? "AI credits exhausted." : "AI unavailable." };
+    }
+    const json = await res.json();
+    const raw: string = json?.choices?.[0]?.message?.content ?? "{}";
+    try {
+      const parsed = JSON.parse(raw.replace(/^```json\s*|```$/g, "").trim());
+      return {
+        ok: true as const,
+        analysis: {
+          matchScore: clamp(Number(parsed.matchScore) || 0),
+          atsScore: clamp(Number(parsed.atsScore) || 0),
+          verdict: String(parsed.verdict ?? ""),
+          matchedKeywords: arrStr(parsed.matchedKeywords),
+          missingKeywords: arrStr(parsed.missingKeywords),
+          strengths: arrStr(parsed.strengths),
+          gaps: arrStr(parsed.gaps),
+          improvements: arrStr(parsed.improvements),
+          tailoredSummary: String(parsed.tailoredSummary ?? ""),
+        },
+      };
+    } catch {
+      return { ok: false as const, error: "Could not parse AI response." };
+    }
+  });
+
+function clamp(n: number) { return Math.max(0, Math.min(100, Math.round(n))); }
+function arrStr(v: unknown): string[] { return Array.isArray(v) ? v.map(String).filter(Boolean).slice(0, 20) : []; }
