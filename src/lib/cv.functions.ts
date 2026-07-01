@@ -48,11 +48,15 @@ export const saveMyCv = createServerFn({ method: "POST" })
         : Array.isArray(p.skills)
           ? (p.skills as unknown[]).map(String)
           : [];
-    const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
-    if (name) patch.name = name;
-    if (discipline) patch.discipline = discipline;
-    patch.skills = skills;
-    await supabase.from("profiles").update(patch).eq("id", userId);
+    await supabase
+      .from("profiles")
+      .update({
+        ...(name ? { name } : {}),
+        ...(discipline ? { discipline } : {}),
+        skills,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", userId);
 
     return { ok: true };
   });
