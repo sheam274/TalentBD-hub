@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { getMyCv, saveMyCv } from "@/lib/cv.functions";
 import { toast } from "sonner";
-import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, User, GraduationCap, Briefcase, PersonStanding } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, MapPin, Globe, Linkedin, Github, Printer, Save, Upload, X, FileDown, GraduationCap, Briefcase, PersonStanding } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/cv-builder")({
   head: () => ({ meta: [{ title: "CV Builder — TalentBD" }, { name: "description", content: "Build a professional, print-ready CV with standard or premium layouts." }] }),
