@@ -220,26 +220,60 @@ function CvBuilder() {
     const node = document.querySelector(".cv-print-area") as HTMLElement | null;
     if (!node) return;
     try {
-      const mod: any = await import("html2pdf.js");
-      const html2pdf = mod.default ?? mod;
       const filename = `${cvFileBase()}.pdf`;
       const bg = style === "premium" ? PREMIUM_THEMES[theme].bg : "#ffffff";
-      await html2pdf()
-        .set({
-          margin: [10, 10, 10, 10],
-          filename,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: bg,
-            onclone: (doc: Document) => sanitizeModernColors(doc),
-          },
-          jsPDF: { unit: "mm", format: paper === "letter" ? "letter" : "a4", orientation: "portrait" },
-          pagebreak: { mode: ["css", "legacy"] },
-        })
-        .from(node)
-        .save();
+      const [{ toPng }, jsPdfMod] = await Promise.all([
+        import("html-to-image"),
+        import("jspdf"),
+      ]);
+      const JsPDF = (jsPdfMod as any).jsPDF ?? (jsPdfMod as any).default;
+      // html-to-image renders via SVG foreignObject, so the browser natively
+      // rasterizes modern CSS colors (oklab / oklch / color-mix) that
+      // html2canvas fails to parse.
+      const dataUrl = await toPng(node, {
+        pixelRatio: 2,
+        backgroundColor: bg,
+        cacheBust: true,
+      });
+      const format = paper === "letter" ? "letter" : "a4";
+      const pdf = new JsPDF({ unit: "mm", format, orientation: "portrait" });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise((res) => { img.onload = res; });
+      const availW = pageW - margin * 2;
+      const ratio = availW / img.width;
+      const renderH = img.height * ratio;
+      const availH = pageH - margin * 2;
+      if (renderH <= availH) {
+        pdf.addImage(dataUrl, "PNG", margin, margin, availW, renderH);
+      } else {
+        // Slice the tall image across pages.
+        let remaining = img.height;
+        let sy = 0;
+        const sliceHpx = availH / ratio;
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = Math.ceil(sliceHpx);
+        const ctx = canvas.getContext("2d")!;
+        let first = true;
+        while (remaining > 0) {
+          const h = Math.min(sliceHpx, remaining);
+          canvas.height = Math.ceil(h);
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, sy, img.width, h, 0, 0, img.width, h);
+          const slice = canvas.toDataURL("image/png");
+          if (!first) pdf.addPage(format, "portrait");
+          pdf.addImage(slice, "PNG", margin, margin, availW, h * ratio);
+          first = false;
+          sy += h;
+          remaining -= h;
+        }
+      }
+      pdf.save(filename);
     } catch (e: any) {
       toast.error(e?.message || "Could not generate PDF");
     }
