@@ -154,7 +154,7 @@ function AuthPage() {
 
   async function google() {
     const origin = window.location.origin;
-    const isLovableHost = /\.lovable\.(app|dev)$/.test(window.location.hostname);
+    const isLovableHost = /\.lovable\.(app|dev)$|\.lovableproject\.com$/.test(window.location.hostname);
     const flow = isLovableHost ? "lovable-broker" : "supabase-pkce";
     console.groupCollapsed(`[auth] Google sign-in (${flow})`);
     console.log("origin:", origin);
