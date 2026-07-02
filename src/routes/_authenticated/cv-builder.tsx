@@ -174,7 +174,12 @@ function CvBuilder() {
           margin: [10, 10, 10, 10],
           filename,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, backgroundColor: bg },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: bg,
+            onclone: (doc: Document) => sanitizeModernColors(doc),
+          },
           jsPDF: { unit: "mm", format: paper === "letter" ? "letter" : "a4", orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
         })
