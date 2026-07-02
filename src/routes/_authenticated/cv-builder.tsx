@@ -43,6 +43,61 @@ type Payload = {
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
+// html2canvas can't parse modern CSS color functions (oklab/oklch/color-mix).
+// Walk the cloned document, resolve every color-bearing property to sRGB via
+// the Canvas 2D fillStyle normalizer, and inline the result so the renderer
+// only sees rgb()/rgba() values.
+function sanitizeModernColors(doc: Document) {
+  const canvas = doc.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  const toRgb = (value: string): string | null => {
+    try {
+      ctx.fillStyle = "#000";
+      ctx.fillStyle = value;
+      const out = ctx.fillStyle as string;
+      return typeof out === "string" ? out : null;
+    } catch {
+      return null;
+    }
+  };
+  const MODERN = /(color-mix|oklab|oklch|color\()/i;
+  const COLOR_TOKEN = /(color-mix\([^()]*(?:\([^()]*\)[^()]*)*\)|oklab\([^)]*\)|oklch\([^)]*\)|color\([^)]*\))/gi;
+  const simpleProps = [
+    "color",
+    "background-color",
+    "border-top-color",
+    "border-right-color",
+    "border-bottom-color",
+    "border-left-color",
+    "outline-color",
+    "text-decoration-color",
+    "fill",
+    "stroke",
+    "caret-color",
+  ];
+  const complexProps = ["background", "background-image", "box-shadow", "border-image", "filter"];
+  const all = doc.querySelectorAll<HTMLElement>("*");
+  all.forEach((el) => {
+    const cs = doc.defaultView?.getComputedStyle(el);
+    if (!cs) return;
+    for (const prop of simpleProps) {
+      const v = cs.getPropertyValue(prop);
+      if (v && MODERN.test(v)) {
+        const rgb = toRgb(v);
+        if (rgb) el.style.setProperty(prop, rgb, "important");
+      }
+    }
+    for (const prop of complexProps) {
+      const v = cs.getPropertyValue(prop);
+      if (v && MODERN.test(v)) {
+        const replaced = v.replace(COLOR_TOKEN, (m) => toRgb(m) || "transparent");
+        el.style.setProperty(prop, replaced, "important");
+      }
+    }
+  });
+}
+
 const empty: Payload = {
   name: "", title: "", email: "", phone: "", location: "",
   website: "", linkedin: "", github: "", photo: "",
@@ -174,7 +229,12 @@ function CvBuilder() {
           margin: [10, 10, 10, 10],
           filename,
           image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, backgroundColor: bg },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: bg,
+            onclone: (doc: Document) => sanitizeModernColors(doc),
+          },
           jsPDF: { unit: "mm", format: paper === "letter" ? "letter" : "a4", orientation: "portrait" },
           pagebreak: { mode: ["css", "legacy"] },
         })
