@@ -82,7 +82,7 @@ export const getExamQuiz = createServerFn({ method: "GET" })
     if (modIds.length === 0) return { modules: [], questions: [] };
     const { data: qs } = await supabaseAdmin
       .from("skill_quizzes")
-      .select("id, module_id, question, choices, correct_answer")
+      .select("id, module_id, question, choices")
       .in("module_id", modIds);
     const byId = new Map((mods ?? []).map((m) => [m.id, m]));
     const questions = (qs ?? []).map((q) => ({
@@ -91,4 +91,25 @@ export const getExamQuiz = createServerFn({ method: "GET" })
       module_title: byId.get(q.module_id)?.title ?? "",
     }));
     return { modules: mods ?? [], questions };
+  });
+
+export const gradeExamQuiz = createServerFn({ method: "POST" })
+  .inputValidator((i: { answers: Record<string, string> }) => i)
+  .handler(async ({ data }) => {
+    const ids = Object.keys(data.answers);
+    if (ids.length === 0) return { results: {} as Record<string, { correct: boolean; correct_answer: string }> };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: qs, error } = await supabaseAdmin
+      .from("skill_quizzes")
+      .select("id, correct_answer")
+      .in("id", ids);
+    if (error) throw new Error(error.message);
+    const results: Record<string, { correct: boolean; correct_answer: string }> = {};
+    for (const q of qs ?? []) {
+      results[q.id] = {
+        correct_answer: q.correct_answer,
+        correct: data.answers[q.id] === q.correct_answer,
+      };
+    }
+    return { results };
   });
