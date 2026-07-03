@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
-import { getExamQuiz } from "@/lib/learning.functions";
+import { getExamQuiz, gradeExamQuiz } from "@/lib/learning.functions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -58,6 +58,7 @@ function ExamPrep() {
   const cfg = EXAMS[exam];
   const navigate = useNavigate({ from: Route.fullPath });
   const fn = useServerFn(getExamQuiz);
+  const gradeFn = useServerFn(gradeExamQuiz);
   const q = useQuery({
     queryKey: ["exam-quiz", exam],
     queryFn: () => fn({ data: { slugs: cfg.slugs } }),
@@ -67,6 +68,7 @@ function ExamPrep() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [seed, setSeed] = useState(0);
+  const [results, setResults] = useState<Record<string, { correct: boolean; correct_answer: string }>>({});
 
   const questions = useMemo(() => {
     const list = [...(q.data?.questions ?? [])];
@@ -79,9 +81,9 @@ function ExamPrep() {
     return list.slice(0, 25);
   }, [q.data, seed]);
 
-  const score = questions.reduce((s, qq) => s + (answers[qq.id] === qq.correct_answer ? 1 : 0), 0);
+  const score = questions.reduce((s, qq) => s + (results[qq.id]?.correct ? 1 : 0), 0);
   const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
-  const incorrect = submitted ? questions.filter((qq) => answers[qq.id] !== qq.correct_answer) : [];
+  const incorrect = submitted ? questions.filter((qq) => !results[qq.id]?.correct) : [];
   const unanswered = submitted ? questions.filter((qq) => !answers[qq.id]) : [];
 
   return (
@@ -146,7 +148,7 @@ function ExamPrep() {
           {q.isLoading ? "Loading questions…" : `${questions.length} questions · pass mark 80%`}
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => { setAnswers({}); setSubmitted(false); setSeed((s) => s + 1); }}>
+            <Button variant="outline" size="sm" onClick={() => { setAnswers({}); setSubmitted(false); setResults({}); setSeed((s) => s + 1); }}>
             <RefreshCw className="size-4" /> Reshuffle
           </Button>
           {submitted && (
@@ -170,7 +172,7 @@ function ExamPrep() {
                   {questions.length - incorrect.length} correct · {incorrect.length - unanswered.length} wrong · {unanswered.length} skipped
                 </p>
               </div>
-              <Button size="sm" variant="outline" onClick={() => { setAnswers({}); setSubmitted(false); setSeed((s) => s + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+              <Button size="sm" variant="outline" onClick={() => { setAnswers({}); setSubmitted(false); setResults({}); setSeed((s) => s + 1); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
                 <RefreshCw className="size-4" /> Retake {cfg.label}
               </Button>
             </div>
@@ -195,7 +197,7 @@ function ExamPrep() {
         )}
         {questions.map((qq, idx) => {
           const chosen = answers[qq.id];
-          const correct = qq.correct_answer;
+          const correct = results[qq.id]?.correct_answer;
           const isRight = submitted && chosen === correct;
           const isSkipped = submitted && !chosen;
           return (
@@ -270,11 +272,18 @@ function ExamPrep() {
       {questions.length > 0 && (
         <div className="mt-6 flex justify-end">
           {!submitted ? (
-            <Button onClick={() => setSubmitted(true)} disabled={Object.keys(answers).length < questions.length}>
+            <Button
+              onClick={async () => {
+                const r = await gradeFn({ data: { answers } });
+                setResults(r.results);
+                setSubmitted(true);
+              }}
+              disabled={Object.keys(answers).length < questions.length}
+            >
               Submit exam
             </Button>
           ) : (
-            <Button variant="outline" onClick={() => { setAnswers({}); setSubmitted(false); setSeed((s) => s + 1); }}>
+            <Button variant="outline" onClick={() => { setAnswers({}); setSubmitted(false); setResults({}); setSeed((s) => s + 1); }}>
               Retake
             </Button>
           )}
