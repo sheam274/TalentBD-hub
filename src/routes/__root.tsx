@@ -67,6 +67,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "TalentBD: Bangladesh's learn-and-earn platform with courses, certifications, CV builder, ATS parser, and a local + global jobs marketplace." },
       { property: "og:site_name", content: "TalentBD" },
       { property: "og:type", content: "website" },
+      { property: "og:title", content: "TalentBD — Learn, earn credentials, land jobs in Bangladesh" },
+      { name: "twitter:title", content: "TalentBD — Learn, earn credentials, land jobs in Bangladesh" },
+      { property: "og:description", content: "TalentBD: Bangladesh's learn-and-earn platform with courses, certifications, CV builder, ATS parser, and a local + global jobs marketplace." },
+      { name: "twitter:description", content: "TalentBD: Bangladesh's learn-and-earn platform with courses, certifications, CV builder, ATS parser, and a local + global jobs marketplace." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/093e16cb-4800-42f7-928c-fdb137249ab5/id-preview-f5ed9605--5c6d81f9-bc3f-44c2-8977-136dee46e8a7.lovable.app-1783003213446.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/093e16cb-4800-42f7-928c-fdb137249ab5/id-preview-f5ed9605--5c6d81f9-bc3f-44c2-8977-136dee46e8a7.lovable.app-1783003213446.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
