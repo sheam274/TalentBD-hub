@@ -25,10 +25,11 @@ export const getModulePublic = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!mod) return null;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: quizzes } = await supabaseAdmin
+    const { data: quizzes, error: quizzesError } = await supabaseAdmin
       .from("skill_quizzes")
       .select("id, question, choices")
       .eq("module_id", mod.id);
+    if (quizzesError) throw new Error(quizzesError.message);
     return { module: mod, quizzes: quizzes ?? [] };
   });
 
@@ -47,7 +48,8 @@ export const adminUpsertModule = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => moduleSchema.parse(i))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+    const { data: roles, error: rolesError } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+    if (rolesError) throw new Error(rolesError.message);
     if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
     const payload = { ...data, updated_at: new Date().toISOString(), created_by: userId };
     const { error } = data.id
@@ -62,7 +64,8 @@ export const adminDeleteModule = createServerFn({ method: "POST" })
   .inputValidator((i: { id: string }) => i)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+    const { data: roles, error: rolesError } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+    if (rolesError) throw new Error(rolesError.message);
     if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
     const { error } = await supabase.from("learning_modules").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -73,17 +76,19 @@ export const getExamQuiz = createServerFn({ method: "GET" })
   .inputValidator((i: { slugs: string[] }) => i)
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: mods } = await supabaseAdmin
+    const { data: mods, error: modsError } = await supabaseAdmin
       .from("learning_modules")
       .select("id, section_slug, title")
       .eq("discipline", "Computer Science")
       .in("section_slug", data.slugs);
+    if (modsError) throw new Error(modsError.message);
     const modIds = (mods ?? []).map((m) => m.id);
     if (modIds.length === 0) return { modules: [], questions: [] };
-    const { data: qs } = await supabaseAdmin
+    const { data: qs, error: qsError } = await supabaseAdmin
       .from("skill_quizzes")
       .select("id, module_id, question, choices")
       .in("module_id", modIds);
+    if (qsError) throw new Error(qsError.message);
     const byId = new Map((mods ?? []).map((m) => [m.id, m]));
     const questions = (qs ?? []).map((q) => ({
       ...q,

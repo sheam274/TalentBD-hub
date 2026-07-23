@@ -53,10 +53,11 @@ export const scheduleInterview = createServerFn({ method: "POST" })
       created_by: context.userId,
     });
     if (error) throw new Error(error.message);
-    await context.supabase
+    const { error: stageError } = await context.supabase
       .from("job_applications")
       .update({ stage: "interview", stage_updated_at: new Date().toISOString(), status: "interview" })
       .eq("id", data.applicationId);
+    if (stageError) throw new Error(stageError.message);
     return { ok: true };
   });
 
@@ -99,10 +100,11 @@ export const issueAppointmentLetter = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    await context.supabase
+    const { error: stageError } = await context.supabase
       .from("job_applications")
       .update({ stage: "offer", stage_updated_at: new Date().toISOString(), status: "offer" })
       .eq("id", data.applicationId);
+    if (stageError) throw new Error(stageError.message);
     return { ok: true, id: letter.id as string };
   });
 
@@ -147,10 +149,11 @@ export const acceptLetter = createServerFn({ method: "POST" })
       .update({ accepted_at: new Date().toISOString() })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
-    await context.supabase
+    const { error: stageError } = await context.supabase
       .from("job_applications")
       .update({ stage: "hired", stage_updated_at: new Date().toISOString(), status: "hired" })
       .eq("id", letter.application_id);
+    if (stageError) throw new Error(stageError.message);
     return { ok: true };
   });
 
@@ -166,10 +169,17 @@ export const getMyApplicationTracking = createServerFn({ method: "GET" })
       .eq("user_id", context.userId)
       .maybeSingle();
     if (error || !app) throw new Error("Application not found");
-    const [{ data: invites }, { data: letters }, { data: messages }] = await Promise.all([
+    const [invitesRes, lettersRes, messagesRes] = await Promise.all([
       context.supabase.from("interview_invitations").select("*").eq("application_id", data.id).order("scheduled_at"),
       context.supabase.from("appointment_letters").select("*").eq("application_id", data.id).order("issued_at", { ascending: false }),
       context.supabase.from("application_messages").select("*").eq("application_id", data.id).order("created_at"),
     ]);
-    return { app, invites: invites ?? [], letters: letters ?? [], messages: messages ?? [] };
+    const relatedError = invitesRes.error ?? lettersRes.error ?? messagesRes.error;
+    if (relatedError) throw new Error(relatedError.message);
+    return {
+      app,
+      invites: invitesRes.data ?? [],
+      letters: lettersRes.data ?? [],
+      messages: messagesRes.data ?? [],
+    };
   });

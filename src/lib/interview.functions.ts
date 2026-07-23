@@ -102,22 +102,25 @@ export const getSession = createServerFn({ method: "GET" })
   .inputValidator((i: unknown) => z.object({ sessionId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: session } = await supabase
+    const { data: session, error: sessionError } = await supabase
       .from("interview_sessions")
       .select("*")
       .eq("id", data.sessionId)
       .eq("user_id", userId)
       .maybeSingle();
+    if (sessionError) throw new Error(sessionError.message);
     if (!session) throw new Error("Session not found");
-    const { data: questions } = await supabase
+    const { data: questions, error: questionsError } = await supabase
       .from("interview_questions")
       .select("*")
       .eq("session_id", data.sessionId)
       .order("idx", { ascending: true });
-    const { data: answers } = await supabase
+    if (questionsError) throw new Error(questionsError.message);
+    const { data: answers, error: answersError } = await supabase
       .from("interview_answers")
       .select("*")
       .eq("session_id", data.sessionId);
+    if (answersError) throw new Error(answersError.message);
     return { session, questions: questions ?? [], answers: answers ?? [] };
   });
 
@@ -133,18 +136,20 @@ export const submitAnswer = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => AnswerSchema.parse(i))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: q } = await supabase
+    const { data: q, error: qError } = await supabase
       .from("interview_questions")
       .select("id, prompt, question_type, correct_answer, expected_topic, session_id")
       .eq("id", data.questionId)
       .maybeSingle();
+    if (qError) throw new Error(qError.message);
     if (!q) throw new Error("Question not found");
-    const { data: sess } = await supabase
+    const { data: sess, error: sessError } = await supabase
       .from("interview_sessions")
       .select("id, role, difficulty")
       .eq("id", q.session_id)
       .eq("user_id", userId)
       .maybeSingle();
+    if (sessError) throw new Error(sessError.message);
     if (!sess) throw new Error("Not your session");
 
     let score = 0;
@@ -191,17 +196,19 @@ export const finalizeInterview = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ sessionId: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: sess } = await supabase
+    const { data: sess, error: sessError } = await supabase
       .from("interview_sessions")
       .select("*")
       .eq("id", data.sessionId)
       .eq("user_id", userId)
       .maybeSingle();
+    if (sessError) throw new Error(sessError.message);
     if (!sess) throw new Error("Session not found");
-    const { data: answers } = await supabase
+    const { data: answers, error: answersError } = await supabase
       .from("interview_answers")
       .select("score, feedback")
       .eq("session_id", data.sessionId);
+    if (answersError) throw new Error(answersError.message);
     const list = answers ?? [];
     const total = sess.total_questions || list.length || 1;
     const sum = list.reduce((a, b) => a + (b.score ?? 0), 0);
@@ -218,7 +225,7 @@ export const finalizeInterview = createServerFn({ method: "POST" })
       overall = `You scored ${pct}%.`;
     }
 
-    await supabase
+    const { error: updateError } = await supabase
       .from("interview_sessions")
       .update({
         score: pct,
@@ -227,10 +234,11 @@ export const finalizeInterview = createServerFn({ method: "POST" })
         completed_at: new Date().toISOString(),
       })
       .eq("id", data.sessionId);
+    if (updateError) throw new Error(updateError.message);
 
     let credentialId: string | null = null;
     if (pct >= 80) {
-      const { data: cred } = await supabase
+      const { data: cred, error: credError } = await supabase
         .from("user_credentials")
         .insert({
           user_id: userId,
@@ -239,6 +247,7 @@ export const finalizeInterview = createServerFn({ method: "POST" })
         })
         .select("id")
         .maybeSingle();
+      if (credError) throw new Error(credError.message);
       credentialId = cred?.id ?? null;
     }
     return { score: pct, overall, passed: pct >= 80, credentialId };

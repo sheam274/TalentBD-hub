@@ -91,10 +91,11 @@ export const getCompanyBySlug = createServerFn({ method: "GET" })
   .inputValidator((i: unknown) => z.object({ slug: z.string().min(1).max(120) }).parse(i))
   .handler(async ({ data }) => {
     if (data.slug.startsWith("ext-")) {
-      const { data: rows } = await publicClient
+      const { data: rows, error: rowsError } = await publicClient
         .from("external_jobs_cache")
         .select("*")
         .order("publication_date", { ascending: false });
+      if (rowsError) throw new Error(rowsError.message);
       const matches = (rows ?? []).filter(
         (r: any) =>
           "ext-" + r.company.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") ===
@@ -135,12 +136,13 @@ export const getCompanyBySlug = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!company) return null;
-    const { data: jobs } = await publicClient
+    const { data: jobs, error: jobsError } = await publicClient
       .from("job_marketplace")
       .select("*")
       .eq("is_live", true)
       .or(`company_id.eq.${company.id},company.eq.${company.name}`)
       .order("created_at", { ascending: false });
+    if (jobsError) throw new Error(jobsError.message);
     return { company, jobs: jobs ?? [] };
   });
 
@@ -164,7 +166,8 @@ const jobSchema = z.object({
 });
 
 async function assertAdmin(supabase: any, userId: string) {
-  const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  const { data: roles, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  if (error) throw new Error(error.message);
   if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
 }
 
@@ -231,10 +234,14 @@ export const applyToJob = createServerFn({ method: "POST" })
     const prefix = method === "external" ? "[Applied on company site] " : "";
     // Snapshot the applicant's profile + latest CV so the employer receives
     // it together with the application (auto-submitted with every apply).
-    const [{ data: profile }, { data: cv }] = await Promise.all([
+    const [profileRes, cvRes] = await Promise.all([
       context.supabase.from("profiles").select("name, discipline, skills").eq("id", context.userId).maybeSingle(),
       context.supabase.from("cv_records").select("selected_style, builder_payload, updated_at").eq("user_id", context.userId).maybeSingle(),
     ]);
+    const snapshotError = profileRes.error ?? cvRes.error;
+    if (snapshotError) throw new Error(snapshotError.message);
+    const profile = profileRes.data;
+    const cv = cvRes.data;
     const snapshot = {
       profile: profile ?? null,
       cv: cv ?? null,

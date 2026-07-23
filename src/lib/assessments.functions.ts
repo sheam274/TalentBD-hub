@@ -25,11 +25,12 @@ export const submitQuiz = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: mod } = await supabase
+    const { data: mod, error: modError } = await supabase
       .from("learning_modules")
       .select("id, title")
       .eq("id", data.moduleId)
       .maybeSingle();
+    if (modError) throw new Error(modError.message);
     if (!mod) throw new Error("Module not found");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: quizzes, error } = await supabaseAdmin

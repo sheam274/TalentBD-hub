@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { logEvent } from "@/lib/server-logger";
 
 // Background sync: pulls live jobs from Remotive, Arbeitnow, RemoteOK, Himalayas,
 // normalizes categories, dedupes by external_id, and upserts into
@@ -75,7 +76,10 @@ async function fetchRemotive(headers: Record<string, string>): Promise<Row[]> {
         publication_date: x.publication_date ?? null,
       };
     });
-  } catch { return []; }
+  } catch (err) {
+    logEvent("external-api", "error", { op: "jobs.remotive", error: (err as Error).message });
+    return [];
+  }
 }
 
 async function fetchArbeitnow(headers: Record<string, string>): Promise<Row[]> {
@@ -102,7 +106,10 @@ async function fetchArbeitnow(headers: Record<string, string>): Promise<Row[]> {
         publication_date: x.created_at ? new Date(x.created_at * 1000).toISOString() : null,
       };
     });
-  } catch { return []; }
+  } catch (err) {
+    logEvent("external-api", "error", { op: "jobs.arbeitnow", error: (err as Error).message });
+    return [];
+  }
 }
 
 async function fetchRemoteOK(headers: Record<string, string>): Promise<Row[]> {
@@ -131,7 +138,10 @@ async function fetchRemoteOK(headers: Record<string, string>): Promise<Row[]> {
         publication_date: x.date ?? null,
       };
     });
-  } catch { return []; }
+  } catch (err) {
+    logEvent("external-api", "error", { op: "jobs.remoteok", error: (err as Error).message });
+    return [];
+  }
 }
 
 export type SyncResult = {
@@ -173,10 +183,15 @@ export async function runJobSync(): Promise<SyncResult> {
     upserted += count ?? slice.length;
   }
 
-  await supabaseAdmin
+  const { error: pruneError } = await supabaseAdmin
     .from("external_jobs_cache")
     .delete()
     .lt("fetched_at", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString());
+  if (pruneError) {
+    // Upserts already succeeded; surface the stale-row cleanup failure without
+    // discarding the work done above.
+    logEvent("external-api", "error", { op: "jobs.prune", error: pruneError.message });
+  }
 
   return { ok: true, upserted, sources };
 }
