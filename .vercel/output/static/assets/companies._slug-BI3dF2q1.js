@@ -1,1 +1,0 @@
-import{j as o,L as n}from"./index-BaxvlCKm.js";const t=()=>o.jsxs("div",{className:"mx-auto max-w-3xl p-10 text-sm",children:["Company not found. ",o.jsx(n,{to:"/companies",className:"underline",children:"Back to companies"})]});export{t as notFoundComponent};
