@@ -6,6 +6,12 @@ import { scoreAndSortJobs } from "./external-jobs.scoring";
 
 const BLOCKED_JOB_HOSTS = new Set(["jobicy.com", "www.jobicy.com", "himalayas.app", "www.himalayas.app"]);
 
+// Strip PostgREST reserved characters so a user-supplied term can't break out
+// of an `.or()` / `.ilike` filter string and inject extra conditions.
+function sanitizeFilterTerm(s: string): string {
+  return s.replace(/[,()*:]/g, " ").replace(/\s+/g, " ").trim();
+}
+
 function normalizeJobUrl(raw?: string | null) {
   if (!raw) return null;
   try {
@@ -49,10 +55,13 @@ export const listRemoteJobsExternal = createServerFn({ method: "GET" })
         .select("external_id,source,title,company,company_logo,category,normalized_category,job_type,location,is_remote,salary,url,tags,publication_date")
         .order("publication_date", { ascending: false, nullsFirst: false })
         .limit(limit);
-      if (data.category) q = q.ilike("normalized_category", `%${data.category}%`);
-      if (data.search) q = q.or(
-        `title.ilike.%${data.search}%,company.ilike.%${data.search}%,category.ilike.%${data.search}%`,
-      );
+      if (data.category) q = q.ilike("normalized_category", `%${sanitizeFilterTerm(data.category)}%`);
+      if (data.search) {
+        const term = sanitizeFilterTerm(data.search);
+        if (term) q = q.or(
+          `title.ilike.%${term}%,company.ilike.%${term}%,category.ilike.%${term}%`,
+        );
+      }
       const { data: rows } = await q;
       cached = (rows ?? []).map((r) => ({
         id: r.external_id,

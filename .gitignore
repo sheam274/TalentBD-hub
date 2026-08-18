@@ -17,7 +17,7 @@ dist-ssr
 .vercel
 *.local
 
-# Local env files
+# Local env files (never commit real secrets). Use .env.example as the template.
 .env
 .env.*
 !.env.example
