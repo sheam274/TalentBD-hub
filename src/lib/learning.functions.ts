@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabase as publicClient } from "@/integrations/supabase/client";
+import { assertAdminRole } from "@/lib/roles";
 import { z } from "zod";
 
 export const listModulesPublic = createServerFn({ method: "GET" }).handler(async () => {
@@ -47,8 +48,7 @@ export const adminUpsertModule = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => moduleSchema.parse(i))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-    if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
+    await assertAdminRole(supabase, userId);
     const payload = { ...data, updated_at: new Date().toISOString(), created_by: userId };
     const { error } = data.id
       ? await supabase.from("learning_modules").update(payload).eq("id", data.id)
@@ -62,8 +62,7 @@ export const adminDeleteModule = createServerFn({ method: "POST" })
   .inputValidator((i: { id: string }) => i)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-    if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
+    await assertAdminRole(supabase, userId);
     const { error } = await supabase.from("learning_modules").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { hasRole, isAllowedAdminEmail } from "@/lib/roles";
 
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -7,11 +8,9 @@ export const getMyProfile = createServerFn({ method: "GET" })
     const { supabase, userId, claims } = context;
     const { data: profile } = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle();
     const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-    const ALLOWED_ADMIN_EMAILS = ["sheam.rahman99@gmail.com", "sheam.rahman@outlook.com"];
-    const email = (claims as { email?: string } | undefined)?.email?.toLowerCase() ?? "";
-    const hasAdminRole = !!roles?.some((r: { role: string }) => r.role === "admin");
-    const isAdmin = hasAdminRole && ALLOWED_ADMIN_EMAILS.includes(email);
-    const isEmployer = !!roles?.some((r: { role: string }) => r.role === "employer");
+    const email = (claims as { email?: string } | undefined)?.email;
+    const isAdmin = hasRole(roles, "admin") && isAllowedAdminEmail(email);
+    const isEmployer = hasRole(roles, "employer");
     const { data: memberships } = await supabase
       .from("company_members")
       .select("company_id, role, company:companies(id, name, slug, logo_url)")

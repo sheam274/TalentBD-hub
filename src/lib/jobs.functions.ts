@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabase as publicClient } from "@/integrations/supabase/client";
+import { assertAdminRole } from "@/lib/roles";
 import { z } from "zod";
 
 export const listJobsPublic = createServerFn({ method: "GET" }).handler(async () => {
@@ -163,15 +164,10 @@ const jobSchema = z.object({
   company_id: z.string().uuid().optional().nullable(),
 });
 
-async function assertAdmin(supabase: any, userId: string) {
-  const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-  if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
-}
-
 export const adminListJobs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("job_marketplace")
       .select("*")
@@ -184,7 +180,7 @@ export const adminUpsertJob = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => jobSchema.parse(i))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const { error } = data.id
       ? await context.supabase.from("job_marketplace").update(data).eq("id", data.id)
       : await context.supabase.from("job_marketplace").insert(data);
@@ -196,7 +192,7 @@ export const adminToggleJobLive = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: { id: string; is_live: boolean }) => i)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const { error } = await context.supabase
       .from("job_marketplace")
       .update({ is_live: data.is_live })
@@ -209,7 +205,7 @@ export const adminDeleteJob = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: { id: string }) => i)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const { error } = await context.supabase.from("job_marketplace").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -300,7 +296,7 @@ const companySchema = z.object({
 export const adminListCompanies = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const { data, error } = await context.supabase.from("companies").select("*").order("name");
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -310,7 +306,7 @@ export const adminUpsertCompany = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => companySchema.parse(i))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const payload = { ...data, logo_url: data.logo_url || null, website: data.website || null };
     const { error } = data.id
       ? await context.supabase.from("companies").update(payload).eq("id", data.id)
@@ -323,7 +319,7 @@ export const adminDeleteCompany = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: { id: string }) => i)
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const { error } = await context.supabase.from("companies").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -333,7 +329,7 @@ export const adminDeleteCompany = createServerFn({ method: "POST" })
 export const adminRunJobsSync = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertAdminRole(context.supabase, context.userId);
     const mod = await import("@/routes/api/public/hooks/sync-external-jobs");
     const startedAt = Date.now();
     const result = await mod.runJobSync();

@@ -1,17 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 import { z } from "zod";
 
-async function assertAdmin(supabase: any, userId: string) {
-  const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-  if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
-  // Defense-in-depth: main-admin CRUD is locked to the email allowlist even
-  // if the admin role was granted by another means.
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: u } = await supabaseAdmin.auth.admin.getUserById(userId);
-  const email = (u?.user?.email ?? "").toLowerCase();
-  const ALLOWED = ["sheam.rahman99@gmail.com", "sheam.rahman@outlook.com"];
-  if (!ALLOWED.includes(email)) throw new Error("Forbidden");
+async function assertAdmin(supabase: SupabaseClient<Database>, userId: string) {
+  const { assertMainAdmin } = await import("@/integrations/supabase/admin-users.server");
+  await assertMainAdmin(supabase, userId);
 }
 
 export const adminListUsers = createServerFn({ method: "GET" })
@@ -76,16 +71,10 @@ export const adminPromoteByEmail = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Find user by email via Auth Admin API
-    let target: { id: string; email?: string } | null = null;
-    for (let page = 1; page <= 20 && !target; page++) {
-      const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
-      if (error) throw new Error(error.message);
-      const found = list.users.find((u) => (u.email ?? "").toLowerCase() === data.email);
-      if (found) target = { id: found.id, email: found.email ?? undefined };
-      if (list.users.length < 200) break;
-    }
-    if (!target) throw new Error(`No user found with email ${data.email}`);
+    const { findAuthUserByEmail } = await import("@/integrations/supabase/admin-users.server");
+    const found = await findAuthUserByEmail(data.email);
+    if (!found) throw new Error(`No user found with email ${data.email}`);
+    const target = { id: found.id, email: found.email ?? undefined };
     if (data.grant) {
       const { error } = await supabaseAdmin
         .from("user_roles")
@@ -117,14 +106,9 @@ export const adminListAdmins = createServerFn({ method: "GET" })
       .from("profiles")
       .select("id, name, discipline, created_at")
       .in("id", ids);
-    // Enrich with email via Auth Admin API
-    const byId = new Map<string, string | undefined>();
-    for (let page = 1; page <= 20; page++) {
-      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
-      list.users.forEach((u) => { if (ids.includes(u.id)) byId.set(u.id, u.email ?? undefined); });
-      if (list.users.length < 200) break;
-    }
-    return (profiles ?? []).map((p: any) => ({ ...p, email: byId.get(p.id) ?? null }));
+    const { getEmailsByUserIds } = await import("@/integrations/supabase/admin-users.server");
+    const emailById = await getEmailsByUserIds(ids);
+    return (profiles ?? []).map((p: any) => ({ ...p, email: emailById[p.id] ?? null }));
   });
 
 export const adminAdjustCredential = createServerFn({ method: "POST" })
@@ -359,17 +343,16 @@ export const adminListAuditLogs = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { findAuthUserByEmail, getEmailsByUserIds } = await import(
+      "@/integrations/supabase/admin-users.server"
+    );
 
     // Optional email → user_id resolution
     let actorId: string | undefined;
     if (data.actorEmail) {
-      for (let page = 1; page <= 10 && !actorId; page++) {
-        const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
-        const found = list?.users.find((u) => (u.email ?? "").toLowerCase() === data.actorEmail);
-        if (found) actorId = found.id;
-        if (!list?.users.length || list.users.length < 200) break;
-      }
-      if (!actorId) return { rows: [], emailMap: {} as Record<string, string> };
+      const found = await findAuthUserByEmail(data.actorEmail, 10);
+      if (!found) return { rows: [], emailMap: {} as Record<string, string> };
+      actorId = found.id;
     }
 
     let q: any = (supabaseAdmin as any)
@@ -385,15 +368,10 @@ export const adminListAuditLogs = createServerFn({ method: "GET" })
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
-    // Map actor_ids to emails for display
-    const emailMap: Record<string, string> = {};
-    const actorIds = Array.from(new Set((rows ?? []).map((r: any) => r.actor_id).filter(Boolean)));
-    if (actorIds.length) {
-      // Best-effort: page through auth users once
-      const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
-      for (const u of list?.users ?? []) {
-        if (u.email && actorIds.includes(u.id)) emailMap[u.id] = u.email;
-      }
-    }
+    // Map actor_ids to emails for display (best-effort: first page only)
+    const actorIds = Array.from(
+      new Set((rows ?? []).map((r: any) => r.actor_id).filter(Boolean)),
+    ) as string[];
+    const emailMap = await getEmailsByUserIds(actorIds, 1);
     return { rows: rows ?? [], emailMap };
   });
