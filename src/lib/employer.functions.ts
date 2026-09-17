@@ -3,12 +3,13 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 async function myCompany(supabase: any, userId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("company_members")
     .select("company_id, company:companies(*)")
     .eq("user_id", userId)
     .limit(1)
     .maybeSingle();
+  if (error) throw new Error(error.message);
   if (!data) throw new Error("No company linked to this account");
   return { companyId: data.company_id as string, company: data.company };
 }
@@ -16,11 +17,12 @@ async function myCompany(supabase: any, userId: string) {
 export const getMyCompany = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase
+    const { data, error } = await context.supabase
       .from("company_members")
       .select("company_id, role, company:companies(*)")
       .eq("user_id", context.userId)
       .maybeSingle();
+    if (error) throw new Error(error.message);
     return data;
   });
 

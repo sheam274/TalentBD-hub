@@ -3,12 +3,14 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 async function assertAdmin(supabase: any, userId: string) {
-  const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  const { data: roles, error: rolesError } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  if (rolesError) throw new Error(rolesError.message);
   if (!roles?.some((r: { role: string }) => r.role === "admin")) throw new Error("Forbidden");
   // Defense-in-depth: main-admin CRUD is locked to the email allowlist even
   // if the admin role was granted by another means.
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: u } = await supabaseAdmin.auth.admin.getUserById(userId);
+  const { data: u, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+  if (userError) throw new Error(userError.message);
   const email = (u?.user?.email ?? "").toLowerCase();
   const ALLOWED = ["sheam.rahman99@gmail.com", "sheam.rahman@outlook.com"];
   if (!ALLOWED.includes(email)) throw new Error("Forbidden");
@@ -19,15 +21,18 @@ export const adminListUsers = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: profiles } = await supabaseAdmin
+    const { data: profiles, error: profilesError } = await supabaseAdmin
       .from("profiles")
       .select("id, name, discipline, created_at")
       .order("created_at", { ascending: false });
-    const { data: roles } = await supabaseAdmin.from("user_roles").select("user_id, role");
-    const { data: creds } = await supabaseAdmin
+    if (profilesError) throw new Error(profilesError.message);
+    const { data: roles, error: rolesError } = await supabaseAdmin.from("user_roles").select("user_id, role");
+    if (rolesError) throw new Error(rolesError.message);
+    const { data: creds, error: credsError } = await supabaseAdmin
       .from("user_credentials")
       .select("user_id, credential_name, score, verified_at")
       .order("verified_at", { ascending: false });
+    if (credsError) throw new Error(credsError.message);
     return {
       profiles: profiles ?? [],
       roles: roles ?? [],
@@ -107,16 +112,18 @@ export const adminListAdmins = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: roles } = await supabaseAdmin
+    const { data: roles, error: rolesError } = await supabaseAdmin
       .from("user_roles")
       .select("user_id")
       .eq("role", "admin");
+    if (rolesError) throw new Error(rolesError.message);
     const ids = (roles ?? []).map((r: any) => r.user_id);
     if (!ids.length) return [];
-    const { data: profiles } = await supabaseAdmin
+    const { data: profiles, error: profilesError } = await supabaseAdmin
       .from("profiles")
       .select("id, name, discipline, created_at")
       .in("id", ids);
+    if (profilesError) throw new Error(profilesError.message);
     // Enrich with email via Auth Admin API
     const byId = new Map<string, string | undefined>();
     for (let page = 1; page <= 20; page++) {
@@ -170,6 +177,11 @@ export const adminStats = createServerFn({ method: "GET" })
       supabaseAdmin.from("job_marketplace").select("*", head).eq("is_live", true),
       supabaseAdmin.from("external_jobs_cache").select("*", head),
     ]);
+    const statErr = [
+      users, modules, jobs, creds, companies, applications,
+      employers, interviews, letters, liveJobs, cachedJobs,
+    ].find((r) => r.error);
+    if (statErr?.error) throw new Error(statErr.error.message);
     return {
       users: users.count ?? 0,
       employers: employers.count ?? 0,
@@ -192,17 +204,20 @@ export const adminListEmployers = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: roles } = await supabaseAdmin
+    const { data: roles, error: rolesError } = await supabaseAdmin
       .from("user_roles")
       .select("user_id")
       .eq("role", "employer");
+    if (rolesError) throw new Error(rolesError.message);
     const ids = (roles ?? []).map((r: any) => r.user_id);
     if (!ids.length) return [];
-    const { data: profiles } = await supabaseAdmin.from("profiles").select("*").in("id", ids);
-    const { data: members } = await supabaseAdmin
+    const { data: profiles, error: profilesError } = await supabaseAdmin.from("profiles").select("*").in("id", ids);
+    if (profilesError) throw new Error(profilesError.message);
+    const { data: members, error: membersError } = await supabaseAdmin
       .from("company_members")
       .select("user_id, role, company:companies(id, name, slug)")
       .in("user_id", ids);
+    if (membersError) throw new Error(membersError.message);
     return (profiles ?? []).map((p: any) => ({
       ...p,
       companies: (members ?? []).filter((m: any) => m.user_id === p.id),
@@ -214,11 +229,12 @@ export const adminListApplications = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from("job_applications")
       .select("id, status, stage, created_at, user_id, job:job_marketplace(id, job_title, company), applicant:profiles(name)")
       .order("created_at", { ascending: false })
       .limit(200);
+    if (error) throw new Error(error.message);
     return data ?? [];
   });
 
@@ -227,11 +243,12 @@ export const adminListInvitations = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from("interview_invitations")
       .select("*, application:job_applications(id, user_id, job:job_marketplace(job_title, company))")
       .order("scheduled_at", { ascending: false })
       .limit(200);
+    if (error) throw new Error(error.message);
     return data ?? [];
   });
 
@@ -240,11 +257,12 @@ export const adminListLetters = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from("appointment_letters")
       .select("*, application:job_applications(id, user_id, job:job_marketplace(job_title, company))")
       .order("issued_at", { ascending: false })
       .limit(200);
+    if (error) throw new Error(error.message);
     return data ?? [];
   });
 
@@ -295,9 +313,10 @@ export const adminListTables = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const results = await Promise.all(
       ADMIN_BROWSABLE_TABLES.map(async (t) => {
-        const { count } = await (supabaseAdmin as any)
+        const { count, error } = await (supabaseAdmin as any)
           .from(t)
           .select("*", { count: "exact", head: true });
+        if (error) throw new Error(`${t}: ${error.message}`);
         return { table: t, count: count ?? 0 };
       }),
     );
