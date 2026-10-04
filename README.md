@@ -1,26 +1,33 @@
-# TalentBD Hub
+# ⚡ TalentBD Hub
 
-**TalentBD Hub** is a modern, full-stack talent, recruitment, and learning platform designed to bridge job seekers, employers, and administrators in Bangladesh. Built with **React**, **TanStack Router**, **Tailwind CSS**, **Shadcn UI**, and **Supabase**, the platform provides AI-assisted resume building, automated job matching, interview preparation, and computer science learning modules.
-
----
-
-## 🌟 Key Features
-
-* **Job Portal & Smart Matching:** Search and apply for job listings with match scoring and direct tracking.
-* **AI Resume & CV Tools:** AI-powered CV builder and CV parser to optimize applicant profile presentation.
-* **Mock Interviews & Prep:** Interactive interview prep modules with session histories and detailed feedback.
-* **Employer Management Suite:** Portal for posting jobs, managing applicants, scheduling interviews, and sending offer/rejection letters.
-* **Admin Dashboard:** System audit logs, user management, database controls, credential validation, and platform analytics.
-* **CSE Learning & Exam Prep:** Interactive learning modules tailored for Computer Science & Engineering students and job seekers.
+> **Empowering Talent, Elevating Careers.**  
+> A next-generation, AI-driven recruitment and career accelerator platform designed to bridge job seekers, employers, and administrators through automated job matching, real-time interview simulations, and computer science learning ecosystems.
 
 ---
 
-## 🛠️ Tech Stack
+## 📸 Overview & Key Features
 
-* **Frontend:** React, TypeScript, Vite, Tailwind CSS, Shadcn UI, Framer Motion / Lucide Icons
-* **Routing & State:** TanStack Router, TanStack Query
-* **Backend & Database:** Supabase (PostgreSQL, Auth, Row Level Security)
-* **Runtime / Package Manager:** Bun (or Node.js / npm)
+TalentBD Hub transforms the modern hiring journey by combining full-stack architecture with intelligent career tools:
+
+* 🎯 **Automated Job Matching & Tracking:** Real-time job search powered by dynamic match scoring algorithms to give candidate applications instant visibility.
+* 🤖 **AI Resume Builder & CV Parser:** Automated document parsing and optimized CV generation tailored for technical and corporate standards.
+* 🎙️ **Interactive Mock Interviews:** Simulated interview modules equipped with response evaluation, session history tracking, and actionable feedback.
+* 💼 **Enterprise Employer Suite:** Complete recruiter workspace to post jobs, manage candidate pipelines, schedule interviews, and issue automated offer/rejection workflows.
+* 🛡️ **Role-Based Admin Control & Audit:** Full system observability, audit logs, credential validation, Row Level Security (RLS), and database metrics.
+* 📚 **CSE Learning & Assessment Engine:** Built-in interactive learning tracks and exam preparation modules tailored for Computer Science & Engineering students and software roles.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend Framework** | React 18 (TypeScript), Vite |
+| **Routing & State** | TanStack Router (File-based), TanStack Query (React Query) |
+| **Styling & Components** | Tailwind CSS, Shadcn UI, Framer Motion, Lucide Icons |
+| **Backend & Database** | Supabase (PostgreSQL, Realtime, Auth, Storage) |
+| **Security** | Row Level Security (RLS), JWT Authentication |
+| **Runtime & Tooling** | Bun / Node.js (v18+) |
 
 ---
 
@@ -28,20 +35,20 @@
 
 ```text
 .
-├── scripts/              # Database seed scripts and setup utilities
-│   ├── db-setup.sh
-│   └── seed.sql
+├── scripts/              # Database orchestration & seed scripts
+│   ├── db-setup.sh       # Automated environment & DB bootstrapper
+│   └── seed.sql          # Initial mock data and lookup tables
 ├── src/
-│   ├── assets/           # Media assets and logos
-│   ├── components/       # Shared UI components and Shadcn primitives
-│   ├── hooks/            # Custom React hooks
-│   ├── integrations/     # External integrations (Supabase client/middleware, Lovable)
-│   ├── lib/              # Core business logic, API helpers, and scoring functions
-│   ├── routes/           # TanStack file-based routing architecture
-│   │   ├── _authenticated/# Protected routes (User, Admin, Employer dashboards)
+│   ├── assets/           # Media assets, branding, and dynamic graphics
+│   ├── components/       # UI primitives and composite features (Shadcn UI)
+│   ├── hooks/            # Reusable React hooks for data fetching and state
+│   ├── integrations/     # Supabase client configurations and external APIs
+│   ├── lib/              # Core business logic, scoring algorithms, and utils
+│   ├── routes/           # TanStack file-based routing directory
+│   │   ├── _authenticated/# Protected routes (User, Admin, Employer portals)
 │   │   └── api/          # Public API hooks and sync endpoints
-│   ├── router.tsx        # Router configuration
-│   └── server.ts         # Server entrypoint
+│   ├── router.tsx        # Central router configuration
+│   └── server.ts         # SSR / Edge runtime entrypoint
 └── supabase/
-    ├── config.toml       # Supabase configuration
-    └── migrations/       # Database migrations
+    ├── config.toml       # Supabase CLI runtime configurations
+    └── migrations/       # Production database versioning & SQL migrations
